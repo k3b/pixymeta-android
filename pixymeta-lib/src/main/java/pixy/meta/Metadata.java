@@ -521,5 +521,36 @@ public abstract class Metadata implements MetadataReader, IMetadataDirectory {
 		byte[] data = getData();
 		if(data != null)
 			out.write(data);
-	}	
+	}
+
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
+	}
+
+	/** may generate the IMetadataDirectory on demand */
+	abstract protected IMetadataDirectory get();
+
 }

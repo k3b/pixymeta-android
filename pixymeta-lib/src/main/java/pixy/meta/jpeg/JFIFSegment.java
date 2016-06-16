@@ -36,7 +36,7 @@ import pixy.io.IOUtils;
 import pixy.util.ArrayUtils;
 import pixy.util.MetadataUtils;
 
-public class JFIFSegment extends Metadata  implements IMetadataDirectory {
+public class JFIFSegment extends Metadata  {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(JFIFSegment.class);
 	private static final String MODUL_NAME = "Jpeg-JFIF";
@@ -189,7 +189,8 @@ public class JFIFSegment extends Metadata  implements IMetadataDirectory {
 	private MetadataDirectoryImpl metaData = null;
 
 	// calculate metaData on demand
-	private MetadataDirectoryImpl get() {
+	@Override
+	protected IMetadataDirectory get() {
 		if ((metaData == null)) {
 			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
 
@@ -210,29 +211,4 @@ public class JFIFSegment extends Metadata  implements IMetadataDirectory {
 		return metaData;
 	}
 
-	/**
-	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
-	 *
-	 * @return the name of the directory
-	 */
-	@Override
-	public String getName() {
-		return get().getName();
-	}
-
-	/**
-	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
-	 */
-	@Override
-	public List<IMetadataDirectory> getSubdirectories() {
-		return get().getSubdirectories();
-	}
-
-	/**
-	 * @return Tags that belong to this Directory or null if there are no tags
-	 */
-	@Override
-	public List<IMetadataTag> getTags() {
-		return get().getTags();
-	}
 }

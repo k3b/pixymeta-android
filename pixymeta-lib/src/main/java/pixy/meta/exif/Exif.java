@@ -56,7 +56,7 @@ import pixy.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/13/2014
  */
-public abstract class Exif extends Metadata  implements IMetadataDirectory {
+public abstract class Exif extends Metadata  {
 	private final String MODUL_NAME;
 
 	protected IFD imageIFD;
@@ -273,7 +273,8 @@ public abstract class Exif extends Metadata  implements IMetadataDirectory {
 	private MetadataDirectoryImpl metaData = null;
 
 	// calculate metaData on demand
-	private MetadataDirectoryImpl get() {
+	@Override
+	protected IMetadataDirectory get() {
 		if ((metaData == null)) {
 			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
 
@@ -295,31 +296,4 @@ public abstract class Exif extends Metadata  implements IMetadataDirectory {
 		}
 		return metaData;
 	}
-
-	/**
-	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
-	 *
-	 * @return the name of the directory
-	 */
-	@Override
-	public String getName() {
-		return get().getName();
-	}
-
-	/**
-	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
-	 */
-	@Override
-	public List<IMetadataDirectory> getSubdirectories() {
-		return get().getSubdirectories();
-	}
-
-	/**
-	 * @return Tags that belong to this Directory or null if there are no tags
-	 */
-	@Override
-	public List<IMetadataTag> getTags() {
-		return get().getTags();
-	}
-
 }

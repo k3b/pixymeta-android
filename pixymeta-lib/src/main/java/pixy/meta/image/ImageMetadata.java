@@ -36,7 +36,7 @@ import pixy.meta.MetadataType;
 import pixy.meta.Thumbnail;
 import pixy.string.XMLUtils;
 
-public class ImageMetadata extends Metadata  implements IMetadataDirectory {
+public class ImageMetadata extends Metadata  {
 	private static final String MODUL_NAME = "Image";
 	private Document document;
 	private Map<String, Thumbnail> thumbnails;
@@ -96,7 +96,8 @@ public class ImageMetadata extends Metadata  implements IMetadataDirectory {
 	private MetadataDirectoryImpl metaData = null;
 
 	// calculate metaData on demand
-	private MetadataDirectoryImpl get() {
+	@Override
+	protected IMetadataDirectory get() {
 		if ((metaData == null)) {
 			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
 
@@ -125,32 +126,5 @@ public class ImageMetadata extends Metadata  implements IMetadataDirectory {
 		}
 		return metaData;
 	}
-
-	/**
-	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
-	 *
-	 * @return the name of the directory
-	 */
-	@Override
-	public String getName() {
-		return get().getName();
-	}
-
-	/**
-	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
-	 */
-	@Override
-	public List<IMetadataDirectory> getSubdirectories() {
-		return get().getSubdirectories();
-	}
-
-	/**
-	 * @return Tags that belong to this Directory or null if there are no tags
-	 */
-	@Override
-	public List<IMetadataTag> getTags() {
-		return get().getTags();
-	}
-
 
 }
