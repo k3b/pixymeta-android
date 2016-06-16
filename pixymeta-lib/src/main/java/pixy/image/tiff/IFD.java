@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import pixy.io.RandomAccessOutputStream;
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.string.StringUtils;
 
 /**
@@ -38,8 +41,9 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
  */
-public final class IFD {
-		
+public class IFD implements IMetadataDirectory {
+
+	private static final String MODUL_NAME = "IFD";
 	/**
 	 * Create a children map for sub IFDs. A sub IFD is associated with a tag of the current IFD
 	 * which serves as pointer to the sub IFD.
@@ -52,7 +56,9 @@ public final class IFD {
 	private int endOffset;
 	
 	private int startOffset;
-	
+
+	private String name = null;
+
 	public IFD() {}
 	
 	// Copy constructor
@@ -62,6 +68,7 @@ public final class IFD {
 		this.tiffFields = Collections.unmodifiableMap(other.tiffFields);
 		this.startOffset = other.startOffset;
 		this.endOffset = other.endOffset;
+		setName(other.getName());
 	}
 	
 	public void addChild(Tag tag, IFD child) {
@@ -79,7 +86,9 @@ public final class IFD {
 	}
 	
 	public IFD getChild(Tag tag) {
-		return children.get(tag);
+		final IFD result = children.get(tag);
+		if (result != null) result.setName(tag.getName());
+		return result;
 	}
 	
 	public Map<Tag, IFD> getChildren() {
@@ -209,4 +218,53 @@ public final class IFD {
 			
 		return toOffset;
 	}
+
+	public IFD setName(String value) {
+		name = value;
+		return this;
+	}
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			// ensureDataRead();
+			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+			// metaData.getSubdirectories().add(child);
+
+			// final List<IMetadataTag> tags = child.getTags();
+			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+		}
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
+	}
+
 }

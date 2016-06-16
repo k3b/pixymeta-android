@@ -2,6 +2,7 @@ package pixy.meta.jpeg;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -9,6 +10,9 @@ import org.w3c.dom.NodeList;
 
 import pixy.image.jpeg.Marker;
 import pixy.io.IOUtils;
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.xmp.XMP;
 import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
@@ -21,13 +25,14 @@ public class JpegXMP extends XMP {
 	private static final int MAX_EXTENDED_XMP_CHUNK_SIZE = 65458;
 	private static final int MAX_XMP_CHUNK_SIZE = 65504;
 	private static final int GUID_LEN = 32;
-		
+	private static final String MODUL_NAME = "Jpeg-XMP";
+
 	public JpegXMP(byte[] data) {
-		super(data);
+		super(MODUL_NAME, data);
 	}
 	
 	public JpegXMP(String xmp) {
-		super(xmp);
+		super(MODUL_NAME, xmp);
 	}
 	
 	/**
@@ -35,7 +40,7 @@ public class JpegXMP extends XMP {
 	 * @param extendedXmp XML string for the extended XMP - Assuming in UTF-8 format
 	 */
 	public JpegXMP(String xmp, String extendedXmp) {
-		super(xmp, extendedXmp);
+		super(MODUL_NAME, xmp, extendedXmp);
 	}
 
 	@Override
@@ -101,5 +106,22 @@ public class JpegXMP extends XMP {
 				os.write(ArrayUtils.subArray(extendedXmp, offset, leftOver));
 			}
 		}
+	}
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			ensureDataRead();
+			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+			// metaData.getSubdirectories().add(child);
+
+			// final List<IMetadataTag> tags = child.getTags();
+			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+		}
+		return metaData;
 	}
 }

@@ -23,8 +23,11 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-import pixy.meta.exif.Exif;
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.image.jpeg.Marker;
 import pixy.image.tiff.ASCIIField;
 import pixy.image.tiff.IFD;
@@ -38,12 +41,15 @@ import pixy.io.WriteStrategyMM;
 
 public class JpegExif extends Exif {
 
+	private static final String MODUL_NAME = "Jpeg-Exif";
+
 	public JpegExif() {
+		super(MODUL_NAME);
 		;
 	}
 	
 	public JpegExif(byte[] data) {
-		super(data);
+		super(MODUL_NAME, data);
 	}
 	
 	private void createImageIFD() {

@@ -22,18 +22,25 @@ package pixy.meta.xmp;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetaDataTagImpl;
 import pixy.meta.Metadata;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.MetadataType;
 import pixy.string.XMLUtils;
 
-public abstract class XMP extends Metadata {
+public abstract class XMP extends Metadata  implements IMetadataDirectory {
 	// Fields
+	private final String MODUL_NAME;
+
 	private Document xmpDocument;
 	private Document extendedXmpDocument;
 	//document contains the complete XML as a Tree.
@@ -43,17 +50,20 @@ public abstract class XMP extends Metadata {
 	
 	private String xmp;
 		
-	public XMP(byte[] data) {
+	public XMP(String MODUL_NAME, byte[] data) {
 		super(MetadataType.XMP, data);
+		this.MODUL_NAME = MODUL_NAME;
 	}
 	
-	public XMP(String xmp) {
+	public XMP(String MODUL_NAME, String xmp) {
 		super(MetadataType.XMP, null);
+		this.MODUL_NAME = MODUL_NAME;
 		this.xmp = xmp;
 	}
 	
-	public XMP(String xmp, String extendedXmp) {
+	public XMP(String MODUL_NAME, String xmp, String extendedXmp) {
 		super(MetadataType.XMP, null);
+		this.MODUL_NAME = MODUL_NAME;
 		if(xmp == null) throw new IllegalArgumentException("Input XMP string is null");
 		this.xmp = xmp;
 		if(extendedXmp != null) { // We have ExtendedXMP
@@ -151,4 +161,50 @@ public abstract class XMP extends Metadata {
 	}
 	
 	public abstract void write(OutputStream os) throws IOException;
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			ensureDataRead();
+			metaData.getTags().add(new MetaDataTagImpl("xml", XMLUtils.print(getMergedDocument(), "", new StringBuilder()).toString()));
+
+			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+			// metaData.getSubdirectories().add(child);
+
+			// final List<IMetadataTag> tags = child.getTags();
+			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+		}
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
+	}
+
 }

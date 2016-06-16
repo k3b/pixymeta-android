@@ -34,16 +34,20 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
 import pixy.meta.Metadata;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.MetadataType;
 import pixy.image.png.Chunk;
 import pixy.image.png.ChunkType;
 import pixy.image.png.TextReader;
 
-public class TextualChunks extends Metadata {
+public class TextualChunks extends Metadata  implements IMetadataDirectory {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(TextualChunks.class);
-	
+	private static final String MODUL_NAME = "PNG-Text";
+
 	/* This queue is used to keep track of the unread chunks
 	 * After it's being read, all of it's elements will be moved
 	 * to chunks list
@@ -122,4 +126,48 @@ public class TextualChunks extends Metadata {
 				&& (chunkType != ChunkType.ZTXT))
 			throw new IllegalArgumentException("Expect Textual chunk!");
 	}
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			ensureDataRead();
+			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+			// metaData.getSubdirectories().add(child);
+
+			// final List<IMetadataTag> tags = child.getTags();
+			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+		}
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
+	}
+
 }

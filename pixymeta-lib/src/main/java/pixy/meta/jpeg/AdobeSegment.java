@@ -20,18 +20,27 @@ package pixy.meta.jpeg;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetaDataTagImpl;
 import pixy.meta.Metadata;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.MetadataType;
+import pixy.meta.Thumbnail;
 import pixy.string.StringUtils;
 import pixy.io.IOUtils;
 
-public class AdobeSegment extends Metadata {
+public class AdobeSegment extends Metadata  implements IMetadataDirectory {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdobeSegment.class);
+	private static final String MODUL_NAME = "Jpeg-Adobe";
 
 	private int m_DCTEncodeVersion;
 	private int m_APP14Flags0;
@@ -87,10 +96,11 @@ public class AdobeSegment extends Metadata {
 		}
 	}
 
+	private static String[] colorTransform = {"Unknown (RGB or CMYK)", "YCbCr", "YCCK"};
+
 	@Override
 	public void showMetadata() {
 		ensureDataRead();
-		String[] colorTransform = {"Unknown (RGB or CMYK)", "YCbCr", "YCCK"};
 		LOGGER.info("JPEG AdobeSegment output starts =>");
 		LOGGER.info("DCTEncodeVersion: {}", m_DCTEncodeVersion);
 		LOGGER.info("APP14Flags0: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags0));
@@ -105,5 +115,48 @@ public class AdobeSegment extends Metadata {
 		IOUtils.writeShortMM(os, getAPP14Flags0());
 		IOUtils.writeShortMM(os, getAPP14Flags1());
 		IOUtils.write(os, getColorTransform());
+	}
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate data on demand
+	private MetadataDirectoryImpl get() {
+		if (metaData == null) {
+			ensureDataRead();
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+			final List<IMetadataTag> tags = metaData.getTags();
+
+			tags.add(new MetaDataTagImpl("APP14Flags0", StringUtils.shortToHexStringMM((short)m_APP14Flags0)));
+			tags.add(new MetaDataTagImpl("APP14Flags1", StringUtils.shortToHexStringMM((short)m_APP14Flags1)));
+			tags.add(new MetaDataTagImpl("ColorTransform", (m_ColorTransform <= 2)?colorTransform[m_ColorTransform]:("?"+m_ColorTransform)));
+		}
+
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
 	}
 }

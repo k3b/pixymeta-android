@@ -208,8 +208,8 @@ public class XMLUtils {
 		// Log the XML tree
 		LOGGER.info("\n{}", xmlTree);
 	}
-	
-	private static void print(Node node, String indent, StringBuilder stringBuilder) {
+
+	public static StringBuilder print(Node node, String indent, StringBuilder stringBuilder) {
 		if(node != null) {
 			if(indent == null) indent = "";  
 			switch(node.getNodeType()) {
@@ -280,6 +280,7 @@ public class XMLUtils {
 		            break;
 			}
 		}
+		return stringBuilder;
 	}
 	
 	// Retrieve and remove the first non-empty, non-null attribute value for the attribute name

@@ -43,7 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetaDataTagImpl;
 import pixy.meta.Metadata;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.DDB;
 import pixy.meta.adobe.IRB;
@@ -1043,7 +1046,70 @@ public class TIFFMeta {
 			ifds.append("<<GPS SubIFD ends>>\n");
 		}		
 	}
-	
+
+	public static void getIfds(IFD currIFD, Class<? extends Tag> tagClass, MetadataDirectoryImpl ifds) {
+		// Use reflection to invoke fromShort(short) method
+		Method method = null;
+		try {
+			method = tagClass.getDeclaredMethod("fromShort", short.class);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		Collection<TiffField<?>> fields = currIFD.getFields();
+		int i = 0;
+
+		final List<IMetadataTag> tags = ifds.getTags();
+
+		for(TiffField<?> field : fields) {
+			short tag = field.getTag();
+			Tag ftag = TiffTag.UNKNOWN;
+			if(tag == ExifTag.PADDING.getValue()) {
+				ftag = ExifTag.PADDING;
+			} else {
+				try {
+					ftag = (Tag)method.invoke(null, tag);
+				} catch (IllegalAccessException e) {
+					LOGGER.error("IllegalAcessException", e);
+				} catch (IllegalArgumentException e) {
+					LOGGER.error("IllegalArgumentException", e);
+				} catch (InvocationTargetException e) {
+					LOGGER.error("InvocationTargetException", e);
+				}
+			}
+			String fieldName = (ftag == TiffTag.UNKNOWN) ? ("??"+Integer.toHexString(tag&0xffff)) : ftag.getName();
+			FieldType ftype = field.getType();
+
+			String suffix = null;
+			if(ftype == FieldType.SHORT || ftype == FieldType.SSHORT)
+				suffix = ftag.getFieldAsString(field.getDataAsLong());
+			else
+				suffix = ftag.getFieldAsString(field.getData());
+
+			String fieldValue = field.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix);
+
+			tags.add(new MetaDataTagImpl(fieldName, fieldValue));
+			i++;
+		}
+
+		Map<Tag, IFD> children = currIFD.getChildren();
+
+		getIfds(ifds, children, TiffTag.EXIF_SUB_IFD);
+		getIfds(ifds, children, TiffTag.GPS_SUB_IFD);
+	}
+
+	private static void getIfds(MetadataDirectoryImpl parent, Map<Tag, IFD> children, TiffTag searchTag) {
+		final IFD currIFD1 = children.get(searchTag);
+		if(currIFD1 != null) {
+			MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(currIFD1.getName());
+			parent.getSubdirectories().add(child);
+
+			getIfds(currIFD1, ExifTag.class, child);
+		}
+	}
+
+
 	private static int readHeader(RandomAccessInputStream rin) throws IOException {
 		int offset = 0;
 	    // First 2 bytes determine the byte order of the file

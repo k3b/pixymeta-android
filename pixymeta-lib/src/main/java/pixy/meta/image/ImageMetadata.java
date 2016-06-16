@@ -20,18 +20,24 @@ package pixy.meta.image;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetaDataTagImpl;
 import pixy.meta.Metadata;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.MetadataType;
 import pixy.meta.Thumbnail;
 import pixy.string.XMLUtils;
 
-public class ImageMetadata extends Metadata {
+public class ImageMetadata extends Metadata  implements IMetadataDirectory {
+	private static final String MODUL_NAME = "Image";
 	private Document document;
 	private Map<String, Thumbnail> thumbnails;
 
@@ -81,9 +87,70 @@ public class ImageMetadata extends Metadata {
 			    Thumbnail thumbnail = entry.getValue();
 			    LOGGER.info("Thumbnail width: {}", ((thumbnail.getWidth() < 0)? " Unavailable": thumbnail.getWidth()));
 				LOGGER.info("Thumbanil height: {}", ((thumbnail.getHeight() < 0)? " Unavailable": thumbnail.getHeight()));
-				LOGGER.info("Thumbnail data type: {}", thumbnail.getDataTypeAsString());
+				LOGGER.info("Thumbnail metaData type: {}", thumbnail.getDataTypeAsString());
 				i++;
 			}
 		}		
 	}
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			ensureDataRead();
+			if (containsThumbnail()) {
+				Iterator<Map.Entry<String, Thumbnail>> entries = thumbnails.entrySet().iterator();
+
+				while (entries.hasNext()) {
+					Map.Entry<String, Thumbnail> entry = entries.next();
+					MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+					metaData.getSubdirectories().add(child);
+					Thumbnail thumbnail = entry.getValue();
+
+					final List<IMetadataTag> tags = child.getTags();
+					if (thumbnail.getWidth() > 0)
+						tags.add(new MetaDataTagImpl("width", "" + thumbnail.getWidth()));
+					if (thumbnail.getHeight() > 0)
+						tags.add(new MetaDataTagImpl("height", "" + thumbnail.getHeight()));
+					tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+				}
+
+				if (document != null) {
+					metaData.getTags().add(new MetaDataTagImpl("xml", XMLUtils.print(document, "", new StringBuilder()).toString()));
+				}
+			}
+		}
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
+	}
+
+
 }

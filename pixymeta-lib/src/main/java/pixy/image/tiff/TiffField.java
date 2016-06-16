@@ -13,6 +13,7 @@ package pixy.image.tiff;
 import java.io.IOException;
 
 import pixy.io.RandomAccessOutputStream;
+import pixy.meta.IMetadataTag;
 import pixy.string.StringUtils;
 
 /**
@@ -25,7 +26,7 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
  */
-public abstract class TiffField<T> implements Comparable<TiffField<?>>{
+public abstract class TiffField<T> implements Comparable<TiffField<?>>, IMetadataTag{
 
 	private final short tag;
 	private final FieldType fieldType;
@@ -47,7 +48,7 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>>{
 	public T getData() {
 		return data;
 	}
-	
+
 	/** Return an integer array representing TIFF long field */
 	public int[] getDataAsLong() { 
 		throw new UnsupportedOperationException("getDataAsLong() method is only supported by"
@@ -101,4 +102,23 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>>{
 	}
 	
 	protected abstract int writeData(RandomAccessOutputStream os, int toOffset) throws IOException;
+
+	/**
+	 * Provides a String the name of the Tag, for display purposes.  E.g. <code>5.6</code> for name=Aperture
+	 *
+	 * @return the value of the Tag
+	 */
+	public String getValue() {
+		return getDataAsString();
+	}
+
+	/**
+	 * Provides the name of the Tag, for display purposes.  E.g. <code>Aperture</code>
+	 *
+	 * @return the name of the Tag
+	 */
+	public String getName() {
+		return toString();
+	}
+
 }

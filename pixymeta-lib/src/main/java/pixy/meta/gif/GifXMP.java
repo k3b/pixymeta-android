@@ -2,7 +2,11 @@ package pixy.meta.gif;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.xmp.XMP;
 import pixy.string.XMLUtils;
 import static pixy.meta.gif.GIFMeta.*;
@@ -10,16 +14,19 @@ import static pixy.meta.gif.GIFMeta.*;
 import org.w3c.dom.Document;
 
 public class GifXMP extends XMP {
+
+	private static final String MODUL_NAME = "Gif-XMP";
+
 	public GifXMP(byte[] data) {
-		super(data);
+		super(MODUL_NAME, data);
 	}
 
 	public GifXMP(String xmp) {
-		super(xmp);
+		super(MODUL_NAME, xmp);
 	}
 	
 	public GifXMP(String xmp, String extendedXmp) {
-		super(xmp, extendedXmp);
+		super(MODUL_NAME, xmp, extendedXmp);
 	}
 
 	public void write(OutputStream os) throws IOException {
@@ -58,4 +65,5 @@ public class GifXMP extends XMP {
  		os.write(magic_trailer);
  		// End of XMP data 		
 	}
+
 }

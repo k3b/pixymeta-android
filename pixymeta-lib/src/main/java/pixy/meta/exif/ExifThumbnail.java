@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pixy.image.IBitmap;
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.Thumbnail;
 import pixy.meta.tiff.TIFFMeta;
 import pixy.image.tiff.IFD;
@@ -47,7 +50,8 @@ import pixy.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/13/2015
  */
-public class ExifThumbnail extends Thumbnail {
+public class ExifThumbnail extends Thumbnail implements IMetadataDirectory {
+	private static final String MODUL_NAME = "ExifThumbnailIFD";
 	// Comprised of an IFD and an associated image
 	// Create thumbnail IFD (IFD1 in the case of JPEG EXIF segment)
 	private IFD thumbnailIFD = new IFD();
@@ -166,5 +170,48 @@ public class ExifThumbnail extends Thumbnail {
 		}
 		// Close the RandomAccessOutputStream instance if we created it locally
 		if(!(os instanceof RandomAccessOutputStream)) randOS.shallowClose();
+	}
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			// ensureDataRead();
+			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+			// metaData.getSubdirectories().add(child);
+
+			// final List<IMetadataTag> tags = child.getTags();
+			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+		}
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
 	}
 }

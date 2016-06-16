@@ -20,11 +20,15 @@ package pixy.meta.icc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
 import pixy.meta.Metadata;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.MetadataType;
 import pixy.string.StringUtils;
 import pixy.io.IOUtils;
@@ -35,7 +39,10 @@ import pixy.io.IOUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 07/02/2013
  */
-public class ICCProfile extends Metadata {
+public class ICCProfile extends Metadata  implements IMetadataDirectory {
+
+	private static final String MODUL_NAME = "ICC";
+
 	// Profile header - 128 bytes in length and contains 18 fields
 	private static class ICCProfileHeader {
 		private long profileSize;
@@ -329,4 +336,48 @@ public class ICCProfile extends Metadata {
 	private void showTagTable() {
 		tagTable.showTable();
 	}
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			ensureDataRead();
+			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+			// metaData.getSubdirectories().add(child);
+
+			// final List<IMetadataTag> tags = child.getTags();
+			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+		}
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
+	}
+
 }

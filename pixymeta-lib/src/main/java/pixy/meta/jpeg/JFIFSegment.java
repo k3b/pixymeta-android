@@ -20,21 +20,27 @@ package pixy.meta.jpeg;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pixy.image.BitmapFactory;
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetaDataTagImpl;
 import pixy.meta.Metadata;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.MetadataType;
 import pixy.io.IOUtils;
 import pixy.util.ArrayUtils;
 import pixy.util.MetadataUtils;
 
-public class JFIFSegment extends Metadata {
+public class JFIFSegment extends Metadata  implements IMetadataDirectory {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(JFIFSegment.class);
-		
+	private static final String MODUL_NAME = "Jpeg-JFIF";
+
 	private static void checkInput(int majorVersion, int minorVersion, int densityUnit, int xDensity, int yDensity) {
 		if(majorVersion < 0 || majorVersion > 0xff) throw new IllegalArgumentException("Invalid major version number: " + majorVersion);
 		if(minorVersion < 0 || minorVersion > 0xff) throw new IllegalArgumentException("Invalid minor version number: " + minorVersion);
@@ -153,10 +159,10 @@ public class JFIFSegment extends Metadata {
 		}		
 	}
 
+	private static String[] densityUnits = {"No units, aspect ratio only specified", "Dots per inch", "Dots per centimeter"};
 	@Override
 	public void showMetadata() {
 		ensureDataRead();
-		String[] densityUnits = {"No units, aspect ratio only specified", "Dots per inch", "Dots per centimeter"};
 		LOGGER.info("JPEG JFIF output starts =>");
 		LOGGER.info("Version: {}.{}", majorVersion, minorVersion);
 		LOGGER.info("Density unit: {}", (densityUnit <= 2)?densityUnits[densityUnit]:densityUnit);
@@ -178,5 +184,55 @@ public class JFIFSegment extends Metadata {
 		IOUtils.write(os, thumbnailHeight);
 		if(containsThumbnail)
 			thumbnail.write(os);
+	}
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			ensureDataRead();
+			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+			// metaData.getSubdirectories().add(child);
+
+			final List<IMetadataTag> tags = metaData.getTags();
+			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+			tags.add(new MetaDataTagImpl("Version", majorVersion+"."+minorVersion));
+			tags.add(new MetaDataTagImpl("Density-unit", (densityUnit <= 2)?densityUnits[densityUnit]:(""+densityUnit)));
+			tags.add(new MetaDataTagImpl("XDensity", ""+xDensity));
+			tags.add(new MetaDataTagImpl("YDensity", ""+yDensity));
+			tags.add(new MetaDataTagImpl("Thumbnail-width", ""+thumbnailWidth));
+			tags.add(new MetaDataTagImpl("Thumbnail-height", ""+thumbnailHeight));
+
+		}
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
 	}
 }

@@ -32,7 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pixy.image.IBitmap;
+import pixy.meta.IMetadataDirectory;
+import pixy.meta.IMetadataTag;
+import pixy.meta.MetaDataTagImpl;
 import pixy.meta.Metadata;
+import pixy.meta.MetadataDirectoryImpl;
 import pixy.meta.MetadataType;
 import pixy.meta.Thumbnail;
 import pixy.meta.tiff.TIFFMeta;
@@ -52,7 +56,9 @@ import pixy.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/13/2014
  */
-public abstract class Exif extends Metadata {
+public abstract class Exif extends Metadata  implements IMetadataDirectory {
+	private final String MODUL_NAME;
+
 	protected IFD imageIFD;
 	protected IFD exifSubIFD;
 	protected IFD gpsSubIFD;
@@ -66,23 +72,25 @@ public abstract class Exif extends Metadata {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(Exif.class);
 	
-	public Exif() {
+	public Exif(String MODUL_NAME) {
 		super(MetadataType.EXIF, null);
+		this.MODUL_NAME = MODUL_NAME;
 		isDataRead = true;
 	}
 	
-	public Exif(byte[] data) {
+	public Exif(String MODUL_NAME, byte[] data) {
 		super(MetadataType.EXIF, data);
+		this.MODUL_NAME = MODUL_NAME;
 		ensureDataRead();
 	}
 	
-	public Exif(IFD imageIFD) {
-		this();
+	public Exif(String MODUL_NAME, IFD imageIFD) {
+		this(MODUL_NAME);
 		setImageIFD(imageIFD);
 	}
 	
-	public Exif(InputStream is) throws IOException {
-		this(IOUtils.inputStreamToByteArray(is));
+	public Exif(String MODUL_NAME, InputStream is) throws IOException {
+		this(MODUL_NAME, IOUtils.inputStreamToByteArray(is));
 	}
 	
 	public void addExifField(ExifTag tag, FieldType type, Object data) {
@@ -220,7 +228,7 @@ public abstract class Exif extends Metadata {
 	public void setImageIFD(IFD imageIFD) {
 		if(imageIFD == null)
 			throw new IllegalArgumentException("Input image IFD is null");
-		this.imageIFD = imageIFD;
+		this.imageIFD = imageIFD.setName("ExifImageIFD");
 		this.exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
 		this.gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
 	}
@@ -260,4 +268,58 @@ public abstract class Exif extends Metadata {
 	}
 	
 	public abstract void write(OutputStream os) throws IOException;
+
+
+	private MetadataDirectoryImpl metaData = null;
+
+	// calculate metaData on demand
+	private MetadataDirectoryImpl get() {
+		if ((metaData == null)) {
+			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
+
+			ensureDataRead();
+			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
+			// metaData.getSubdirectories().add(child);
+
+			final List<IMetadataTag> tags = metaData.getTags();
+			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
+
+			if(imageIFD != null) {
+				TIFFMeta.getIfds(imageIFD, TiffTag.class, metaData);
+				// TIFFMeta.printIFD(imageIFD, TiffTag.class, "");
+			}
+			if(containsThumbnail) {
+				tags.add(new MetaDataTagImpl("Exif-thumbnail-format", (thumbnail.getDataType() == 1? "DATA_TYPE_JPG":"DATA_TYPE_TIFF")));
+				tags.add(new MetaDataTagImpl("Exif-thumbnail-data-length: {}", "" + thumbnail.getCompressedImage().length));
+			}
+		}
+		return metaData;
+	}
+
+	/**
+	 * Provides the name of the directory, for display purposes.  E.g. <code>Exif</code>
+	 *
+	 * @return the name of the directory
+	 */
+	@Override
+	public String getName() {
+		return get().getName();
+	}
+
+	/**
+	 * @return sub-directories that belong to this Directory or null if there are no sub-directories
+	 */
+	@Override
+	public List<IMetadataDirectory> getSubdirectories() {
+		return get().getSubdirectories();
+	}
+
+	/**
+	 * @return Tags that belong to this Directory or null if there are no tags
+	 */
+	@Override
+	public List<IMetadataTag> getTags() {
+		return get().getTags();
+	}
+
 }
