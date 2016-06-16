@@ -165,7 +165,8 @@ public abstract class XMP extends Metadata  {
 	private MetadataDirectoryImpl metaData = null;
 
 	// calculate metaData on demand
-	private MetadataDirectoryImpl get() {
+	@Override
+	protected IMetadataDirectory get() {
 		if ((metaData == null)) {
 			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
 

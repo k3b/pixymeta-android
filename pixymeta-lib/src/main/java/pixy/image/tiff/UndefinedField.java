@@ -23,7 +23,7 @@ import pixy.string.StringUtils;
  */
 public final class UndefinedField extends TiffField<byte[]> {
 
-	public UndefinedField(short tag, byte[] data) {
+	public UndefinedField(Tag tag, byte[] data) {
 		super(tag, FieldType.UNDEFINED, data.length);
 		this.data = data;
 	}

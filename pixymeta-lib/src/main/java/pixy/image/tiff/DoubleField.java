@@ -23,7 +23,7 @@ import pixy.io.RandomAccessOutputStream;
  */
 public class DoubleField extends TiffField<double[]> {
 
-	public DoubleField(short tag, double[] data) {
+	public DoubleField(Tag tag, double[] data) {
 		super(tag, FieldType.DOUBLE, data.length);
 		this.data = data;
 	}

@@ -20,8 +20,8 @@ import pixy.string.StringUtils;
  */
 public final class SShortField extends AbstractShortField {
 
-	public SShortField(short tag, short[] data) {
-		super(tag, FieldType.SSHORT, data);	
+	public SShortField(Tag tag, short[] data) {
+		super(tag, FieldType.SSHORT, data);
 	}
 	
 	public int[] getDataAsLong() {

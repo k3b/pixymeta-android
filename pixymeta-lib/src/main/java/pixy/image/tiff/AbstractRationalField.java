@@ -16,7 +16,7 @@ import pixy.io.RandomAccessOutputStream;
 
 public abstract class AbstractRationalField extends TiffField<int[]> {
 
-	public AbstractRationalField(short tag, FieldType fieldType, int[] data) {
+	public AbstractRationalField(Tag tag, FieldType fieldType, int[] data) {
 		super(tag, fieldType, data.length>>1);
 		this.data = data;
 	}

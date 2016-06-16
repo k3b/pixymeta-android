@@ -14,10 +14,9 @@ import java.io.IOException;
 
 import pixy.io.RandomAccessOutputStream;
 import pixy.meta.IMetadataTag;
-import pixy.string.StringUtils;
 
 /**
- * IFD (Image File Directory) field.
+ * One one meta data item of basetype T living in a IFD (Image File Directory).
  * <p>
  * We could have used a TiffTag enum as the first parameter of the constructor, but this
  * will not work with unknown tags of tag type TiffTag.UNKNOWN. In that case, we cannot
@@ -27,22 +26,21 @@ import pixy.string.StringUtils;
  * @version 1.0 01/04/2013
  */
 public abstract class TiffField<T> implements Comparable<TiffField<?>>, IMetadataTag{
-
-	private final short tag;
 	private final FieldType fieldType;
 	private final int length;
+	private final Tag tag;
 	protected T data;	
 		
 	protected int dataOffset;
 	
-	public TiffField(short tag, FieldType fieldType, int length) {
-		this.tag = tag;
+	public TiffField(Tag tag, FieldType fieldType, int length) {
 		this.fieldType = fieldType;
 		this.length = length;
+		this.tag = tag;
 	}
 	
 	public int compareTo(TiffField<?> that) {
-		return (this.tag&0xffff) - (that.tag&0xffff);
+		return (this.getTag()&0xffff) - (that.getTag()&0xffff);
     }
 	
 	public T getData() {
@@ -76,7 +74,7 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>>, IMetadat
 	}
 	
 	public short getTag() {
-		return tag;
+		return tag.getValue();
 	}
 	
 	public FieldType getType() {
@@ -84,17 +82,12 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>>, IMetadat
 	}
 
 	@Override public String toString() {
-		short tag = this.getTag();
-		Tag tagEnum = TiffTag.fromShort(tag);
-		
-		if (tagEnum != TiffTag.UNKNOWN)
-			return tagEnum.toString();
-		return tagEnum.toString() + " [TiffTag value: "+ StringUtils.shortToHexStringMM(tag) + "]";
+		return tag.toString();
 	}
 	
 	public final int write(RandomAccessOutputStream os, int toOffset) throws IOException {
 		// Write the header first
-		os.writeShort(this.tag);
+		os.writeShort(this.getTag());
 		os.writeShort(getType().getValue());
 		os.writeInt(getLength());
 		// Then the actual data
@@ -120,5 +113,4 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>>, IMetadat
 	public String getName() {
 		return toString();
 	}
-
 }

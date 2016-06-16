@@ -20,8 +20,8 @@ import pixy.string.StringUtils;
  */
 public final class RationalField extends AbstractRationalField {
 
-	public RationalField(short tag, int[] data) {
-		super(tag, FieldType.RATIONAL, data);
+	public RationalField(Tag tag, int[] dat) {
+		super(tag, FieldType.RATIONAL, dat);
 	}
 	
 	public String getDataAsString() {

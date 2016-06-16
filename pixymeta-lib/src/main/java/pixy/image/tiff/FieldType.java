@@ -51,7 +51,7 @@ public enum FieldType {
     	switch(type) {
     		case ASCII:
     			if(typeClass == String.class) {
-    				retValue = new ASCIIField(tag.getValue(), (String)data);    				
+    				retValue = new ASCIIField(tag, (String)data);
     			}
     			break;
     		case BYTE:
@@ -61,11 +61,11 @@ public enum FieldType {
     				byte[] byteData = (byte[])data;
     				if(byteData.length > 0) {
     					if(type == FieldType.BYTE)
-    						retValue = new ByteField(tag.getValue(), byteData);
+    						retValue = new ByteField(tag, byteData);
     					else if(type == FieldType.SBYTE)
-    						retValue = new SByteField(tag.getValue(), byteData);
+    						retValue = new SByteField(tag, byteData);
     					else
-    						retValue = new UndefinedField(tag.getValue(), byteData);
+    						retValue = new UndefinedField(tag, byteData);
     				}
     			}
     			break;
@@ -75,9 +75,9 @@ public enum FieldType {
     				short[] shortData = (short[])data;
     				if(shortData.length > 0) {
     					if(type == FieldType.SHORT)
-    						retValue = new ShortField(tag.getValue(), shortData);    
+    						retValue = new ShortField(tag, shortData);
     					else
-    						retValue = new SShortField(tag.getValue(), shortData); 
+    						retValue = new SShortField(tag, shortData);
     				}
     			}
     			break;
@@ -87,9 +87,9 @@ public enum FieldType {
     				int[] intData = (int[])data;
     				if(intData.length > 0) {
     					if(type == FieldType.LONG)
-    						retValue = new LongField(tag.getValue(), intData);
+    						retValue = new LongField(tag, intData);
     					else
-    						retValue = new SLongField(tag.getValue(), intData);
+    						retValue = new SLongField(tag, intData);
     				}
     			}
     			break;
@@ -99,9 +99,9 @@ public enum FieldType {
     				int[] intData = (int[])data;
     				if(intData.length > 0 && intData.length % 2 == 0) {
     					if(type == FieldType.RATIONAL)
-    						retValue = new RationalField(tag.getValue(), intData);
+    						retValue = new RationalField(tag, intData);
     					else
-    						retValue = new SRationalField(tag.getValue(), intData);
+    						retValue = new SRationalField(tag, intData);
     				}
     			}
     			break;
@@ -109,7 +109,7 @@ public enum FieldType {
     			if(typeClass == String.class) {
     				try {
 						byte[] xp = ((String)data).getBytes("UTF-16LE");
-						retValue = new ByteField(tag.getValue(), xp); 
+						retValue = new ByteField(tag, xp);
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}    				   				

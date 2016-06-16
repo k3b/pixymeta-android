@@ -23,7 +23,7 @@ import pixy.io.RandomAccessOutputStream;
  */
 public class FloatField extends TiffField<float[]> {
 
-	public FloatField(short tag, float[] data) {
+	public FloatField(Tag tag, float[] data) {
 		super(tag, FieldType.FLOAT, data.length);
 		this.data = data;
 	}

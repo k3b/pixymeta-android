@@ -16,7 +16,7 @@ import pixy.io.RandomAccessOutputStream;
 
 public abstract class AbstractShortField extends TiffField<short[]> {
 
-	public AbstractShortField(short tag, FieldType fieldType, short[] data) {
+	public AbstractShortField(Tag tag, FieldType fieldType, short[] data) {
 		super(tag, fieldType, data.length);
 		this.data = data;	
 	}

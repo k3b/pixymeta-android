@@ -17,7 +17,7 @@ import pixy.string.StringUtils;
 
 public abstract class AbstractByteField extends TiffField<byte[]> {
 
-	public AbstractByteField(short tag, FieldType fieldType, byte[] data) {
+	public AbstractByteField(Tag tag, FieldType fieldType, byte[] data) {
 		super(tag, fieldType, data.length);
 		this.data = data;
 	}

@@ -108,20 +108,4 @@ public class JpegXMP extends XMP {
 		}
 	}
 
-	private MetadataDirectoryImpl metaData = null;
-
-	// calculate metaData on demand
-	private MetadataDirectoryImpl get() {
-		if ((metaData == null)) {
-			metaData = new MetadataDirectoryImpl().setName(MODUL_NAME);
-
-			ensureDataRead();
-			// MetadataDirectoryImpl child = new MetadataDirectoryImpl().setName(entry.getKey());
-			// metaData.getSubdirectories().add(child);
-
-			// final List<IMetadataTag> tags = child.getTags();
-			// tags.add(new MetaDataTagImpl("type", thumbnail.getDataTypeAsString()));
-		}
-		return metaData;
-	}
 }

@@ -190,7 +190,9 @@ public enum ExifTag implements Tag {
 			return name;
 		return name + " [Value: " + StringUtils.shortToHexStringMM(value) +"]";
 	}
-	
+
+	/** translates from tag-id back to enum
+	 * called via reflection */
     public static Tag fromShort(short value) {
        	ExifTag exifTag = tagMap.get(value);
     	if (exifTag == null)

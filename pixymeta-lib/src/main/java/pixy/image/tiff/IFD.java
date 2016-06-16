@@ -36,7 +36,7 @@ import pixy.meta.MetadataDirectoryImpl;
 import pixy.string.StringUtils;
 
 /**
- * Image File Directory
+ * Image File Directory containing meta-data-fields and sub-IFDs
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
@@ -71,8 +71,9 @@ public class IFD implements IMetadataDirectory {
 		setName(other.getName());
 	}
 	
-	public void addChild(Tag tag, IFD child) {
+	public IFD addChild(Tag tag, IFD child) {
 		children.put(tag, child);
+		return this;
 	}
 	
 	public void addField(TiffField<?> tiffField) {

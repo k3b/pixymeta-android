@@ -84,7 +84,7 @@ public class TIFFImage implements Iterable<IFD> {
 		if(numOfPages > 1) { 
 			for(int i = 0; i < ifds.size(); i++) {
 				ifds.get(i).removeField(TiffTag.PAGE_NUMBER);
-				ifds.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(numOfPages - 1)}));
+				ifds.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER, new short[]{(short)i, (short)(numOfPages - 1)}));
 			}
 		}
 		TIFFMeta.write(this, out);

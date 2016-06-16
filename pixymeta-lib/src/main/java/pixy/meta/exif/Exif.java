@@ -59,9 +59,15 @@ import pixy.io.RandomAccessOutputStream;
 public abstract class Exif extends Metadata  {
 	private final String MODUL_NAME;
 
+	/** root exif-image data */
 	protected IFD imageIFD;
+
+	/** child of imageIFD */
 	protected IFD exifSubIFD;
+
+	/** child of imageIFD */
 	protected IFD gpsSubIFD;
+
 	protected ExifThumbnail thumbnail;
 	
 	private boolean containsThumbnail;
@@ -130,7 +136,8 @@ public abstract class Exif extends Metadata  {
 			return true;
 		return false;
 	}
-	
+
+	/** creates a clone copy of the value */
 	public IFD getExifIFD() {
 		if(exifSubIFD != null) {
 			return new IFD(exifSubIFD);
@@ -138,7 +145,8 @@ public abstract class Exif extends Metadata  {
 		
 		return null;
 	}
-	
+
+	/** creates a clone copy of the value */
 	public IFD getGPSIFD() {
 		if(gpsSubIFD != null) {
 			return new IFD(gpsSubIFD);
@@ -146,7 +154,8 @@ public abstract class Exif extends Metadata  {
 
 		return null;
 	}
-	
+
+	/** creates a clone copy of the value */
 	public IFD getImageIFD() {
 		if(imageIFD != null) {
 			return new IFD(imageIFD);
@@ -155,6 +164,7 @@ public abstract class Exif extends Metadata  {
 		return null;		
 	}
 
+	/** creates a clone copy of the value */
 	public ExifThumbnail getThumbnail() {
 		if(thumbnail != null)
 			return new ExifThumbnail(thumbnail);
