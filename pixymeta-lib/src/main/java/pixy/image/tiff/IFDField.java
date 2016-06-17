@@ -20,7 +20,7 @@ import pixy.string.StringUtils;
  */
 public final class IFDField extends AbstractLongField {
 
-	public IFDField(short tag, int[] data) {
+	public IFDField(Tag tag, int[] data) {
 		super(tag, FieldType.IFD, data);
 	}
 	

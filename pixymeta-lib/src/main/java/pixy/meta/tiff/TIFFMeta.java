@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import pixy.image.tiff.UnknownTag;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.DDB;
@@ -175,9 +176,9 @@ public class TIFFMeta {
 		}
 		
 		if(TiffTag.fromShort(field.getTag()) == TiffTag.JPEG_AC_TABLES)
-			return new LongField(TiffTag.JPEG_AC_TABLES.getValue(), tmp);
+			return new LongField(TiffTag.JPEG_AC_TABLES, tmp);
 	
-		return new LongField(TiffTag.JPEG_DC_TABLES.getValue(), tmp);
+		return new LongField(TiffTag.JPEG_DC_TABLES, tmp);
 	}
 	
 	private static void copyJPEGIFByteCount(RandomAccessInputStream rin, RandomAccessOutputStream rout, int offset, int outOffset) throws IOException {		
@@ -246,7 +247,7 @@ public class TIFFMeta {
 			curPos += 64;
 		}
 		
-		return new LongField(TiffTag.JPEG_Q_TABLES.getValue(), tmp);
+		return new LongField(TiffTag.JPEG_Q_TABLES, tmp);
 	}
 	
 	private static short copyJPEGSOS(RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException	{
@@ -366,15 +367,15 @@ public class TIFFMeta {
 			}
 						
 			if(ifd.getField(TiffTag.STRIP_BYTE_COUNTS) != null)
-				stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
+				stripOffSets = new LongField(TiffTag.STRIP_OFFSETS, temp);
 			else
-				stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
+				stripOffSets = new LongField(TiffTag.TILE_OFFSETS, temp);
 			ifd.addField(stripOffSets);		
 		}
 		
 		// Add software field.
 		String softWare = "PIXYMETA-ANDROID - https://github.com/dragon66/pixymeta-android\0";
-		ifd.addField(new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare));
+		ifd.addField(new ASCIIField(TiffTag.SOFTWARE, softWare));
 	
 		/* The following are added to work with old-style JPEG compression (type 6) */		
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
@@ -393,9 +394,9 @@ public class TIFFMeta {
 					long startOffset = rout.getStreamPointer();
 					copyJPEGIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
 					long endOffset = rout.getStreamPointer();
-					ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{(int)(endOffset - startOffset)}));
+					ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[]{(int)(endOffset - startOffset)}));
 				}
-				jpegIFOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{offset});
+				jpegIFOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT, new int[]{offset});
 				ifd.addField(jpegIFOffset);
 			} catch (EOFException ex) {;};
 		}		
@@ -651,7 +652,7 @@ public class TIFFMeta {
 			commentsBuilder.append('\0');
 		}
 		
-		workingPage.addField(new ASCIIField(TiffTag.IMAGE_DESCRIPTION.getValue(), commentsBuilder.toString()));
+		workingPage.addField(new ASCIIField(TiffTag.IMAGE_DESCRIPTION, commentsBuilder.toString()));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -699,7 +700,7 @@ public class TIFFMeta {
 		}
 		
 		if(newExifSubIFD != null) {
-			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD.getValue(), new int[]{0})); // Place holder
+			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD, new int[]{0})); // Place holder
 			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);		
 		}
 		
@@ -709,7 +710,7 @@ public class TIFFMeta {
 		}
 		
 		if(newGpsSubIFD != null) {
-			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD.getValue(), new int[]{0})); // Place holder
+			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD, new int[]{0})); // Place holder
 			imageIFD.addChild(TiffTag.GPS_SUB_IFD, newGpsSubIFD);		
 		}
 		
@@ -744,7 +745,7 @@ public class TIFFMeta {
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		workingPage.addField(new UndefinedField(TiffTag.ICC_PROFILE.getValue(), icc_profile));
+		workingPage.addField(new UndefinedField(TiffTag.ICC_PROFILE, icc_profile));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -825,7 +826,7 @@ public class TIFFMeta {
 			for(_8BIM bim : bims.values()) // Copy the other 8BIMs if any
 				bim.write(bout);
 			// Add a new Photoshop tag field to TIFF
-			workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
+			workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP, bout.toByteArray()));
 		} else { // We don't have photoshop, add IPTC to regular IPTC tag field
 			if(f_iptc != null && update) {
 				byte[] data = null;
@@ -838,7 +839,7 @@ public class TIFFMeta {
 			for(IPTCDataSet dataset : iptcs) {
 				dataset.write(bout);
 			}		
-			workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
+			workingPage.addField(new UndefinedField(TiffTag.IPTC, bout.toByteArray()));
 		}
 		
 		offset = copyPages(ifds, offset, rin, rout);
@@ -883,7 +884,7 @@ public class TIFFMeta {
 		for(_8BIM bim : bims)
 			bim.write(bout);
 		
-		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
+		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP, bout.toByteArray()));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -936,7 +937,7 @@ public class TIFFMeta {
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		workingPage.addField(new UndefinedField(TiffTag.XMP.getValue(), xmp));
+		workingPage.addField(new UndefinedField(TiffTag.XMP, xmp));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -970,15 +971,8 @@ public class TIFFMeta {
 	}
 	
 	private static void print(IFD currIFD, Class<? extends Tag> tagClass, String indent, StringBuilder ifds) {
-		// Use reflection to invoke fromShort(short) method
-		Method method = null;
-		try {
-			method = tagClass.getDeclaredMethod("fromShort", short.class);
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		}
+		// Use reflection to invoke fromShort(short) fromShort
+		Method fromShort = getFromShortMethod(tagClass);
 		Collection<TiffField<?>> fields = currIFD.getFields();
 		int i = 0;
 		
@@ -986,27 +980,19 @@ public class TIFFMeta {
 			ifds.append(indent);
 			ifds.append("Field #" + i + "\n");
 			ifds.append(indent);
+			FieldType ftype = field.getType();
 			short tag = field.getTag();
 			Tag ftag = TiffTag.UNKNOWN;
 			if(tag == ExifTag.PADDING.getValue()) {
 				ftag = ExifTag.PADDING;
-			} else {
-				try {
-					ftag = (Tag)method.invoke(null, tag);
-				} catch (IllegalAccessException e) {
-					LOGGER.error("IllegalAcessException", e);
-				} catch (IllegalArgumentException e) {
-					LOGGER.error("IllegalArgumentException", e);
-				} catch (InvocationTargetException e) {
-					LOGGER.error("InvocationTargetException", e);
-				}
+			} else  {
+				ftag = getTagFromId(fromShort, tag, ftype);
 			}
 			if (ftag == TiffTag.UNKNOWN) {
 				LOGGER.warn("Tag: {} {}{}{} {}", ftag, "[Value: 0x", Integer.toHexString(tag&0xffff), "]", "(Unknown)");
 			} else {
 				ifds.append("Tag: " + ftag + "\n");
 			}
-			FieldType ftype = field.getType();				
 			ifds.append(indent);
 			ifds.append("Field type: " + ftype + "\n");
 			int field_length = field.getLength();
@@ -1043,7 +1029,7 @@ public class TIFFMeta {
 			ifds.append("<<GPS SubIFD ends>>\n");
 		}		
 	}
-	
+
 	private static int readHeader(RandomAccessInputStream rin) throws IOException {
 		int offset = 0;
 	    // First 2 bytes determine the byte order of the file
@@ -1077,15 +1063,8 @@ public class TIFFMeta {
 	}
 	
 	private static int readIFD(IFD parent, Tag parentTag, Class<? extends Tag> tagClass, RandomAccessInputStream rin, List<IFD> list, int offset) throws IOException {	
-		// Use reflection to invoke fromShort(short) method
-		Method method = null;
-		try {
-			method = tagClass.getDeclaredMethod("fromShort", short.class);
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		}
+		// Use reflection to invoke fromShort(short) fromShort
+		Method fromShort = getFromShortMethod(tagClass);
 		IFD tiffIFD = new IFD();
 		rin.seek(offset);
 		int no_of_fields = rin.readShort();
@@ -1094,20 +1073,11 @@ public class TIFFMeta {
 		for (int i = 0; i < no_of_fields; i++) {
 			rin.seek(offset);
 			short tag = rin.readShort();
-			Tag ftag = TiffTag.UNKNOWN;
-			try {
-				ftag = (Tag)method.invoke(null, tag);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
 			offset += 2;
 			rin.seek(offset);
 			short type = rin.readShort();
 			FieldType ftype = FieldType.fromShort(type);
+			Tag ftag = getTagFromId(fromShort, tag, ftype);
 			offset += 2;
 			rin.seek(offset);
 			int field_length = rin.readInt();
@@ -1127,9 +1097,9 @@ public class TIFFMeta {
 					}					
 					TiffField<byte[]> byteField = null;
 					if(ftype == FieldType.BYTE)
-						byteField = new ByteField(tag, data);
+						byteField = new ByteField(ftag, data);
 					else
-						byteField = new UndefinedField(tag, data);
+						byteField = new UndefinedField(ftag, data);
 					tiffIFD.addField(byteField);
 					offset += 4;					
 					break;
@@ -1144,7 +1114,7 @@ public class TIFFMeta {
 						rin.seek(rin.readInt());
 						rin.readFully(data, 0, field_length);
 					}
-					TiffField<String> ascIIField = new ASCIIField(tag, new String(data, 0, data.length, "UTF-8"));
+					TiffField<String> ascIIField = new ASCIIField(ftag, new String(data, 0, data.length, "UTF-8"));
 					tiffIFD.addField(ascIIField);
 					offset += 4;	
 					break;
@@ -1171,7 +1141,7 @@ public class TIFFMeta {
 							toOffset += 2;
 						}
 					}
-					TiffField<short[]> shortField = new ShortField(tag, sdata);
+					TiffField<short[]> shortField = new ShortField(ftag, sdata);
 					tiffIFD.addField(shortField);
 					break;
 				case LONG:
@@ -1190,9 +1160,9 @@ public class TIFFMeta {
 							toOffset += 4;
 						}
 					}
-					TiffField<int[]> longField = new LongField(tag, ldata);
+					TiffField<int[]> longField = new LongField(ftag, ldata);
 					tiffIFD.addField(longField);
-					
+
 					if ((ftag == TiffTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
 						try { // If something bad happens, we skip the sub IFD
 							readIFD(tiffIFD, TiffTag.EXIF_SUB_IFD, ExifTag.class, rin, null, ldata[0]);
@@ -1241,7 +1211,7 @@ public class TIFFMeta {
 							toOffset += 4;
 						}
 					}
-					TiffField<float[]> floatField = new FloatField(tag, fdata);
+					TiffField<float[]> floatField = new FloatField(ftag, fdata);
 					tiffIFD.addField(floatField);
 					
 					break;
@@ -1255,7 +1225,7 @@ public class TIFFMeta {
 						ddata[j] = rin.readDouble();
 						toOffset += 8;
 					}
-					TiffField<double[]> doubleField = new DoubleField(tag, ddata);
+					TiffField<double[]> doubleField = new DoubleField(ftag, ddata);
 					tiffIFD.addField(doubleField);
 					
 					break;
@@ -1276,9 +1246,9 @@ public class TIFFMeta {
 					}
 					TiffField<int[]> rationalField = null;
 					if(ftype == FieldType.SRATIONAL) {
-						rationalField = new SRationalField(tag, ldata);
+						rationalField = new SRationalField(ftag, ldata);
 					} else {
-						rationalField = new RationalField(tag, ldata);
+						rationalField = new RationalField(ftag, ldata);
 					}
 					tiffIFD.addField(rationalField);
 					
@@ -1299,7 +1269,7 @@ public class TIFFMeta {
 							toOffset += 4;
 						}
 					}
-					TiffField<int[]> ifdField = new IFDField(tag, ldata);
+					TiffField<int[]> ifdField = new IFDField(ftag, ldata);
 					tiffIFD.addField(ifdField);
 					for(int ifd = 0; ifd < ldata.length; ifd++) {
 						readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0]);
@@ -1320,7 +1290,41 @@ public class TIFFMeta {
 		
 		return rin.readInt();
 	}
-	
+
+	private static Tag getTagFromId(Method fromShortMethod, short tag, FieldType ftype) {
+		Tag ftag = TiffTag.UNKNOWN;
+		try {
+            ftag = (Tag) fromShortMethod.invoke(null, tag);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+		if (ftag == TiffTag.UNKNOWN) {
+			ftag = new UnknownTag(tag, "(?? " + Integer.toHexString(tag&0xffff) +" ??)", ftype);
+		}
+
+		return ftag;
+	}
+
+	// Use reflection to invoke fromShort(short) fromShort
+	private static Method getFromShortMethod(Class<? extends Tag> tagClass) {
+		Method fromShort = null;
+		try {
+			fromShort = tagClass.getDeclaredMethod("fromShort", short.class);
+		} catch (NoSuchMethodException e) {
+			LOGGER.error("enum " + tagClass.getName() +
+					" does not implement static Tag fromShort(short id) ");
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		return fromShort;
+	}
+
 	private static void readIFDs(IFD parent, Tag parentTag, Class<? extends Tag> tagClass, List<IFD> list, int offset, RandomAccessInputStream rin) throws IOException {
 		// Read the IFDs into a list first	
 		while (offset != 0)	{
@@ -1497,7 +1501,7 @@ public class TIFFMeta {
 			for(_8BIM bim : bimMap.values())
 				bim.write(bout);
 			// Add new PHOTOSHOP field
-			workingPage.addField(new ByteField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
+			workingPage.addField(new ByteField(TiffTag.PHOTOSHOP, bout.toByteArray()));
 		}		
 	}
 	
@@ -1529,7 +1533,7 @@ public class TIFFMeta {
 		// Reset pageNumber for the existing pages
 		for(int i = 0; i < list.size(); i++) {
 			list.get(i).removeField(TiffTag.PAGE_NUMBER);
-			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(list.size() - 1)}));
+			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
 		}
 		// End of removing pages		
 		// Step 3: copy the remaining pages
@@ -1566,7 +1570,7 @@ public class TIFFMeta {
 		// Reset pageNumber for the existing pages
 		for(int i = 0; i < list.size(); i++) {
 			list.get(i).removeField(TiffTag.PAGE_NUMBER);
-			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(list.size() - 1)}));
+			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
 		}
 		// Step 3: copy the remaining pages
 		// 0x08 is the first write offset

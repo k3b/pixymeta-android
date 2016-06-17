@@ -49,13 +49,13 @@ public class JpegExif extends Exif {
 	private void createImageIFD() {
 		// Create Image IFD (IFD0)
 		imageIFD = new IFD();
-		TiffField<?> tiffField = new ASCIIField(TiffTag.IMAGE_DESCRIPTION.getValue(), "Exif created by JPEGTweaker");
+		TiffField<?> tiffField = new ASCIIField(TiffTag.IMAGE_DESCRIPTION, "Exif created by JPEGTweaker");
 		imageIFD.addField(tiffField);
 		String softWare = "JPEGTweaker 1.0";
-		tiffField = new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare);
+		tiffField = new ASCIIField(TiffTag.SOFTWARE, softWare);
 		imageIFD.addField(tiffField);
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-		tiffField = new ASCIIField(TiffTag.DATETIME.getValue(), formatter.format(new Date()));
+		tiffField = new ASCIIField(TiffTag.DATETIME, formatter.format(new Date()));
 		imageIFD.addField(tiffField);		
 	}
 	
@@ -87,11 +87,11 @@ public class JpegExif extends Exif {
 		if(imageIFD == null) createImageIFD();
 		// Attach EXIIF and/or GPS SubIFD to main image IFD
 		if(exifSubIFD != null) {
-			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD.getValue(), new int[]{0})); // Place holder
+			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD, new int[]{0})); // Place holder
 			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exifSubIFD);			
 		}
 		if(gpsSubIFD != null) {
-			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD.getValue(), new int[]{0})); // Place holder
+			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD, new int[]{0})); // Place holder
 			imageIFD.addChild(TiffTag.GPS_SUB_IFD, gpsSubIFD);
 		}
 		int offset = imageIFD.write(randOS, FIRST_IFD_OFFSET);

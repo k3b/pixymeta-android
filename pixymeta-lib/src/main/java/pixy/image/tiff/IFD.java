@@ -33,13 +33,14 @@ import pixy.io.RandomAccessOutputStream;
 import pixy.string.StringUtils;
 
 /**
- * Image File Directory
+ * Image File Directory containing meta-data-fields and sub-IFDs
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
  */
-public final class IFD {
-		
+public class IFD {
+
+	private static final String MODUL_NAME = "IFD";
 	/**
 	 * Create a children map for sub IFDs. A sub IFD is associated with a tag of the current IFD
 	 * which serves as pointer to the sub IFD.
@@ -52,7 +53,7 @@ public final class IFD {
 	private int endOffset;
 	
 	private int startOffset;
-	
+
 	public IFD() {}
 	
 	// Copy constructor
@@ -64,8 +65,9 @@ public final class IFD {
 		this.endOffset = other.endOffset;
 	}
 	
-	public void addChild(Tag tag, IFD child) {
+	public IFD addChild(Tag tag, IFD child) {
 		children.put(tag, child);
+		return this;
 	}
 	
 	public void addField(TiffField<?> tiffField) {
@@ -79,7 +81,8 @@ public final class IFD {
 	}
 	
 	public IFD getChild(Tag tag) {
-		return children.get(tag);
+		final IFD result = children.get(tag);
+		return result;
 	}
 	
 	public Map<Tag, IFD> getChildren() {
@@ -209,4 +212,5 @@ public final class IFD {
 			
 		return toOffset;
 	}
+
 }

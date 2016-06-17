@@ -16,8 +16,8 @@ import pixy.io.RandomAccessOutputStream;
 
 public abstract class AbstractLongField extends TiffField<int[]> {
 
-	public AbstractLongField(short tag, FieldType fieldType, int[] data) {
-		super(tag, fieldType, data.length);	
+	public AbstractLongField(Tag tag, FieldType fieldType, int[] data) {
+		super(tag, fieldType, data.length);
 		this.data = data;
 	}
 	

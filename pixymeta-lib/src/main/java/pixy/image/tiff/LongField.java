@@ -20,8 +20,8 @@ import pixy.string.StringUtils;
  */
 public final class LongField extends AbstractLongField {
 
-	public LongField(short tag, int[] data) {
-		super(tag, FieldType.LONG, data);
+	public LongField(Tag context, int[] data) {
+		super(context, FieldType.LONG, data);
 	}
 	
 	public String getDataAsString() {

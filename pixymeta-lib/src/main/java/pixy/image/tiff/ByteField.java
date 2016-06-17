@@ -18,7 +18,7 @@ package pixy.image.tiff;
  */
 public final class ByteField extends AbstractByteField {
 
-	public ByteField(short tag, byte[] data) {
+	public ByteField(Tag tag, byte[] data) {
 		super(tag, FieldType.BYTE, data);
 	}
 }

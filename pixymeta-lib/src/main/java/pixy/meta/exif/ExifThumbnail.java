@@ -84,8 +84,8 @@ public class ExifThumbnail extends Thumbnail {
 		if(getDataType() == Thumbnail.DATA_TYPE_KJpegRGB) { // Compressed old-style JPEG format
 			byte[] compressedImage = getCompressedImage();
 			if(compressedImage == null) throw new IllegalArgumentException("Expected compressed thumbnail data does not exist!");
-			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[] {0})); // Placeholder
-			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[] {compressedImage.length}));
+			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT, new int[] {0})); // Placeholder
+			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[] {compressedImage.length}));
 			offset = thumbnailIFD.write(randOS, offset);
 			// This line is very important!!!
 			randOS.seek(offset);
@@ -130,21 +130,21 @@ public class ExifThumbnail extends Thumbnail {
 			// We are going to write the IFD and associated thumbnail
 			int thumbnailWidth = thumbnail.getWidth();
 			int thumbnailHeight = thumbnail.getHeight();
-			thumbnailIFD.addField(new ShortField(TiffTag.IMAGE_WIDTH.getValue(), new short[]{(short)thumbnailWidth}));
-			thumbnailIFD.addField(new ShortField(TiffTag.IMAGE_LENGTH.getValue(), new short[]{(short)thumbnailHeight}));
-			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{0})); // Place holder
-			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{0})); // Place holder
+			thumbnailIFD.addField(new ShortField(TiffTag.IMAGE_WIDTH, new short[]{(short)thumbnailWidth}));
+			thumbnailIFD.addField(new ShortField(TiffTag.IMAGE_LENGTH, new short[]{(short)thumbnailHeight}));
+			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT, new int[]{0})); // Place holder
+			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[]{0})); // Place holder
 			// Other related tags
-			thumbnailIFD.addField(new RationalField(TiffTag.X_RESOLUTION.getValue(), new int[] {thumbnailWidth, 1}));
-			thumbnailIFD.addField(new RationalField(TiffTag.Y_RESOLUTION.getValue(), new int[] {thumbnailHeight, 1}));
-			thumbnailIFD.addField(new ShortField(TiffTag.RESOLUTION_UNIT.getValue(), new short[]{1})); //No absolute unit of measurement
-			thumbnailIFD.addField(new ShortField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue(), new short[]{(short)TiffFieldEnum.PhotoMetric.YCbCr.getValue()}));
-			thumbnailIFD.addField(new ShortField(TiffTag.SAMPLES_PER_PIXEL.getValue(), new short[]{3}));		
-			thumbnailIFD.addField(new ShortField(TiffTag.BITS_PER_SAMPLE.getValue(), new short[]{8, 8, 8}));
-			thumbnailIFD.addField(new ShortField(TiffTag.YCbCr_SUB_SAMPLING.getValue(), new short[]{1, 1}));
-			thumbnailIFD.addField(new ShortField(TiffTag.PLANAR_CONFIGURATTION.getValue(), new short[]{(short)TiffFieldEnum.PlanarConfiguration.CONTIGUOUS.getValue()}));
-			thumbnailIFD.addField(new ShortField(TiffTag.COMPRESSION.getValue(), new short[]{(short)TiffFieldEnum.Compression.OLD_JPG.getValue()}));
-			thumbnailIFD.addField(new ShortField(TiffTag.ROWS_PER_STRIP.getValue(), new short[]{(short)thumbnailHeight}));
+			thumbnailIFD.addField(new RationalField(TiffTag.X_RESOLUTION, new int[] {thumbnailWidth, 1}));
+			thumbnailIFD.addField(new RationalField(TiffTag.Y_RESOLUTION, new int[] {thumbnailHeight, 1}));
+			thumbnailIFD.addField(new ShortField(TiffTag.RESOLUTION_UNIT, new short[]{1})); //No absolute unit of measurement
+			thumbnailIFD.addField(new ShortField(TiffTag.PHOTOMETRIC_INTERPRETATION, new short[]{(short)TiffFieldEnum.PhotoMetric.YCbCr.getValue()}));
+			thumbnailIFD.addField(new ShortField(TiffTag.SAMPLES_PER_PIXEL, new short[]{3}));
+			thumbnailIFD.addField(new ShortField(TiffTag.BITS_PER_SAMPLE, new short[]{8, 8, 8}));
+			thumbnailIFD.addField(new ShortField(TiffTag.YCbCr_SUB_SAMPLING, new short[]{1, 1}));
+			thumbnailIFD.addField(new ShortField(TiffTag.PLANAR_CONFIGURATTION, new short[]{(short)TiffFieldEnum.PlanarConfiguration.CONTIGUOUS.getValue()}));
+			thumbnailIFD.addField(new ShortField(TiffTag.COMPRESSION, new short[]{(short)TiffFieldEnum.Compression.OLD_JPG.getValue()}));
+			thumbnailIFD.addField(new ShortField(TiffTag.ROWS_PER_STRIP, new short[]{(short)thumbnailHeight}));
 			// Write the thumbnail IFD
 			// This line is very important!!!
 			randOS.seek(thumbnailIFD.write(randOS, offset));
