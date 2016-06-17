@@ -1,5 +1,7 @@
 package pixy.image.tiff;
 
+import pixy.api.IDataType;
+
 /**
  * Created by k3b on 16.06.2016.
  */
@@ -32,5 +34,12 @@ public class UnknownTag implements Tag {
     @Override
     public short getValue() {
         return value;
+    }
+
+
+    // implementation of api.IFieldDefinition
+    @Override
+    public IDataType getDataType() {
+        return getFieldType();
     }
 }

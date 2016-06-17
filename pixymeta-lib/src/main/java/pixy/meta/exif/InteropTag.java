@@ -13,6 +13,7 @@ package pixy.meta.exif;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.IDataType;
 import pixy.meta.exif.InteropTag;
 import pixy.image.tiff.FieldType;
 import pixy.image.tiff.Tag;
@@ -111,4 +112,11 @@ public enum InteropTag implements Tag {
 	
 	private final String name;
 	private final short value;
+
+	// implementation of api.IFieldDefinition
+	@Override
+	public IDataType getDataType() {
+		return getFieldType();
+	}
+
 }

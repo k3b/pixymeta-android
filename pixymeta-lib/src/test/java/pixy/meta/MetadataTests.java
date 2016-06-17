@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import pixy.api.IDirectory;
+import pixy.api.IFieldValue;
 import pixy.demo.j2se.TestPixyMetaJ2se;
 
 public class MetadataTests  {
@@ -71,6 +73,32 @@ public class MetadataTests  {
 		Map<MetadataType, Metadata> metadataMap = null;
 		try {
 			metadataMap = Metadata.readMetadata(stream);
+
+			for (Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
+				result.append(entry.getKey()).append("\n");
+
+				List<IDirectory> metaDir = (entry.getValue() != null) ? entry.getValue().getMetaData() : null;
+				if (metaDir != null) {
+					for (IDirectory dir : metaDir) {
+						final List<IFieldValue> values = dir.getValues();
+						if (values != null) {
+							for (IFieldValue value : values) {
+								if (value != null) {
+									result.append(dir.getName()
+											+ "." + value.getDefinition().getName()
+											+ "(" + value.getDataType().getName()
+											+ ")=" + value.getValueAsString()
+											+ "\n");
+
+								}
+							}
+						}
+					}
+					result.append("----------------------\n");
+				}
+				entry.getValue().showMetadata();
+			}
+
 
 		} catch (Exception e) {
 			result.append("err :").append(e.getMessage()).append("\n");

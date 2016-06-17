@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pixy.api.IDirectory;
+import pixy.api.IFieldValue;
 import pixy.io.RandomAccessOutputStream;
 import pixy.string.StringUtils;
 
@@ -38,7 +40,7 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
  */
-public class IFD {
+public class IFD implements IDirectory {
 
 	private static final String MODUL_NAME = "IFD";
 	/**
@@ -213,4 +215,27 @@ public class IFD {
 		return toOffset;
 	}
 
+	private String name = null;
+
+	// implementation of api.IDirectory
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	// implementation of api.IDirectory
+	@Override
+	public IDirectory setName(String name) {
+		this.name = name;
+		return this;
+	}
+
+	// implementation of api.IDirectory
+	@Override
+	public List<IFieldValue> getValues() {
+		if ((tiffFields != null) && (tiffFields.size() > 0)) {
+			return new ArrayList<IFieldValue>(tiffFields.values());
+		}
+		return null;
+	}
 }

@@ -14,13 +14,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.IDataType;
+
 /**
  * TIFF field type.
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/06/2013
  */
-public enum FieldType {
+public enum FieldType implements IDataType {
 	BYTE("Byte", (short)0x0001),
 	ASCII("ASCII", (short)0x0002),
 	SHORT("Short", (short)0x0003),

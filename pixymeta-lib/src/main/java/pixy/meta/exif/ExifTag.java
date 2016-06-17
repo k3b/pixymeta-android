@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.IDataType;
 import pixy.meta.exif.ExifTag;
 import pixy.image.tiff.FieldType;
 import pixy.image.tiff.Tag;
@@ -224,5 +225,12 @@ public enum ExifTag implements Tag {
 	}
 	
 	private final String name;
-	private final short value;	
+	private final short value;
+
+	// implementation of api.IFieldDefinition
+	@Override
+	public IDataType getDataType() {
+		return getFieldType();
+	}
+
 }

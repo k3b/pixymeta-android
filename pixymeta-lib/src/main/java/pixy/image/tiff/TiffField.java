@@ -12,6 +12,9 @@ package pixy.image.tiff;
 
 import java.io.IOException;
 
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
 import pixy.io.RandomAccessOutputStream;
 
 /**
@@ -24,12 +27,12 @@ import pixy.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
  */
-public abstract class TiffField<T> implements Comparable<TiffField<?>>{
+public abstract class TiffField<T> implements Comparable<TiffField<?>>, IFieldValue{
 	private final FieldType fieldType;
 	private final int length;
 	private final Tag tag;
-	protected T data;	
-		
+	protected T data;
+
 	protected int dataOffset;
 	
 	public TiffField(Tag tag, FieldType fieldType, int length) {
@@ -94,4 +97,25 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>>{
 	}
 	
 	protected abstract int writeData(RandomAccessOutputStream os, int toOffset) throws IOException;
+
+	// implementation of api.IFieldValue
+	@Override
+	public IFieldDefinition getDefinition() {
+		return tag;
+	}
+
+	// implementation of api.IFieldValue
+	@Override
+	public String getValueAsString() {
+		return this.getDataAsString();
+	}
+
+	// implementation of api.IFieldValue
+	@Override
+	public IDataType getDataType(){
+		return fieldType;
+	}
+
+
+
 }

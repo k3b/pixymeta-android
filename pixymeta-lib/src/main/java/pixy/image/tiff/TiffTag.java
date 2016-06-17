@@ -15,6 +15,8 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
 import pixy.string.StringUtils;
 
 /**
@@ -953,5 +955,11 @@ public enum TiffTag implements Tag {
 		if (this == UNKNOWN)
 			return name;
 		return name + " [Value: " + StringUtils.shortToHexStringMM(value) +"] (" + getAttribute() + ")";
+	}
+
+	// implementation of api.IFieldDefinition
+	@Override
+	public IDataType getDataType() {
+		return getFieldType();
 	}
 }

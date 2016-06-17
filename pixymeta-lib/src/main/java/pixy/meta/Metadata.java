@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.api.IDirectory;
 import pixy.image.IBitmap;
 import pixy.util.MetadataUtils;
 import pixy.meta.adobe._8BIM;
@@ -521,5 +523,12 @@ public abstract class Metadata implements MetadataReader {
 		byte[] data = getData();
 		if(data != null)
 			out.write(data);
-	}	
+	}
+
+	/**
+	 * @return directories that belong to this MetaData
+	 * */
+	public List<IDirectory> getMetaData() {
+		return null;
+	}
 }

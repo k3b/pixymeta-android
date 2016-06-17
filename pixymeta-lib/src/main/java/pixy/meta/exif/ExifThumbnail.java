@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import pixy.api.IDirectory;
 import pixy.image.IBitmap;
 import pixy.meta.Thumbnail;
 import pixy.meta.tiff.TIFFMeta;
@@ -166,5 +167,9 @@ public class ExifThumbnail extends Thumbnail {
 		}
 		// Close the RandomAccessOutputStream instance if we created it locally
 		if(!(os instanceof RandomAccessOutputStream)) randOS.shallowClose();
+	}
+
+	public IDirectory getMetaData() {
+		return (thumbnailIFD != null) ? thumbnailIFD : null;
 	}
 }

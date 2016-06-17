@@ -10,13 +10,15 @@
 
 package pixy.image.tiff;
 
+import pixy.api.IFieldDefinition;
+
 /**
- * Common interface for all TIFF related tag enumerations
+ * Common interface for all TIFF/EXIF related tag enumerations
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/28/2014
  */
-public interface Tag {
+public interface Tag extends IFieldDefinition {
 	public String getFieldAsString(Object value);
 	public FieldType getFieldType();
 	public String getName();
