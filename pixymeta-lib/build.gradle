@@ -20,6 +20,8 @@ dependencies {
     testCompile project(':pixymeta-j2se-demo')
 
     testCompile 'junit:junit:4.11'
+    // testCompile 'junit:junit:4.12-beta-3'
+    testCompile 'pl.pragmatists:JUnitParams:1.0.5'
     testCompile 'org.slf4j:slf4j-simple:1.7.7@jar'
 
 }
