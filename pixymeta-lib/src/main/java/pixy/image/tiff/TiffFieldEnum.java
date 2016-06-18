@@ -13,6 +13,10 @@ package pixy.image.tiff;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+
 /**
  * TiffFieldEnum.java
  * <p>
@@ -23,7 +27,7 @@ import java.util.Map;
  */
 public class TiffFieldEnum {
 	
-	public enum PhotoMetric {
+	public enum PhotoMetric implements IFieldDefinition {
 		// Baseline
 		WHITE_IS_ZERO("WhiteIsZero (for bilevel and grayscale images)", 0),
 		BLACK_IS_ZERO("BlackIsZero (for bilevel and grayscale images)", 1),
@@ -76,9 +80,19 @@ public class TiffFieldEnum {
 
 		private String description;
 		private int value;
+
+
+		public IDataType getDataType() {
+			return DefaultApiImpl.UNKNOWN;
+		}
+
+		public String getName() {
+			return this.getDescription();
+		}
+
 	}
 	
-	public enum Compression {
+	public enum Compression implements IFieldDefinition {
 		//
 		NONE("No Compression", 1),
 		CCITTRLE("CCITT modified Huffman RLE", 2),
@@ -130,9 +144,19 @@ public class TiffFieldEnum {
 
 		private String description;
 		private int value;
+
+
+		public IDataType getDataType() {
+			return DefaultApiImpl.UNKNOWN;
+		}
+
+		public String getName() {
+			return this.getDescription();
+		}
+
 	}
 	
-	public enum PlanarConfiguration {
+	public enum PlanarConfiguration implements IFieldDefinition {
 		CONTIGUOUS("Chunky format (The component values for each pixel are stored contiguously)", 1),
 		SEPARATE("Planar format (The components are stored in separate component planes)", 2),
 		UNKNOWN("Unknown", 9999);
@@ -172,7 +196,17 @@ public class TiffFieldEnum {
 		
 		private final String description;
 		private final int value;
+
+
+		public IDataType getDataType() {
+			return DefaultApiImpl.UNKNOWN;
+		}
+
+		public String getName() {
+			return this.getDescription();
+		}
+
 	}
 	
-	private TiffFieldEnum() {}	
+	private TiffFieldEnum() {}
 }

@@ -20,10 +20,15 @@ package pixy.meta.icc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDirectory;
+import pixy.api.IFieldValue;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.string.StringUtils;
@@ -318,7 +323,34 @@ public class ICCProfile extends Metadata {
 		LOGGER.info("Profile ID: {}", getProfileID());
 		LOGGER.info("*** End of ICC_Profile Header ***");
 	}
-	
+
+	/** same as showHeader but instead of printing the data is added to structure */
+	private IDirectory getHeader() {
+		IDirectory dir = new DefaultApiImpl("ICC-Header");
+		List<IFieldValue> items = dir.getValues();
+		items.add(new DefaultApiImpl(new DefaultApiImpl("ProfileSize"), ""+ getProfileSize()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("CMM Type"), ""+ getPreferredCMMType()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Version"), ""+ getProfileVersionNumber()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Profile/Device Class"), ""+ getProfileClassDescription()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Color Space"), ""+ getColorSpace()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("PCS"), ""+ getPCS()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Date Created"), ""+ getDateTimeCreated()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Profile File Signature"), ""+ getProfileFileSignature()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Primary Platform Signature"), ""+ getPrimaryPlatformSignature()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Flags"), ""+ getProfileFlags()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Device Manufacturer"), ""+ getDeviceManufacturer()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Device Model"), ""+ getDeviceModel()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Device Attributes"), ""+ getDeviceAttributes()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Rendering Intent"), ""+ getRenderingIntentDescription()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("PCS Illuminant"),
+				"X = " + getPCSXYZ()[0] +
+						", Y = " + getPCSXYZ()[1] +
+						", Z = " + getPCSXYZ()[2]));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Profile Creator"), ""+ getProfileCreator()));
+		items.add(new DefaultApiImpl(new DefaultApiImpl("Profile ID"), ""+ getProfileID()));
+		return dir;
+	}
+
 	@Override
 	public void showMetadata() {
 		ensureDataRead();
@@ -329,4 +361,15 @@ public class ICCProfile extends Metadata {
 	private void showTagTable() {
 		tagTable.showTable();
 	}
+
+	@Override
+	public List<IDirectory> getMetaData() {
+		List<IDirectory> result =  new ArrayList<IDirectory>();
+		result.add(getHeader());
+		result.add(new DefaultApiImpl("ICC-Table", new ArrayList<IFieldValue>(tagTable.getTagEntries())));
+
+		return result;
+	}
+
+
 }

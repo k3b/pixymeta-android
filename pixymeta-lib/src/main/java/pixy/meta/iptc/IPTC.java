@@ -31,11 +31,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDirectory;
+import pixy.api.IFieldValue;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.io.IOUtils;
 
-public class IPTC extends Metadata {
+public class IPTC extends Metadata  {
 	public static void showIPTC(byte[] data) {
 		if(data != null && data.length > 0) {
 			IPTC iptc = new IPTC(data);
@@ -177,9 +180,24 @@ public class IPTC extends Metadata {
 		}
 	}
 
+	/**
+	 * @return directories that belong to this MetaData.
+	 * */
+	@Override
+	public List<IDirectory> getMetaData() {
+		ensureDataRead();
+		ArrayList<IDirectory> result = new ArrayList<IDirectory>();
+		for (Map.Entry<String, List<IPTCDataSet>> entry : getDataSets().entrySet()) {
+			result.add(new DefaultApiImpl(entry.getKey(), new ArrayList<IFieldValue>(entry.getValue())));
+		}
+		return result;
+	}
+
+
 	public void write(OutputStream os) throws IOException {
 		for(List<IPTCDataSet> datasets : getDataSets().values())
 			for(IPTCDataSet dataset : datasets)
 				dataset.write(os);
 	}
+
 }

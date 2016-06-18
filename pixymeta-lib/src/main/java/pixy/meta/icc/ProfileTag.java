@@ -16,7 +16,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pixy.meta.icc.ProfileTag;
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
 
 /**
  * ICC Profile Tag
@@ -24,7 +26,7 @@ import pixy.meta.icc.ProfileTag;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/13/2015
  */
-public enum ProfileTag {
+public enum ProfileTag implements IFieldDefinition {
 	// Public tags
 	A2B0(TagType.PUBLIC, 0x41324230, "AToB0Tag"), // Multi-dimensional transformation structure
 	A2B1(TagType.PUBLIC, 0x41324231, "AToB1Tag"), // Multi-dimensional transformation structure
@@ -85,10 +87,15 @@ public enum ProfileTag {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileTag.class);
 
-	public enum TagType { //
+	public enum TagType implements IDataType { //
 		PUBLIC,
 		PRIVATE,
-		UNKNOWN;		
+		UNKNOWN;
+
+		public String getName() {
+			return this.name();
+		}
+
 	}
 	
 	public TagType getTagType() {
@@ -134,4 +141,14 @@ public enum ProfileTag {
     private final TagType tagType;
 	private final String description;
 	private final int value;
+
+
+	public IDataType getDataType() {
+		return DefaultApiImpl.UNKNOWN;
+	}
+
+	public String getName() {
+		return this.getDescription();
+	}
+
 }

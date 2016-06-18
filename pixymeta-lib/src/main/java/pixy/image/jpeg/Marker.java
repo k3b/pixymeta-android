@@ -13,13 +13,17 @@ package pixy.image.jpeg;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+
 /**
  * Class represents JPEG marker.
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/08/2013
  */
-public enum Marker {
+public enum Marker implements IFieldDefinition {
 
 	    /**
 	     * Define JPEG markers. 
@@ -135,4 +139,14 @@ public enum Marker {
    	  
 	    private final String description;
 	    private final short value;
+
+
+	public IDataType getDataType() {
+		return DefaultApiImpl.UNKNOWN;
+	}
+
+	public String getName() {
+		return this.getDescription();
+	}
+
 }

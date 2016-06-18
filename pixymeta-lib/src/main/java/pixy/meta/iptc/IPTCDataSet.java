@@ -26,16 +26,10 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pixy.meta.iptc.IPTCApplicationTag;
-import pixy.meta.iptc.IPTCDataSet;
-import pixy.meta.iptc.IPTCEnvelopeTag;
-import pixy.meta.iptc.IPTCFotoStationTag;
-import pixy.meta.iptc.IPTCNewsPhotoTag;
-import pixy.meta.iptc.IPTCObjectDataTag;
-import pixy.meta.iptc.IPTCPostObjectDataTag;
-import pixy.meta.iptc.IPTCPreObjectDataTag;
-import pixy.meta.iptc.IPTCRecord;
-import pixy.meta.iptc.IPTCTag;
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
 import pixy.io.IOUtils;
 import pixy.string.StringUtils;
 import pixy.util.ArrayUtils;
@@ -46,7 +40,7 @@ import pixy.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 06/10/2013
  */
-public class IPTCDataSet {
+public class IPTCDataSet implements IFieldValue {
 	// Fields
 	private int recordNumber; // Corresponds to IPTCRecord enumeration recordNumber 
 	private int tag; // Corresponds to IPTC tag enumeration tag field
@@ -234,5 +228,20 @@ public class IPTCDataSet {
 		out.write(getTag());
 		IOUtils.writeShortMM(out, size);
 		out.write(data, offset, size);
+	}
+
+	@Override
+	public IFieldDefinition getDefinition() {
+		return tagEnum;
+	}
+
+	@Override
+	public String getValueAsString() {
+		return getDataAsString();
+	}
+
+	@Override
+	public IDataType getDataType() {
+		return DefaultApiImpl.UNKNOWN;
 	}
 }

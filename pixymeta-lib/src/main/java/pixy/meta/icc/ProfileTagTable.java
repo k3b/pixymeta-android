@@ -19,6 +19,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
 import pixy.meta.icc.ICCProfile;
 import pixy.meta.icc.ProfileTag;
 import pixy.io.IOUtils;
@@ -36,7 +40,7 @@ public class ProfileTagTable {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileTagTable.class);
 		
-	public static class TagEntry implements Comparable<TagEntry> {
+	public static class TagEntry implements Comparable<TagEntry>, IFieldValue {
 		private int profileTag;
 		private int dataOffset;
 		private int dataLength;
@@ -67,7 +71,22 @@ public class ProfileTagTable {
 		
 		public byte[] getData() {
 			return data;
-		}		
+		}
+
+		@Override
+		public IFieldDefinition getDefinition() {
+			return ProfileTag.fromInt(getProfileTag());
+		}
+
+		@Override
+		public String getValueAsString() {
+			return null;
+		}
+
+		@Override
+		public IDataType getDataType() {
+			return DefaultApiImpl.UNKNOWN;
+		}
 	}
 	
 	public ProfileTagTable() {}

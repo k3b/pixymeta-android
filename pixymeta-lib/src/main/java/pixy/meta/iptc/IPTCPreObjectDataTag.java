@@ -14,8 +14,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import pixy.meta.iptc.IPTCPreObjectDataTag;
-import pixy.meta.iptc.IPTCTag;
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
 import pixy.string.StringUtils;
 
 /**
@@ -83,4 +83,9 @@ public enum IPTCPreObjectDataTag implements IPTCTag {
  
 	 private final int tag;
 	 private final String name;
+
+	public IDataType getDataType() {
+		return DefaultApiImpl.UNKNOWN;
+	}
+
 }

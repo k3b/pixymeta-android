@@ -13,13 +13,17 @@ package pixy.image.bmp;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+
 /**
  * BMP compression type.
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 05/09/2014
  */
-public enum BmpCompression {
+public enum BmpCompression implements IFieldDefinition {
 	//
 	BI_RGB("No Compression", 0),
 	BI_RLE8("8 bit RLE Compression (8 bit only)", 1),
@@ -63,4 +67,14 @@ public enum BmpCompression {
 
 	private String description;
 	private int value;
+
+
+	public IDataType getDataType() {
+		return DefaultApiImpl.UNKNOWN;
+	}
+
+	public String getName() {
+		return this.getDescription();
+	}
+
 }

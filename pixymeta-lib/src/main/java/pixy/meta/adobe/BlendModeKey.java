@@ -21,7 +21,11 @@ package pixy.meta.adobe;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum BlendModeKey {
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+
+public enum BlendModeKey implements IFieldDefinition {
 	pass("pass through", 0x70617373),
 	norm("normal", 0x6e6f726d),
 	diss("dissolve", 0x64697373),
@@ -84,4 +88,14 @@ public enum BlendModeKey {
 	
  	private final String description;
 	private final int value;
+
+
+	public IDataType getDataType() {
+		return DefaultApiImpl.UNKNOWN;
+	}
+
+	public String getName() {
+		return this.getDescription();
+	}
+
 }

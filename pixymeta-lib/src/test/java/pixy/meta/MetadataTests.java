@@ -1,18 +1,19 @@
 package pixy.meta;
 
 import org.junit.Test;
-import org.junit.Assert;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
 import pixy.api.IDirectory;
+import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.demo.j2se.TestPixyMetaJ2se;
 
@@ -60,12 +61,15 @@ public class MetadataTests  {
 
 	@Test
 	public void shouldFormat()  throws IOException {
+//		for (String fileName : allTestFiles) {
+//			format(fileName, false);
+//		}
 		for (String fileName : allTestFiles) {
-			format(fileName);
+			format(fileName, true);
 		}
 	}
 
-	private void format(String fileName)
+	private void format(String fileName, boolean showDetailed)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("\n\n############\n").append(fileName).append("\n");
@@ -76,35 +80,53 @@ public class MetadataTests  {
 
 			for (Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
 				result.append(entry.getKey()).append("\n");
-
-				List<IDirectory> metaDir = (entry.getValue() != null) ? entry.getValue().getMetaData() : null;
-				if (metaDir != null) {
-					for (IDirectory dir : metaDir) {
-						final List<IFieldValue> values = dir.getValues();
-						if (values != null) {
-							for (IFieldValue value : values) {
-								if (value != null) {
-									result.append(dir.getName()
-											+ "." + value.getDefinition().getName()
-											+ "(" + value.getDataType().getName()
-											+ ")=" + value.getValueAsString()
-											+ "\n");
-
-								}
-							}
-						}
-					}
-					result.append("----------------------\n");
-				}
-				entry.getValue().showMetadata();
+				 if (showDetailed) {
+					 List<IDirectory> metaDir = (entry.getValue() != null) ? entry.getValue().getMetaData() : null;
+					 if (metaDir != null) {
+						 for (IDirectory dir : metaDir) {
+							 final List<IFieldValue> values = dir.getValues();
+							 if (values != null) {
+								 for (IFieldValue value : values) {
+									 formatValue(result, dir, value);
+								 }
+							 }
+						 }
+						 result.append("----------------------\n");
+					 }
+					 entry.getValue().showMetadata();
+				 }
 			}
 
 
 		} catch (Exception e) {
-			result.append("err :").append(e.getMessage()).append("\n");
+			String context = "err processing " + fileName +	":";
+			result.append(context).append(e.getMessage()).append("\n");
+			LOGGER.error(context, e);
 			e.printStackTrace();
 		}
 		LOGGER.info(result.toString());
+	}
+
+	// add "dirName.fieldDefinitionName[dataTypeName]=valueAsString" to result
+	private void formatValue(StringBuffer result, IDirectory dir, IFieldValue value) {
+		if (value != null) {
+			final String dirName = dir.getName();
+			final IFieldDefinition fieldDefinition = value.getDefinition();
+
+			IDataType dataType = value.getDataType();
+			if (DefaultApiImpl.isNull(dataType) && !DefaultApiImpl.isNull(fieldDefinition)) dataType = fieldDefinition.getDataType();
+
+			final String dataTypeName = DefaultApiImpl.isNull(dataType) ? null : dataType.getName();
+			final String valueAsString = value.getValueAsString();
+			final String fieldDefinitionName = DefaultApiImpl.isNull(fieldDefinition) ? null :  fieldDefinition.getName();
+
+			if (dirName != null) result.append(dirName);
+
+			if (fieldDefinitionName != null) result.append(".").append(fieldDefinitionName);
+			if (dataTypeName != null) result.append("[").append(dataTypeName).append("]");
+			if (valueAsString != null) result.append("=").append(valueAsString);
+			result.append("\n");
+        }
 	}
 
 

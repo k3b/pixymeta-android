@@ -13,13 +13,17 @@ package pixy.image.png;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+
 /**
  * Define PNG chunk types
  * 
  * @author Wen Yu, yuwen_66@yahoo.com 
  * @version 1.0 10/16/2012
  */
-public enum ChunkType {	
+public enum ChunkType implements IFieldDefinition {
 	// Four critical chunks
 	IHDR("IHDR", 0x49484452, Attribute.CRITICAL, 1), // PNG header, must be the first one
 	IDAT("IDAT", 0x49444154, Attribute.CRITICAL, 60), // PNG data, could have multiple but must appear consecutively
@@ -155,4 +159,9 @@ public enum ChunkType {
     private final String name;
     private final int value;
     private final int ranking;
+
+
+	public IDataType getDataType() {
+		return DefaultApiImpl.UNKNOWN;
+	}
 }

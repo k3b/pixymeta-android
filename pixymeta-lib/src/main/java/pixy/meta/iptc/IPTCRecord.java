@@ -13,6 +13,7 @@ package pixy.meta.iptc;
 import java.util.HashMap;
 import java.util.Map;
 
+import pixy.api.IDataType;
 import pixy.meta.iptc.IPTCRecord;
 
 /**

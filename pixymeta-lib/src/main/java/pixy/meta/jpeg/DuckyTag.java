@@ -21,7 +21,11 @@ package pixy.meta.jpeg;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum DuckyTag {
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IFieldDefinition;
+
+public enum DuckyTag implements IFieldDefinition {
 	//
 	QUALITY(1, "Quality"),
 	COMMENT(2, "Comment"),
@@ -63,5 +67,11 @@ public enum DuckyTag {
 	 
 	@Override public String toString() {
 		return name;
-	}	
+	}
+
+
+	public IDataType getDataType() {
+		return DefaultApiImpl.UNKNOWN;
+	}
+
 }
