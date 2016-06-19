@@ -28,41 +28,29 @@ import pixy.string.StringUtils;
  */
 public enum InteropTag implements Tag {
 	// EXIF InteropSubIFD tags
-	INTEROPERABILITY_INDEX("InteroperabilityIndex", (short)0x0001) {
-		public FieldType getFieldType() {
-			return FieldType.ASCII;
-		}
-	},
-	INTEROPERABILITY_VERSION("InteroperabilityVersion", (short)0x0002) {
-		public FieldType getFieldType() {
-			return FieldType.UNDEFINED;
-		}
-	},
-	RELATED_IMAGE_FILE_FORMAT("RelatedImageFileFormat", (short)0x1000) {
-		public FieldType getFieldType() {
-			return FieldType.ASCII;
-		}
-	},
-	RELATED_IMAGE_WIDTH("RelatedImageWidth", (short)0x1001) {
-		public FieldType getFieldType() {
-			return FieldType.SHORT;
-		}
-	},
-	RELATED_IMAGE_LENGTH("RelatedImageLength", (short)0x1002) {
-		public FieldType getFieldType() {
-			return FieldType.SHORT;
-		}
-	},
+	INTEROPERABILITY_INDEX("InteroperabilityIndex", (short)0x0001,FieldType.ASCII),
+	INTEROPERABILITY_VERSION("InteroperabilityVersion", (short)0x0002),
+	RELATED_IMAGE_FILE_FORMAT("RelatedImageFileFormat", (short)0x1000,FieldType.ASCII),
+	RELATED_IMAGE_WIDTH("RelatedImageWidth", (short)0x1001,FieldType.SHORT),
+	RELATED_IMAGE_LENGTH("RelatedImageLength", (short)0x1002,FieldType.SHORT),
 	// unknown tag
 	UNKNOWN("Unknown",  (short)0xffff); 
 	// End of IneropSubIFD tags
 		
-	private InteropTag(String name, short value)
-	{
+	private InteropTag(String name, short value, FieldType fieldType) {
 		this.name = name;
 		this.value = value;
+
+		if (fieldType != null) {
+			this.fieldType = fieldType;
+		}
 	}
-	
+
+	private InteropTag(String name, short value)
+	{
+		this(name, value, null);
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -107,11 +95,12 @@ public enum InteropTag implements Tag {
 	}
 	
 	public FieldType getFieldType() {
-		return FieldType.UNKNOWN;
+		return fieldType;
 	}
 	
 	private final String name;
 	private final short value;
+	private FieldType fieldType  = FieldType.UNKNOWN;;
 
 	// implementation of api.IFieldDefinition
 	@Override

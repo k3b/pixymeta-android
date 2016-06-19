@@ -1,5 +1,8 @@
 package pixy.meta;
 
+import com.twelvemonkeys.imageio.metadata.exif.EXIF;
+
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -26,6 +29,10 @@ import pixy.api.IDirectory;
 import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.demo.j2se.TestPixyMetaJ2se;
+import pixy.image.tiff.FieldType;
+import pixy.image.tiff.Tag;
+import pixy.meta.exif.ExifTag;
+import pixy.string.StringUtils;
 
 // @RunWith(Parameterized.class)
 @RunWith(JUnitParamsRunner.class)
@@ -84,10 +91,67 @@ public class MetadataRegressionTests {
 		new File("./" + OUTDIR).mkdirs();
 	}
 
+	@Test
+	// @Parameters({"12.jpg"})
+	@Parameters(method = "getAllResourceImageNamesForTest")
+	public void exifTypeShouldMatch(String fileName) throws IOException {
+		InputStream stream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
+		Map<MetadataType, Metadata> metadataMap = Metadata.readMetadata(stream);
+
+		Metadata exif = metadataMap.get(MetadataType.EXIF);
+
+		StringBuilder wrongExifFieldTypes = new StringBuilder();
+		List<IDirectory> exifDir = (exif != null) ? exif.getMetaData() : null;
+		if (exifDir != null) {
+			for (IDirectory dir : exifDir) {
+				final List<IFieldValue> values = dir.getValues();
+				if (values != null) {
+					for (IFieldValue value : values) {
+						if (value != null) {
+							final IFieldDefinition fieldDefinition = value.getDefinition();
+
+							IDataType valueDataType = value.getDataType();
+							IDataType defDataType = fieldDefinition.getDataType();
+
+							if (!isCompatible(valueDataType, defDataType)) {
+								String fieldDefinitionName = fieldDefinition.getName();
+								if (fieldDefinition instanceof Tag) {
+									fieldDefinitionName = StringUtils.shortToHexStringMM(((Tag) fieldDefinition).getValue()) +"-" + fieldDefinitionName;
+								}
+
+								// 0x0009-ExifVersion:Unknown => Undefined
+								wrongExifFieldTypes
+										.append("\n")
+										.append(fieldDefinitionName)
+										.append(":").append(defDataType.getName())
+										.append(" => ").append(valueDataType)
+								;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		stream.close();
+
+		Assert.assertEquals(wrongExifFieldTypes.toString(), 0, wrongExifFieldTypes.length());
+	}
+
+	private boolean isCompatible(IDataType valueDataType, IDataType definitionDataType) {
+		if (DefaultApiImpl.isNull(valueDataType)) return true;
+		if (valueDataType == definitionDataType) return true;
+		if (valueDataType.getName().toLowerCase().startsWith("un")) return true; // Unknown, Undefenied, ...
+
+		// Long => Short is ok
+		if ( (definitionDataType == FieldType.LONG) && (valueDataType == FieldType.SHORT)) return true;
+
+		return false;
+	}
 
 	@Test
-	@Parameters({"12.jpg"})
-	// @Parameters(method = "getAllResourceImageNamesForTest")
+	// @Parameters({"12.jpg"})
+	@Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldFormat(String fileName) throws IOException
 	{
 		boolean showDetailed = true;
