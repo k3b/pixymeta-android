@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class MetadataRegressionTests {
 
 	// resources in pixymeta-j2se-demo/resources/pixy.demo.j2se.images used by JUnitParamsRunner
 	// for details see https://github.com/Pragmatists/JUnitParams/blob/master/src/test/java/junitparams/usage/SamplesOfUsageTest.java
-	private static final Object allTestFiles[] = new Object[]{
+	private static final String allTestFiles[] = new String[]{
 		"12.jpg",
 		"wizard.jpg",
 		"1.jpg",
@@ -86,6 +87,39 @@ public class MetadataRegressionTests {
 		return allTestFiles;
 	}
 
+	// used by JUnitParamsRunner fileName, dir, value
+	private Object getAllFieldValuesForTest() throws IOException {
+		ArrayList<Object> result = new ArrayList<>();
+		for (String fileName : allTestFiles) {
+			InputStream stream = null;
+			try {
+				stream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
+				Map<MetadataType, Metadata> metadataMap = Metadata.readMetadata(stream);
+				if (metadataMap == null) continue;
+
+				for (Metadata exif : metadataMap.values()) {
+					if (exif == null) continue;
+					List<IDirectory> exifDir = exif.getMetaData();
+					if (exifDir == null) continue;
+					for (IDirectory dir : exifDir) {
+						final List<IFieldValue> values = dir.getValues();
+						if (values != null) {
+							for (IFieldValue value : values) {
+								if (value != null) {
+									result.add(new Object[]{fileName,dir, value});
+								}
+							}
+						}
+					}
+				}
+			} finally {
+				stream.close();
+
+			}
+		}
+		return result;
+	}
+
 	@BeforeClass
 	public static void initDirectories() {
 		new File("./" + OUTDIR).mkdirs();
@@ -93,49 +127,32 @@ public class MetadataRegressionTests {
 
 	@Test
 	// @Parameters({"12.jpg"})
-	@Parameters(method = "getAllResourceImageNamesForTest")
-	public void exifTypeShouldMatch(String fileName) throws IOException {
-		InputStream stream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
-		Map<MetadataType, Metadata> metadataMap = Metadata.readMetadata(stream);
+	@Parameters(method = "getAllFieldValuesForTest")
+	public void declaredTypeShouldMatchFoundType(String fileName, IDirectory dir, IFieldValue value) throws IOException {
+		final IFieldDefinition fieldDefinition = value.getDefinition();
 
-		Metadata exif = metadataMap.get(MetadataType.EXIF);
+		IDataType valueDataType = value.getDataType();
+		IDataType defDataType = fieldDefinition.getDataType();
 
-		StringBuilder wrongExifFieldTypes = new StringBuilder();
-		List<IDirectory> exifDir = (exif != null) ? exif.getMetaData() : null;
-		if (exifDir != null) {
-			for (IDirectory dir : exifDir) {
-				final List<IFieldValue> values = dir.getValues();
-				if (values != null) {
-					for (IFieldValue value : values) {
-						if (value != null) {
-							final IFieldDefinition fieldDefinition = value.getDefinition();
-
-							IDataType valueDataType = value.getDataType();
-							IDataType defDataType = fieldDefinition.getDataType();
-
-							if (!isCompatible(valueDataType, defDataType)) {
-								String fieldDefinitionName = fieldDefinition.getName();
-								if (fieldDefinition instanceof Tag) {
-									fieldDefinitionName = StringUtils.shortToHexStringMM(((Tag) fieldDefinition).getValue()) +"-" + fieldDefinitionName;
-								}
-
-								// 0x0009-ExifVersion:Unknown => Undefined
-								wrongExifFieldTypes
-										.append("\n")
-										.append(fieldDefinitionName)
-										.append(":").append(defDataType.getName())
-										.append(" => ").append(valueDataType)
-								;
-							}
-						}
-					}
-				}
+		if (!isCompatible(valueDataType, defDataType)) {
+			String fieldDefinitionName = fieldDefinition.getName();
+			if (fieldDefinition instanceof Tag) {
+				fieldDefinitionName = StringUtils.shortToHexStringMM(((Tag) fieldDefinition).getValue()) +"-" + fieldDefinitionName;
 			}
+
+			// 0x0009-ExifVersion:Unknown => Undefined
+			StringBuilder wrongExifFieldTypes = new StringBuilder()
+					.append(fileName)
+					.append(":")
+					.append(dir.getName())
+					.append(".")
+					.append(fieldDefinitionName)
+					.append(":").append(defDataType.getName())
+					.append(" => ").append(valueDataType)
+			;
+			Assert.fail(wrongExifFieldTypes.toString());
 		}
 
-		stream.close();
-
-		Assert.assertEquals(wrongExifFieldTypes.toString(), 0, wrongExifFieldTypes.length());
 	}
 
 	private boolean isCompatible(IDataType valueDataType, IDataType definitionDataType) {
