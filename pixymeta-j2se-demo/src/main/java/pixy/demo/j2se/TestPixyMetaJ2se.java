@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -217,17 +215,17 @@ public class TestPixyMetaJ2se {
     private static Exif populateExif(Class<?> exifClass) throws IOException {
         // Create an EXIF wrapper
         Exif exif = exifClass == (TiffExif.class)?new TiffExif() : new JpegExif();
-        exif.addImageField(TiffTag.WINDOWS_XP_AUTHOR, FieldType.WINDOWSXP, "Author");
-        exif.addImageField(TiffTag.WINDOWS_XP_KEYWORDS, FieldType.WINDOWSXP, "Copyright;Author");
+        exif.addField(TiffTag.WINDOWS_XP_AUTHOR, FieldType.WINDOWSXP, "Author");
+        exif.addField(TiffTag.WINDOWS_XP_KEYWORDS, FieldType.WINDOWSXP, "Copyright;Author");
         DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-        exif.addExifField(ExifTag.EXPOSURE_TIME, FieldType.RATIONAL, new int[] {10, 600});
-        exif.addExifField(ExifTag.FNUMBER, FieldType.RATIONAL, new int[] {49, 10});
-        exif.addExifField(ExifTag.ISO_SPEED_RATINGS, FieldType.SHORT, new short[]{273});
+        exif.addField(ExifTag.EXPOSURE_TIME, FieldType.RATIONAL, new int[] {10, 600});
+        exif.addField(ExifTag.FNUMBER, FieldType.RATIONAL, new int[] {49, 10});
+        exif.addField(ExifTag.ISO_SPEED_RATINGS, FieldType.SHORT, new short[]{273});
         //All four bytes should be interpreted as ASCII values - represents [0220] - new byte[]{48, 50, 50, 48}
-        exif.addExifField(ExifTag.EXIF_VERSION, FieldType.UNDEFINED, "0220".getBytes());
-        exif.addExifField(ExifTag.DATE_TIME_ORIGINAL, FieldType.ASCII, formatter.format(new Date()));
-        exif.addExifField(ExifTag.DATE_TIME_DIGITIZED, FieldType.ASCII, formatter.format(new Date()));
-        exif.addExifField(ExifTag.FOCAL_LENGTH, FieldType.RATIONAL, new int[] {240, 10});
+        exif.addField(ExifTag.EXIF_VERSION, FieldType.UNDEFINED, "0220".getBytes());
+        exif.addField(ExifTag.DATE_TIME_ORIGINAL, FieldType.ASCII, formatter.format(new Date()));
+        exif.addField(ExifTag.DATE_TIME_DIGITIZED, FieldType.ASCII, formatter.format(new Date()));
+        exif.addField(ExifTag.FOCAL_LENGTH, FieldType.RATIONAL, new int[] {240, 10});
         // Insert ThumbNailIFD
         // Since we don't provide thumbnail image, it will be created later from the input stream
         exif.setThumbnailRequired(true);

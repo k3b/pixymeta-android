@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import pixy.api.IDirectory;
 import pixy.image.IBitmap;
+import pixy.image.tiff.Tag;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.meta.Thumbnail;
@@ -54,9 +56,6 @@ import pixy.io.RandomAccessOutputStream;
  * @version 1.0 03/13/2014
  */
 public abstract class Exif extends Metadata {
-	protected IFD imageIFD;
-	protected IFD exifSubIFD;
-	protected IFD gpsSubIFD;
 	protected ExifThumbnail thumbnail;
 
 	private boolean containsThumbnail;
@@ -86,34 +85,35 @@ public abstract class Exif extends Metadata {
 		this(IOUtils.inputStreamToByteArray(is));
 	}
 
-	public void addExifField(ExifTag tag, FieldType type, Object data) {
-		if (exifSubIFD == null)
-			exifSubIFD = new IFD();
+	public void addField(Tag tag, FieldType type, Object data) {
+		final String typName = tag.getClass().getSimpleName();
+		IFD ifd = getOrCreateIfd(typName);
+
 		TiffField<?> field = FieldType.createField(tag, type, data);
 		if (field != null)
-			exifSubIFD.addField(field);
+			ifd.addField(field);
 		else
-			throw new IllegalArgumentException("Cannot create required EXIF TIFF field");
+			throw new IllegalArgumentException("Cannot create required " + typName +
+					" field");
 	}
 
-	public void addGPSField(GPSTag tag, FieldType type, Object data) {
-		if (gpsSubIFD == null)
-			gpsSubIFD = new IFD();
-		TiffField<?> field = FieldType.createField(tag, type, data);
-		if (field != null)
-			gpsSubIFD.addField(field);
-		else
-			throw new IllegalArgumentException("Cannot create required GPS TIFF field");
+	protected static final String ID_gpsSubIFD = GPSTag.class.getSimpleName();
+	protected static final String ID_exifSubIFD = ExifTag.class.getSimpleName();
+	protected static final String ID_imageIFD = TiffTag.class.getSimpleName();
+
+	HashMap<String, IFD> ifds = new HashMap<String, IFD>();
+	private IFD getOrCreateIfd(String typName) {
+		IFD result = getIfd(typName);
+
+		if (result == null) {
+			result = new IFD();
+			ifds.put(typName, result);
+		}
+		return result;
 	}
 
-	public void addImageField(TiffTag tag, FieldType type, Object data) {
-		if (imageIFD == null)
-			imageIFD = new IFD();
-		TiffField<?> field = FieldType.createField(tag, type, data);
-		if (field != null)
-			imageIFD.addField(field);
-		else
-			throw new IllegalArgumentException("Cannot create required Image TIFF field");
+	protected IFD getIfd(String typName) {
+		return ifds.get(typName);
 	}
 
 	public boolean containsThumbnail() {
@@ -125,6 +125,8 @@ public abstract class Exif extends Metadata {
 	}
 
 	public IFD getExifIFD() {
+		IFD exifSubIFD = getIfd(ID_exifSubIFD);
+
 		if (exifSubIFD != null) {
 			return new IFD(exifSubIFD);
 		}
@@ -133,6 +135,7 @@ public abstract class Exif extends Metadata {
 	}
 
 	public IFD getGPSIFD() {
+		IFD gpsSubIFD = getIfd(ID_gpsSubIFD);
 		if (gpsSubIFD != null) {
 			return new IFD(gpsSubIFD);
 		}
@@ -141,6 +144,7 @@ public abstract class Exif extends Metadata {
 	}
 
 	public IFD getImageIFD() {
+		IFD imageIFD = getIfd(ID_imageIFD);
 		if (imageIFD != null) {
 			return new IFD(imageIFD);
 		}
@@ -165,9 +169,7 @@ public abstract class Exif extends Metadata {
 			List<IFD> ifds = new ArrayList<IFD>(3);
 			TIFFMeta.readIFDs(ifds, exifIn);
 			if (ifds.size() > 0) {
-				imageIFD = ifds.get(0);
-				exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
-				gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
+				setImageIFD(ifds.get(0));
 			}
 			// We have thumbnail IFD
 			if (ifds.size() >= 2) {
@@ -211,19 +213,21 @@ public abstract class Exif extends Metadata {
 	}
 
 	public void setExifIFD(IFD exifSubIFD) {
-		this.exifSubIFD = exifSubIFD;
+		ifds.put(ID_exifSubIFD, exifSubIFD);
 	}
 
 	public void setGPSIFD(IFD gpsSubIFD) {
-		this.gpsSubIFD = gpsSubIFD;
+		ifds.put(ID_gpsSubIFD, gpsSubIFD);
 	}
 
-	public void setImageIFD(IFD imageIFD) {
+	public IFD setImageIFD(IFD imageIFD) {
 		if (imageIFD == null)
 			throw new IllegalArgumentException("Input image IFD is null");
-		this.imageIFD = imageIFD;
-		this.exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
-		this.gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
+		ifds.put(ID_imageIFD, imageIFD);
+
+		setGPSIFD(imageIFD.getChild(TiffTag.GPS_SUB_IFD));
+		setExifIFD(imageIFD.getChild(TiffTag.EXIF_SUB_IFD));
+		return imageIFD;
 	}
 
 	/**
@@ -248,6 +252,8 @@ public abstract class Exif extends Metadata {
 	public void showMetadata() {
 		ensureDataRead();
 		LOGGER.info("Exif output starts =>");
+		IFD imageIFD = getIfd(ID_imageIFD);
+
 		if (imageIFD != null) {
 			LOGGER.info("<<Image IFD starts>>");
 			TIFFMeta.printIFD(imageIFD, TiffTag.class, "");
@@ -267,7 +273,8 @@ public abstract class Exif extends Metadata {
 	 * */
 	@Override
 	public List<IDirectory> getMetaData() {
-		return getDirectories(new String[]{"", "-sub", "-gps", "-thumb"}, imageIFD, exifSubIFD, getGPSIFD(), (thumbnail != null) ? thumbnail.getMetaData() : null);
+		return getDirectories(new String[]{"", "-sub", "-gps", "-thumb"}, getIfd(ID_imageIFD), getIfd(ID_exifSubIFD), getIfd(ID_gpsSubIFD),
+				(thumbnail != null) ? thumbnail.getMetaData() : null);
 	}
 
 
