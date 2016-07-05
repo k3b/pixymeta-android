@@ -164,9 +164,9 @@ public class TestPixyMetaAndroid {
 	
 	private static List<_8BIM> createPhotoshopIPTC() {
 		IPTC_NAA iptc = new IPTC_NAA();
-		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2016, yuwen_66@yahoo.com"));
-		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!"));
-		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.CATEGORY, "ICAFE"));
+		iptc.addField(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2016, yuwen_66@yahoo.com");
+		iptc.addField(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!");
+		iptc.addField(IPTCApplicationTag.CATEGORY, "ICAFE");
 		
 		return new ArrayList<_8BIM>(Arrays.asList(iptc));
 	}

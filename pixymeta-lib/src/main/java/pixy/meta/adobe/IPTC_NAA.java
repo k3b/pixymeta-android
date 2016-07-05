@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import pixy.api.IFieldDefinition;
 import pixy.meta.adobe.ImageResourceID;
 import pixy.meta.adobe._8BIM;
 import pixy.meta.iptc.IPTC;
@@ -50,11 +51,11 @@ public class IPTC_NAA extends _8BIM {
 		super(ImageResourceID.IPTC_NAA, name, data);
 		iptc = new IPTC(data);
 	}
-	
-	public void addDataSet(IPTCDataSet dataSet) {
-		iptc.addDataSet(dataSet);
+
+	public void addField(IFieldDefinition tag, Object data) {
+		iptc.addDataSet(new IPTCDataSet(tag, data));
 	}
-	
+
 	public void addDataSets(Collection<? extends IPTCDataSet> dataSets) {
 		iptc.addDataSets(dataSets);
 	}

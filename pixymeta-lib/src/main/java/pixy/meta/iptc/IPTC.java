@@ -33,6 +33,7 @@ import java.util.Map;
 
 import pixy.api.DefaultApiImpl;
 import pixy.api.IDirectory;
+import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
@@ -70,7 +71,11 @@ public class IPTC extends Metadata  {
 		super(MetadataType.IPTC, data);
 		ensureDataRead();
 	}
-	
+
+	public void addField(IFieldDefinition tag, Object data) {
+		addDataSet(new IPTCDataSet(tag, data));
+	}
+
 	public void addDataSet(IPTCDataSet dataSet) {
 		addDataSets(Arrays.asList(dataSet));
 	}

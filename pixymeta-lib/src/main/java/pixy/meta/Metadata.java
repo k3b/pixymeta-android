@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pixy.api.IDirectory;
+import pixy.api.IFieldDefinition;
 import pixy.image.IBitmap;
 import pixy.util.MetadataUtils;
 import pixy.meta.adobe._8BIM;
@@ -512,7 +513,10 @@ public abstract class Metadata implements MetadataReader {
 	}
 	
 	public abstract void showMetadata();
-	
+
+	//TODO implement for all
+	// public abstract void addField(IFieldDefinition tag, Object data);
+
 	/**
 	 * Writes the metadata out to the output stream
 	 * 

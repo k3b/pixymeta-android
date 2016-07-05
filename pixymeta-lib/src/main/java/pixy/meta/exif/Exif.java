@@ -32,7 +32,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.api.IDataType;
 import pixy.api.IDirectory;
+import pixy.api.IFieldDefinition;
 import pixy.image.IBitmap;
 import pixy.image.tiff.Tag;
 import pixy.meta.Metadata;
@@ -85,11 +87,15 @@ public abstract class Exif extends Metadata {
 		this(IOUtils.inputStreamToByteArray(is));
 	}
 
-	public void addField(Tag tag, FieldType type, Object data) {
+	public void addField(IFieldDefinition tag, Object data) {
+		addField(tag, tag.getDataType(), data);
+	}
+
+	public void addField(IFieldDefinition tag, IDataType type, Object data) {
 		final String typName = tag.getClass().getSimpleName();
 		IFD ifd = getOrCreateIfd(typName);
 
-		TiffField<?> field = FieldType.createField(tag, type, data);
+		TiffField<?> field = FieldType.createField((Tag) tag, (FieldType) type, data);
 		if (field != null)
 			ifd.addField(field);
 		else

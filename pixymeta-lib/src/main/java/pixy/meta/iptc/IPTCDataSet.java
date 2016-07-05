@@ -54,40 +54,30 @@ public class IPTCDataSet implements IFieldValue {
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCDataSet.class);
-	
-	public IPTCDataSet(int tag, byte[] data) {
-		this(IPTCRecord.APPLICATION, tag, data);
+
+	public IPTCDataSet(IFieldDefinition tag, Object data) {
+		byte[] bytes = (data instanceof String) ? ((String) data).getBytes() : (byte[]) data;
+		init(IPTCRecord.APPLICATION.getRecordNumber(), ((IPTCApplicationTag) tag).getTag(), bytes.length, bytes, 0);
 	}
-	
+
 	public IPTCDataSet(int recordNumber, int tag, int size, byte[] data, int offset) {
+		init(recordNumber, tag, size, data, offset);
+	}
+
+	public IPTCDataSet(IPTCApplicationTag appTag, String value) {
+		byte[] data = value.getBytes();
+		init(IPTCRecord.APPLICATION.getRecordNumber(), appTag.getTag(), data.length, data, 0);
+	}
+
+	private void init(int recordNumber, int tag, int size, byte[] data, int offset) {
 		this.recordNumber = recordNumber;
 		this.tag = tag;
 		this.size = size;
 		this.data = data;
-		this.offset = offset;		
+		this.offset = offset;
 		this.name = getTagName();
 	}
-	
-	public IPTCDataSet(int tag, String value) {
-		this(tag, value.getBytes());
-	}
-	
-	public IPTCDataSet(IPTCApplicationTag appTag, byte[] data) {
-		this(appTag.getTag(), data);
-	}
-	
-	public IPTCDataSet(IPTCApplicationTag appTag, String value) {
-		this(appTag.getTag(), value);
-	}
-	
-	public IPTCDataSet(IPTCRecord record, int tag, byte[] data) {
-		this(record.getRecordNumber(), tag, data.length, data, 0);
-	}
-	
-	public IPTCDataSet(IPTCRecord record, int tag, String value) {
-		this(record, tag, value.getBytes());
-	}
-	
+
 	public boolean allowMultiple() {
 		return tagEnum.allowMultiple();
 	}
