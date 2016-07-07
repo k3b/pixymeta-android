@@ -25,6 +25,13 @@ public final class RationalField extends AbstractRationalField {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.rationalArrayToString(data, true);
+		return StringUtils.rationalToStringList(data, true);
 	}
+
+	// [var, var, var]
+	// TODO !!! @Override
+	public void setValue(String value) {
+		data = StringUtils.parseIntList(value);
+	}
+
 }

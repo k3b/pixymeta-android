@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import pixy.io.RandomAccessOutputStream;
+import pixy.string.StringUtils;
 
 /**
  * TIFF FieldType.FLOAT wrapper
@@ -36,6 +37,12 @@ public class FloatField extends TiffField<float[]> {
 		return Arrays.toString(data);
 	}
 
+	// [var, var, var]
+	// TODO !!! @Override
+	public void setValue(String value) {
+		data = StringUtils.parseFloatList(value);
+	}
+
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		if (data.length == 1) {
 			dataOffset = (int)os.getStreamPointer();
@@ -52,4 +59,5 @@ public class FloatField extends TiffField<float[]> {
 		}
 		return toOffset;
 	}
+
 }

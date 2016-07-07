@@ -25,6 +25,6 @@ public final class SLongField extends AbstractLongField {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.longArrayToString(data, 0, 10, false);
+		return StringUtils.toListString(data, 0, 10, false);
 	}
 }

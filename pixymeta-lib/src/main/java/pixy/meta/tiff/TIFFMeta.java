@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import pixy.image.tiff.UnknownTag;
-import pixy.meta.Metadata;
+import pixy.api.IMetadata;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.DDB;
 import pixy.meta.adobe.IRB;
@@ -1337,12 +1337,12 @@ public class TIFFMeta {
 		readIFDs(null, null, TiffTag.class, list, offset, rin);
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(RandomAccessInputStream rin) throws IOException {
+	public static Map<MetadataType, IMetadata> readMetadata(RandomAccessInputStream rin) throws IOException {
 		return readMetadata(rin, 0);
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(RandomAccessInputStream rin, int pageNumber) throws IOException	{
-		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+	public static Map<MetadataType, IMetadata> readMetadata(RandomAccessInputStream rin, int pageNumber) throws IOException	{
+		Map<MetadataType, IMetadata> metadataMap = new HashMap<MetadataType, IMetadata>();
 
 		int offset = readHeader(rin);
 		List<IFD> ifds = new ArrayList<IFD>();

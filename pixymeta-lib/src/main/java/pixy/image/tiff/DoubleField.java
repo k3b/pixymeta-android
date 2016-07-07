@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import pixy.io.RandomAccessOutputStream;
+import pixy.string.StringUtils;
 
 /**
  * TIFF FieldType.DOUBLE wrapper
@@ -36,6 +37,12 @@ public class DoubleField extends TiffField<double[]> {
 		return Arrays.toString(data);
 	}
 
+	// [var, var, var]
+	// TODO !!! @Override
+	public void setValue(String value) {
+		data = StringUtils.parseDoubleList(value);
+	}
+
 	@Override
 	protected int writeData(RandomAccessOutputStream os, int toOffset)
 			throws IOException {
@@ -51,4 +58,5 @@ public class DoubleField extends TiffField<double[]> {
 		
 		return toOffset;
 	}
+
 }

@@ -12,9 +12,10 @@ package pixy.image.tiff;
 
 import java.io.IOException;
 
+import pixy.api.IIntableField;
 import pixy.io.RandomAccessOutputStream;
 
-public abstract class AbstractRationalField extends TiffField<int[]> {
+public abstract class AbstractRationalField extends TiffField<int[]> implements IIntableField {
 
 	public AbstractRationalField(Tag tag, FieldType fieldType, int[] data) {
 		super(tag, fieldType, data.length>>1);
@@ -25,6 +26,7 @@ public abstract class AbstractRationalField extends TiffField<int[]> {
 		return data.clone();
 	}
 	
+	@Override
 	public int[] getDataAsLong() {
 		return getData();
 	}

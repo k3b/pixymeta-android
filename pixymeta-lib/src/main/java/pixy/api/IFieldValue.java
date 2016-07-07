@@ -6,5 +6,6 @@ package pixy.api;
 public interface IFieldValue {
     IFieldDefinition getDefinition();
     String getValueAsString();
+    // TODO !!! void setValue(String value);
     IDataType getDataType();
 }

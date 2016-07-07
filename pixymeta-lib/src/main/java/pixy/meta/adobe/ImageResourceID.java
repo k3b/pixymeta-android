@@ -21,7 +21,6 @@ package pixy.meta.adobe;
 import java.util.HashMap;
 import java.util.Map;
 
-import pixy.meta.adobe.ImageResourceID;
 import pixy.string.StringUtils;
 
 /**
@@ -148,7 +147,7 @@ public enum ImageResourceID {
     public String toString() {
 		if (this == UNKNOWN)
 			return name();
-		return name() + " [Value: " + StringUtils.shortToHexStringMM(value) +"] - " + description;
+		return name() + " [Value: " + StringUtils.toHexStringMM(value) +"] - " + description;
 	}
 	
     public static ImageResourceID fromShort(short value) {

@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pixy.api.IDataType;
-import pixy.api.IFieldDefinition;
 import pixy.string.StringUtils;
 
 /**
@@ -677,7 +676,7 @@ public enum TiffTag implements Tag {
     public String toString() {
 		if (this == UNKNOWN)
 			return name;
-		return name + " [Value: " + StringUtils.shortToHexStringMM(value) +"] (" + getAttribute() + ")";
+		return name + " [Value: " + StringUtils.toHexStringMM(value) +"] (" + getAttribute() + ")";
 	}
 
 	// implementation of api.IFieldDefinition

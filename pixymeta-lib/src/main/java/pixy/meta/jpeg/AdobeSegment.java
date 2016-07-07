@@ -93,8 +93,8 @@ public class AdobeSegment extends Metadata {
 		String[] colorTransform = {"Unknown (RGB or CMYK)", "YCbCr", "YCCK"};
 		LOGGER.info("JPEG AdobeSegment output starts =>");
 		LOGGER.info("DCTEncodeVersion: {}", m_DCTEncodeVersion);
-		LOGGER.info("APP14Flags0: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags0));
-		LOGGER.info("APP14Flags1: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags1));
+		LOGGER.info("APP14Flags0: {}", StringUtils.toHexStringMM((short)m_APP14Flags0));
+		LOGGER.info("APP14Flags1: {}", StringUtils.toHexStringMM((short)m_APP14Flags1));
 		LOGGER.info("ColorTransform: {}", (m_ColorTransform <= 2)?colorTransform[m_ColorTransform]:m_ColorTransform);
 		LOGGER.info("<= JPEG AdobeSegment output ends");
 	}

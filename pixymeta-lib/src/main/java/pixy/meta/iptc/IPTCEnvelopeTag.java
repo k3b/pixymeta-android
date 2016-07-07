@@ -70,7 +70,7 @@ public enum IPTCEnvelopeTag implements IPTCTag {
 			 e.printStackTrace();
 		 }
 		 // Hex representation of the data
-		 return StringUtils.byteArrayToHexString(data, 0, 10);
+		 return StringUtils.toHexListString(data, 0, 10);
 	 }
 	 
 	 public String getName() {

@@ -104,7 +104,7 @@ public class ICCProfile extends Metadata {
 	}
 	
 	public String getBytesReserved() {
-		return StringUtils.byteArrayToHexString(header.bytesReserved);
+		return StringUtils.toHexListString(header.bytesReserved);
 	}
 	
 	public String getColorSpace() {
@@ -209,7 +209,7 @@ public class ICCProfile extends Metadata {
 	}
 	
 	public String getProfileID() {
-		return StringUtils.byteArrayToHexString(header.profileID);
+		return StringUtils.toHexListString(header.profileID);
 	}
 	
 	public long getProfileSize() {

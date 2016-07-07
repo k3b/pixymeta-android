@@ -44,57 +44,10 @@ import java.util.regex.*;
  * @version 1.0 09/18/2012
  */
 public class StringUtils {
-	
+
 	private static final char[] HEXES = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-	
-	/**
-	 * Formats byte array.
-	 * 
-	 * @param bytes an array of byte.
-	 * @return a hex string representation of the byte array.
-	 */
-	public static String byteArrayToHexString(byte[] bytes) {	    
-	    return byteArrayToHexString(bytes, 0, bytes.length);
-	}
-	
-	public static String byteArrayToHexString(byte[] bytes, int offset, int length) {		
-		if ( bytes == null )
-			return null;
-		
-		if(bytes.length == 0) return "[]";
-	    
-	    if(offset < 0 || offset >= bytes.length)
-	    	throw new IllegalArgumentException("Offset out of array bound!");
-	    
-	    int endOffset = offset + Math.min(length, bytes.length);
-		 
-	    if(endOffset > bytes.length)
-	    	length = bytes.length - offset;
-	    
-	    StringBuilder hex = new StringBuilder(5*length + 2);	    
-	    hex.append("[");
-	    
-	    for (int i = offset; i < endOffset; i++) {
-	    	hex.append("0x").append(HEXES[(bytes[i] & 0xf0) >> 4])
-	         .append(HEXES[bytes[i] & 0x0f]).append(",");
-	    }
-	    
-	    // Remove the last ","
-	    if(hex.length() > 1)
-	    	hex.deleteCharAt(hex.length()-1);
-	    
-	    if(endOffset < bytes.length)
-	    	hex.append(" ..."); // Partial output
-	    
-	    hex.append("]");
-	    
-	    return hex.toString();
-	}
-	
-	public static String byteToHexString(byte b) {
-	    return String.format("0x%02X ", b);
-	}
-	
+	private static final String EMPTY_LIST = "[]";
+
 	/**
 	 * Capitalizes the first character of the words in a string.
 	 * 
@@ -517,7 +470,7 @@ public class StringUtils {
 		return toHexString(md.digest(message));
     }
    
-	public static String intToHexString(int value) {
+	public static String toHexString(int value) {
 		StringBuilder buffer = new StringBuilder(10);
 		
 		buffer.append("0x");		
@@ -534,7 +487,7 @@ public class StringUtils {
 		return buffer.toString();
 	}
 
-	public static String intToHexStringMM(int value) {
+	public static String toHexStringMM(int value) {
 		
 		StringBuilder buffer = new StringBuilder(10);
 		
@@ -584,20 +537,20 @@ public class StringUtils {
 	 * 
 	 * @param data an array of int.
 	 * @param unsigned true if the int value should be treated as unsigned,
-	 * 		  otherwise false 
+	 * 		  otherwise false
 	 * @return a string representation of the int array.
 	 */
-	public static String longArrayToString(int[] data, boolean unsigned) {
+	public static String toListString(int[] data, boolean unsigned) {
 		
-		return longArrayToString(data, 0, data.length, unsigned);
+		return toListString(data, 0, data.length, unsigned);
 	}
 	
-	public static String longArrayToString(int[] data, int offset, int length, boolean unsigned) {
+	public static String toListString(int[] data, int offset, int length, boolean unsigned) {
 		if ( data == null ) {
 		      return null;
 		}
 			
-		if(data.length == 0) return "[]";
+		if(data.length == 0) return EMPTY_LIST;
 	    
 	    if(offset < 0 || offset >= data.length)
 	    	throw new IllegalArgumentException("Offset out of array bound!");
@@ -638,6 +591,7 @@ public class StringUtils {
 	}
 	
 	public static byte parseByte(String s) {
+		if (s.toLowerCase().startsWith("0x")) return parseByte(s.substring(2), 16);
 		return Byte.parseByte(s);
 	}
 	
@@ -681,7 +635,26 @@ public class StringUtils {
 	{
 		return Matcher.quoteReplacement(replacement);
 	}
-	
+
+	public static int[] parseIntList(String value) {
+		int[] data = null;
+		if (value != null) {
+			String[] subValues = parseStringList(value);
+			data = new int[subValues.length];
+			for(int i = subValues.length -1; i >= 0; i--) {
+				if (subValues[i] != null) {
+					data[i] = Integer.parseInt(subValues[i]);
+				}
+			}
+		}
+		return data;
+	}
+
+	private static String[] parseStringList(String value) {
+		if (value.startsWith("[")) value = value.substring(1);
+		return value.split("[\\]\\[ ,/]+");
+	}
+
 	/**
 	 * Formats TIFF rational data field.
 	 * 
@@ -690,7 +663,7 @@ public class StringUtils {
 	 * 		  otherwise false 
 	 * @return a string representation of the int array.
 	 */
-	public static String rationalArrayToString(int[] data, boolean unsigned) {
+	public static String rationalToStringList(int[] data, boolean unsigned) {
 		if(data.length%2 != 0)
 			throw new IllegalArgumentException("Data length is odd number, expect even!");
 
@@ -829,16 +802,16 @@ public class StringUtils {
 	 * 		  otherwise false 
 	 * @return a string representation of the short array.
 	 */
-	public static String shortArrayToString(short[] data, boolean unsigned) {
-		return shortArrayToString(data, 0, data.length, unsigned);
+	public static String toListString(short[] data, boolean unsigned) {
+		return toListString(data, 0, data.length, unsigned);
 	}
 	
-	public static String shortArrayToString(short[] data, int offset, int length, boolean unsigned) {
+	public static String toListString(short[] data, int offset, int length, boolean unsigned) {
 		if ( data == null ) {
 		      return null;
 		}
 			
-		if(data.length == 0) return "[]";
+		if(data.length == 0) return EMPTY_LIST;
 	    
 	    if(offset < 0 || offset >= data.length)
 	    	throw new IllegalArgumentException("Offset out of array bound!");
@@ -874,7 +847,7 @@ public class StringUtils {
 		return shorts.toString();
 	}
 	
-	public static String shortToHexString(short value) {
+	public static String toHexString(short value) {
 		StringBuilder buffer = new StringBuilder(6);
 		
 		buffer.append("0x");		
@@ -887,7 +860,7 @@ public class StringUtils {
 		return buffer.toString();
 	}
 	
-	public static String shortToHexStringMM(short value) {
+	public static String toHexStringMM(short value) {
 		
 		StringBuilder buffer = new StringBuilder(6);
 		
@@ -948,7 +921,55 @@ public class StringUtils {
 	public static String toHexString(byte[] bytes) {
 		return toHexString(bytes, 0, bytes.length);
 	}
-	
+
+	/**
+	 * Formats byte array.
+	 *
+	 * @param bytes an array of byte.
+	 * @return a hex string representation of the byte array.
+	 */
+	public static String toHexListString(byte[] bytes) {
+		return toHexListString(bytes, 0, bytes.length);
+	}
+
+	public static String toHexString(byte b) {
+		return String.format("0x%02X ", b);
+	}
+
+	public static String toHexListString(byte[] bytes, int offset, int length) {
+		if ( bytes == null )
+			return null;
+
+		if(bytes.length == 0) return EMPTY_LIST;
+
+		if(offset < 0 || offset >= bytes.length)
+			throw new IllegalArgumentException("Offset out of array bound!");
+
+		int endOffset = offset + Math.min(length, bytes.length);
+
+		if(endOffset > bytes.length)
+			length = bytes.length - offset;
+
+		StringBuilder hex = new StringBuilder(5*length + 2);
+		hex.append("[");
+
+		for (int i = offset; i < endOffset; i++) {
+			hex.append("0x").append(HEXES[(bytes[i] & 0xf0) >> 4])
+					.append(HEXES[bytes[i] & 0x0f]).append(",");
+		}
+
+		// Remove the last ","
+		if(hex.length() > 1)
+			hex.deleteCharAt(hex.length()-1);
+
+		if(endOffset < bytes.length)
+			hex.append(" ..."); // Partial output
+
+		hex.append("]");
+
+		return hex.toString();
+	}
+
 	/**
 	 * Convert byte array to hex string
 	 * 
@@ -993,6 +1014,62 @@ public class StringUtils {
 		
 		 return retVal;		 
 	}
-	
-	private StringUtils(){} // Prevents instantiation	
+
+	public static float[] parseFloatList(String value) {
+		float[] data = null;
+		if (value != null) {
+			String[] subValues = parseStringList(value);
+			data = new float[subValues.length];
+			for(int i = subValues.length -1; i >= 0; i--) {
+				if (subValues[i] != null) {
+					data[i] =  parseFloat(subValues[i]);
+				}
+			}
+		}
+		return data;
+	}
+
+	public static double[] parseDoubleList(String value) {
+		double[] data = null;
+		if (value != null) {
+			String[] subValues = parseStringList(value);
+			data = new double[subValues.length];
+			for(int i = subValues.length -1; i >= 0; i--) {
+				if (subValues[i] != null) {
+					data[i] =  parseDouble(subValues[i]);
+				}
+			}
+		}
+		return data;
+	}
+
+	public static short[] parseShortList(String value) {
+		short[] data = null;
+		if (value != null) {
+			String[] subValues = parseStringList(value);
+			data = new short[subValues.length];
+			for(int i = subValues.length -1; i >= 0; i--) {
+				if (subValues[i] != null) {
+					data[i] =  parseShort(subValues[i]);
+				}
+			}
+		}
+		return data;
+	}
+
+	public static byte[] parseHexByteList(String value) {
+		byte[] data = null;
+		if (value != null) {
+			String[] subValues = parseStringList(value);
+			data = new byte[subValues.length];
+			for(int i = subValues.length -1; i >= 0; i--) {
+				if (subValues[i] != null) {
+					data[i] =  parseByte(subValues[i]);
+				}
+			}
+		}
+		return data;
+	}
+
+	private StringUtils(){} // Prevents instantiation
 }

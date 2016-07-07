@@ -1,7 +1,5 @@
 package pixy.meta;
 
-import com.twelvemonkeys.imageio.metadata.exif.EXIF;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,10 +27,10 @@ import pixy.api.IDataType;
 import pixy.api.IDirectory;
 import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
+import pixy.api.IMetadata;
 import pixy.demo.j2se.TestPixyMetaJ2se;
 import pixy.image.tiff.FieldType;
 import pixy.image.tiff.Tag;
-import pixy.meta.exif.ExifTag;
 import pixy.string.StringUtils;
 
 // @RunWith(Parameterized.class)
@@ -94,10 +92,10 @@ public class MetadataRegressionTests {
 			InputStream stream = null;
 			try {
 				stream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
-				Map<MetadataType, Metadata> metadataMap = Metadata.readMetadata(stream);
+				Map<MetadataType, IMetadata> metadataMap = Metadata.readMetadata(stream);
 				if (metadataMap == null) continue;
 
-				for (Metadata exif : metadataMap.values()) {
+				for (IMetadata exif : metadataMap.values()) {
 					if (exif == null) continue;
 					List<IDirectory> exifDir = exif.getMetaData();
 					if (exifDir == null) continue;
@@ -137,7 +135,7 @@ public class MetadataRegressionTests {
 		if (!isCompatible(valueDataType, defDataType)) {
 			String fieldDefinitionName = fieldDefinition.getName();
 			if (fieldDefinition instanceof Tag) {
-				fieldDefinitionName = StringUtils.shortToHexStringMM(((Tag) fieldDefinition).getValue()) +"-" + fieldDefinitionName;
+				fieldDefinitionName = StringUtils.toHexStringMM(((Tag) fieldDefinition).getValue()) +"-" + fieldDefinitionName;
 			}
 
 			// 0x0009-ExifVersion:Unknown => Undefined
@@ -176,9 +174,9 @@ public class MetadataRegressionTests {
 		result.append("\n\n############\n").append(fileName).append("\n");
 
 		InputStream stream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
-		Map<MetadataType, Metadata> metadataMap = Metadata.readMetadata(stream);
+		Map<MetadataType, IMetadata> metadataMap = Metadata.readMetadata(stream);
 
-		for (Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
+		for (Map.Entry<MetadataType, IMetadata> entry : metadataMap.entrySet()) {
 			result.append(entry.getKey()).append("\n");
 			 if (showDetailed) {
 				 List<IDirectory> metaDir = (entry.getValue() != null) ? entry.getValue().getMetaData() : null;

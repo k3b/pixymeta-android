@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
+import pixy.api.IMetadata;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.meta.image.Comments;
@@ -68,7 +69,7 @@ public class GIFMeta {
 		private byte[] logicalScreenDescriptor;
 		private byte[] globalPalette;
 		private byte[] imageDescriptor;
-		private Map<MetadataType, Metadata> metadataMap;
+		private Map<MetadataType, IMetadata> metadataMap;
 		private Comments comments;
 	}
 	
@@ -328,11 +329,11 @@ public class GIFMeta {
 		is.read(DTO.logicalScreenDescriptor);
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
+	public static Map<MetadataType, IMetadata> readMetadata(InputStream is) throws IOException {
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		// Created a Map for the Meta data
-		DTO.metadataMap = new HashMap<MetadataType, Metadata>(); 
+		DTO.metadataMap = new HashMap<MetadataType, IMetadata>();
 				
 		readHeader(is, DTO);
 		readLSD(is, DTO);

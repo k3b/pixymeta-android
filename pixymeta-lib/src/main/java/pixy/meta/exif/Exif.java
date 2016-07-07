@@ -26,8 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import pixy.api.IDataType;
 import pixy.api.IDirectory;
 import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
 import pixy.image.IBitmap;
 import pixy.image.tiff.Tag;
 import pixy.meta.Metadata;
@@ -296,6 +299,4 @@ public abstract class Exif extends Metadata {
 		if (result.size() > 0) return result;
 		return null;
 	}
-
-
 }

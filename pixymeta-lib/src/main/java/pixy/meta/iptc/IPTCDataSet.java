@@ -200,7 +200,7 @@ public class IPTCDataSet implements IFieldValue {
 		}		
 		
 		LOGGER.info("Dataset name: {}", name);
-		LOGGER.info("Dataset tag: {}[{}]", tag, StringUtils.shortToHexStringMM((short)tag));
+		LOGGER.info("Dataset tag: {}[{}]", tag, StringUtils.toHexStringMM((short)tag));
 		LOGGER.info("Dataset size: {}", size);
 		
 		LOGGER.info("Dataset value: {}", getDataAsString());
@@ -228,6 +228,12 @@ public class IPTCDataSet implements IFieldValue {
 	@Override
 	public String getValueAsString() {
 		return getDataAsString();
+	}
+
+	// TODO !!! @Override
+	public void setValue(String value) {
+		tagEnum.getDataAsString(getData());
+
 	}
 
 	@Override

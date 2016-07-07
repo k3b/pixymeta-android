@@ -10,6 +10,7 @@
 
 package pixy.image.tiff;
 
+import pixy.api.IIntableField;
 import pixy.string.StringUtils;
 
 /**
@@ -18,12 +19,13 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/06/2013
  */
-public final class ShortField extends AbstractShortField {
+public final class ShortField extends AbstractShortField  implements IIntableField {
 
 	public ShortField(Tag tag, short[] data) {
 		super(tag, FieldType.SHORT, data);
 	}
-	
+
+	@Override
 	public int[] getDataAsLong() {
 		//
 		int[] temp = new int[data.length];
@@ -36,6 +38,6 @@ public final class ShortField extends AbstractShortField {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.shortArrayToString(data, 0, 10, true);
+		return StringUtils.toListString(data, 0, 10, true);
 	}
 }

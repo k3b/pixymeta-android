@@ -33,7 +33,7 @@ public final class UndefinedField extends TiffField<byte[]> {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.byteArrayToHexString(data, 0, 10);
+		return StringUtils.toHexListString(data, 0, 10);
 	}
 	
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {

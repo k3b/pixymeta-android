@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pixy.api.IDataType;
-import pixy.meta.exif.InteropTag;
 import pixy.image.tiff.FieldType;
 import pixy.image.tiff.Tag;
 import pixy.image.tiff.TiffTag;
@@ -63,7 +62,7 @@ public enum InteropTag implements Tag {
     public String toString() {
 		if (this == UNKNOWN)
 			return name;
-		return name + " [Value: " + StringUtils.shortToHexStringMM(value) +"]";
+		return name + " [Value: " + StringUtils.toHexStringMM(value) +"]";
 	}
 	
     public static Tag fromShort(short value) {

@@ -28,7 +28,7 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 RECORD_VERSION(0, "ApplicationRecordVersion") {
 		 public String getDataAsString(byte[] data) {
 			 // Hex representation of the data
-			 return StringUtils.byteArrayToHexString(data, 0, 10);
+			 return StringUtils.toHexListString(data, 0, 10);
 		 }
 	 },
 	 OBJECT_TYPE_REF(3, "ObjectTypeRef"),
@@ -200,7 +200,7 @@ public enum IPTCApplicationTag implements IPTCTag {
 			 e.printStackTrace();
 		 }
 		 // Hex representation of the data
-		 return StringUtils.byteArrayToHexString(data, 0, 10);
+		 return StringUtils.toHexListString(data, 0, 10);
 	 }
 	 
 	 public String getName() {

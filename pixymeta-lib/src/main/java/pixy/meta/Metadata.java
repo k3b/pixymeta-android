@@ -27,7 +27,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pixy.api.IDirectory;
-import pixy.api.IFieldDefinition;
+import pixy.api.IMetadata;
 import pixy.image.IBitmap;
 import pixy.util.MetadataUtils;
 import pixy.meta.adobe._8BIM;
@@ -63,7 +62,7 @@ import pixy.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/12/2015
  */
-public abstract class Metadata implements MetadataReader {
+public abstract class Metadata implements IMetadata {
 	public static final int IMAGE_MAGIC_NUMBER_LEN = 4;
 	// Fields
 	private MetadataType type;
@@ -393,9 +392,9 @@ public abstract class Metadata implements MetadataReader {
 		peekHeadInputStream.shallowClose();
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
+	public static Map<MetadataType, IMetadata> readMetadata(File image) throws IOException {
 		FileInputStream fin = new FileInputStream(image);
-		Map<MetadataType, Metadata> metadataMap = readMetadata(fin);
+		Map<MetadataType, IMetadata> metadataMap = readMetadata(fin);
 		fin.close();
 		
 		return metadataMap; 
@@ -408,9 +407,9 @@ public abstract class Metadata implements MetadataReader {
 	 * @return a list of Metadata for the input stream
 	 * @throws IOException
 	 */
-	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
+	public static Map<MetadataType, IMetadata> readMetadata(InputStream is) throws IOException {
 		// Metadata map for all the Metadata read
-		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+		Map<MetadataType, IMetadata> metadataMap = new HashMap<MetadataType, IMetadata>();
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = MetadataUtils.guessImageType(peekHeadInputStream);		
@@ -443,7 +442,7 @@ public abstract class Metadata implements MetadataReader {
 		return metadataMap;
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(String image) throws IOException {
+	public static Map<MetadataType, IMetadata> readMetadata(String image) throws IOException {
 		return readMetadata(new File(image));
 	}
 	
@@ -497,6 +496,7 @@ public abstract class Metadata implements MetadataReader {
 		}
 	}
 	
+	@Override
 	public byte[] getData() {
 		if(data != null)
 			return data.clone();
@@ -504,15 +504,15 @@ public abstract class Metadata implements MetadataReader {
 		return null;
 	}
 	
+	@Override
 	public MetadataType getType() {
 		return type;
 	}
 	
+	@Override
 	public boolean isDataRead() {
 		return isDataRead;
 	}
-	
-	public abstract void showMetadata();
 
 	//TODO implement for all
 	// public abstract void addField(IFieldDefinition tag, Object data);
@@ -523,6 +523,7 @@ public abstract class Metadata implements MetadataReader {
 	 * @param out OutputStream to write the metadata to
 	 * @throws IOException
 	 */
+	@Override
 	public void write(OutputStream out) throws IOException {
 		byte[] data = getData();
 		if(data != null)
@@ -532,6 +533,7 @@ public abstract class Metadata implements MetadataReader {
 	/**
 	 * @return directories that belong to this MetaData
 	 * */
+	@Override
 	public List<IDirectory> getMetaData() {
 		return null;
 	}

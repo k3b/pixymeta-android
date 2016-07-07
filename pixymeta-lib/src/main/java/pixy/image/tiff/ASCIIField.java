@@ -32,6 +32,11 @@ public final class ASCIIField extends TiffField<String> {
 		return data.trim().replace("\0", "; ");
 	}
 
+	// TODO !!! @Override
+	public void setValue(String value) {
+		data = value;
+	}
+
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		
 		byte[] buf = data.getBytes("iso-8859-1");
@@ -50,4 +55,5 @@ public final class ASCIIField extends TiffField<String> {
 		}		
 		return toOffset;
 	}
+
 }

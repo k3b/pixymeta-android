@@ -12,9 +12,11 @@ package pixy.image.tiff;
 
 import java.io.IOException;
 
+import pixy.api.IIntableField;
 import pixy.io.RandomAccessOutputStream;
+import pixy.string.StringUtils;
 
-public abstract class AbstractLongField extends TiffField<int[]> {
+public abstract class AbstractLongField extends TiffField<int[]> implements IIntableField {
 
 	public AbstractLongField(Tag tag, FieldType fieldType, int[] data) {
 		super(tag, fieldType, data.length);
@@ -24,11 +26,19 @@ public abstract class AbstractLongField extends TiffField<int[]> {
 	public int[] getData() {
 		return data.clone();
 	}
-	
+
+	@Override
 	public int[] getDataAsLong() {
 		return getData();
 	}
-	
+
+
+	// [var, var, var]
+	// TODO !!! @Override
+	public void setValue(String value) {
+		data = StringUtils.parseIntList(value);
+	}
+
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		
 		if (data.length == 1) {

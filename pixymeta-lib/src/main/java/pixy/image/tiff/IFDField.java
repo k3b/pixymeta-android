@@ -25,6 +25,7 @@ public final class IFDField extends AbstractLongField {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.longArrayToString(data, 0, 10, true);
+		return StringUtils.toListString(data, 0, 10, true);
 	}
+
 }

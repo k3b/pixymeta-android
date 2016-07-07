@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pixy.meta.adobe.ImageResourceID;
 import pixy.io.IOUtils;
 import pixy.string.StringUtils;
 
@@ -72,13 +71,13 @@ public class _8BIM {
 		ImageResourceID eId  = ImageResourceID.fromShort(id);
 		
 		if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {
-			LOGGER.info("PATH_INFO [Value: {}] - Path Information (saved paths).", StringUtils.shortToHexStringMM(id));
+			LOGGER.info("PATH_INFO [Value: {}] - Path Information (saved paths).", StringUtils.toHexStringMM(id));
 		}
 		else if((id >= ImageResourceID.PLUGIN_RESOURCE0.getValue()) && (id <= ImageResourceID.PLUGIN_RESOURCE999.getValue())) {
-			LOGGER.info("PLUGIN_RESOURCE [Value: {}] - Plug-In resource.", StringUtils.shortToHexStringMM(id));
+			LOGGER.info("PLUGIN_RESOURCE [Value: {}] - Plug-In resource.", StringUtils.toHexStringMM(id));
 		}
 		else if (eId == ImageResourceID.UNKNOWN) {
-			LOGGER.info("{} [Value: {}]", eId, StringUtils.shortToHexStringMM(id));
+			LOGGER.info("{} [Value: {}]", eId, StringUtils.toHexStringMM(id));
 		}
 		else {
 			LOGGER.info("{}", eId);

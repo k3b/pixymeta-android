@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import pixy.image.png.ICCPBuilder;
-import pixy.meta.Metadata;
+import pixy.api.IMetadata;
 import pixy.meta.MetadataType;
 import pixy.meta.icc.ICCProfile;
 import pixy.meta.xmp.XMP;
@@ -215,8 +215,8 @@ public class PNGMeta {
 		return icc_profile;
  	}
   	
-	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
-		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+	public static Map<MetadataType, IMetadata> readMetadata(InputStream is) throws IOException {
+		Map<MetadataType, IMetadata> metadataMap = new HashMap<MetadataType, IMetadata>();
 		List<Chunk> chunks = readChunks(is);
 		Iterator<Chunk> iter = chunks.iterator();
 		TextualChunks textualChunk = null;

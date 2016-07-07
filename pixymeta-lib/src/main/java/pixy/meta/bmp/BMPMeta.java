@@ -26,7 +26,7 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import pixy.meta.Metadata;
+import pixy.api.IMetadata;
 import pixy.meta.MetadataType;
 import pixy.meta.image.ImageMetadata;
 import pixy.image.bmp.BmpCompression;
@@ -61,8 +61,8 @@ public class BMPMeta {
 		is.read(DTO.infoHeader);
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
-		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+	public static Map<MetadataType, IMetadata> readMetadata(InputStream is) throws IOException {
+		Map<MetadataType, IMetadata> metadataMap = new HashMap<MetadataType, IMetadata>();
 		Document doc = createDocumentNode(); // Create a document for ImageMetadata
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();

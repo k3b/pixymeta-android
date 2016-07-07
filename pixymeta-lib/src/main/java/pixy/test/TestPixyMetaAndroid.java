@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import pixy.image.IBitmap;
+import pixy.api.IMetadata;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.IPTC_NAA;
@@ -40,12 +41,12 @@ public class TestPixyMetaAndroid {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestPixyMetaAndroid.class);
 	
 	public static void main(String[] args) throws IOException {
-		Map<MetadataType, Metadata> metadataMap = Metadata.readMetadata(args[0]);
+		Map<MetadataType, IMetadata> metadataMap = Metadata.readMetadata(args[0]);
 		LOGGER.info("Start of metadata information:");
 		LOGGER.info("Total number of metadata entries: {}", metadataMap.size());
 		
 		int i = 0;
-		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
+		for(Map.Entry<MetadataType, IMetadata> entry : metadataMap.entrySet()) {
 			LOGGER.info("Metadata entry {} - {}", i, entry.getKey());
 			entry.getValue().showMetadata();
 			i++;

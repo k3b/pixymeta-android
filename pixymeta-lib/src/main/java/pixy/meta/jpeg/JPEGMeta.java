@@ -59,6 +59,7 @@ import pixy.image.jpeg.UnknownSegment;
 import pixy.io.FileCacheRandomAccessInputStream;
 import pixy.io.IOUtils;
 import pixy.io.RandomAccessInputStream;
+import pixy.api.IMetadata;
 import pixy.string.Base64;
 import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
@@ -80,7 +81,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.meta.Thumbnail;
 import pixy.meta.adobe.IRB;
@@ -267,7 +267,7 @@ public class JPEGMeta {
 	
 	// Extract depth map from google phones
 	public static void extractDepthMap(InputStream is, String pathToDepthMap) throws IOException {
-		Map<MetadataType, Metadata> meta = readMetadata(is);
+		Map<MetadataType, IMetadata> meta = readMetadata(is);
 		XMP xmp = (XMP)meta.get(MetadataType.XMP);
 		if(xmp != null && xmp.hasExtendedXmp()) {
 			Document xmpDocument = xmp.getMergedDocument();
@@ -1278,8 +1278,8 @@ public class JPEGMeta {
 		m_qTables.addAll(qTables);		
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
-		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+	public static Map<MetadataType, IMetadata> readMetadata(InputStream is) throws IOException {
+		Map<MetadataType, IMetadata> metadataMap = new HashMap<MetadataType, IMetadata>();
 		Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
 		// Need to wrap the input stream with a BufferedInputStream to
 		// speed up reading SOS
@@ -1490,7 +1490,7 @@ public class JPEGMeta {
 			metadataMap.put(MetadataType.COMMENT, comments);
 			
 		// Extract thumbnails to ImageMetadata
-		Metadata meta = metadataMap.get(MetadataType.EXIF);
+		IMetadata meta = metadataMap.get(MetadataType.EXIF);
 		if(meta != null) {
 			Exif exif = (Exif)meta;
 			if(!exif.isDataRead())

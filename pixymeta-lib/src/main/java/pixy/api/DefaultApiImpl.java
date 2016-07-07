@@ -60,6 +60,10 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
         return value;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     @Override
     public IDataType getDataType() {
         return UNKNOWN;
