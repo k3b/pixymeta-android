@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.image.tiff.UnknownTag;
 import pixy.api.IMetadata;
 import pixy.meta.MetadataType;
@@ -62,7 +63,6 @@ import pixy.meta.image.Comments;
 import pixy.meta.iptc.IPTC;
 import pixy.meta.iptc.IPTCDataSet;
 import pixy.meta.xmp.XMP;
-import pixy.image.jpeg.Marker;
 import pixy.image.tiff.ASCIIField;
 import pixy.image.tiff.ByteField;
 import pixy.image.tiff.DoubleField;
@@ -185,37 +185,37 @@ public class TIFFMeta {
 		boolean finished = false;
 		int length = 0;	
 		short marker;
-		Marker emarker;
+		JpegSegmentMarker emarker;
 		
 		rin.seek(offset);
 		rout.seek(outOffset);
 		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(rin)) != Marker.SOI) {
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(rin)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI) {
 			return;
 		}
 		
-		IOUtils.writeShortMM(rout, Marker.SOI.getValue());
+		IOUtils.writeShortMM(rout, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 		
 		marker = IOUtils.readShortMM(rin);
 			
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI) {
+			if (JpegSegmentMarker.fromShort(marker) == JpegSegmentMarker.JPG_SEGMENT_END_OF_IMAGE_EOI) {
 				IOUtils.writeShortMM(rout, marker);
 				finished = true;
 			} else { // Read markers
-		  		emarker = Marker.fromShort(marker);
+		  		emarker = JpegSegmentMarker.fromShort(marker);
 				
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone mark besides SOI, EOI, and RSTn. 
+				    case TEM: // The only stand alone mark besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
 				    	marker = IOUtils.readShortMM(rin);
 				    	break;
 				    case SOS:						
 						marker = copyJPEGSOS(rin, rout);
 						break;
-				    case PADDING:	
+				    case JPG_SEGMENT_PADDING:
 				    	int nextByte = 0;
 				    	while((nextByte = rin.read()) == 0xff) {;}
 				    	marker = (short)((0xff<<8)|nextByte);
@@ -254,7 +254,7 @@ public class TIFFMeta {
 		int len = IOUtils.readUnsignedShortMM(rin);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(rin, buf);
-		IOUtils.writeShortMM(rout, Marker.SOS.getValue());
+		IOUtils.writeShortMM(rout, JpegSegmentMarker.SOS.getValue());
 		IOUtils.writeShortMM(rout, len);
 		rout.write(buf);		
 		// Actual image data follow.
@@ -276,7 +276,7 @@ public class TIFFMeta {
 				if (nextByte != 0x00) {
 					marker = (short)((0xff<<8)|nextByte);
 					
-					switch (Marker.fromShort(marker)) {										
+					switch (JpegSegmentMarker.fromShort(marker)) {
 						case RST0:  
 						case RST1:
 						case RST2:

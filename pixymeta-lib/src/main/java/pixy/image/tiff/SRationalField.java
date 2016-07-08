@@ -23,8 +23,14 @@ public final class SRationalField extends AbstractRationalField {
 	public SRationalField(Tag tag, int[] data) {
 		super(tag, FieldType.SRATIONAL, data);
 	}
-	
+
+	@Override
 	public String getDataAsString() {
 		return StringUtils.rationalToStringList(data, false);
+	}
+
+	@Override
+	public void setValue(String value) {
+		data = StringUtils.parseIntList(value);
 	}
 }

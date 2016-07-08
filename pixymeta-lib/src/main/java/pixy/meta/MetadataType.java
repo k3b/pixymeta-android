@@ -19,7 +19,7 @@ public enum MetadataType {
 	PHOTOSHOP_DDB, // PHOTOSHOP Document Data Block
 	COMMENT, // General comment
 	IMAGE, // Image specific information
-	JPG_JFIF, // JPEG APP0 (JFIF)
+	JPG_JFIF, // JPEG JPG_SEGMENT_JFIF_APP0 (JFIF)
 	JPG_DUCKY, // JPEG APP12 (DUCKY)
 	JPG_ADOBE, // JPEG APP14 (ADOBE)
 	PNG_TEXTUAL, // PNG textual information

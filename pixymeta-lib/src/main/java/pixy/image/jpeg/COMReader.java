@@ -15,23 +15,23 @@ import java.io.IOException;
 import pixy.util.Reader;
 
 /**
- * JPEG COM segment reader
+ * JPEG JPG_SEGMENT_COMMNENTS_COM jpegSegment reader
  *  
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 10/11/2013
  */
 public class COMReader implements Reader {
 
-	private Segment segment;
+	private JpegSegment jpegSegment;
 	private String comment;
 	
-	public COMReader(Segment segment) throws IOException {
+	public COMReader(JpegSegment jpegSegment) throws IOException {
 		//
-		if(segment.getMarker() != Marker.COM) {
-			throw new IllegalArgumentException("Not a valid COM segment!");
+		if(jpegSegment.getJpegSegmentMarker() != JpegSegmentMarker.JPG_SEGMENT_COMMNENTS_COM) {
+			throw new IllegalArgumentException("Not a valid JPG_SEGMENT_COMMNENTS_COM jpegSegment!");
 		}
 		
-		this.segment = segment;
+		this.jpegSegment = jpegSegment;
 		read();
 	}
 	
@@ -40,6 +40,6 @@ public class COMReader implements Reader {
 	}
 	
 	public void read() throws IOException {
-		this.comment = new String(segment.getData()).trim();
+		this.comment = new String(jpegSegment.getData()).trim();
 	}
 }

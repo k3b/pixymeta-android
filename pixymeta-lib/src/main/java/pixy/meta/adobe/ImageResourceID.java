@@ -30,7 +30,7 @@ import pixy.string.StringUtils;
  * @version 1.0 06/10/2013
  */
 public enum ImageResourceID {
-	// Adobe Image Resource Block IDs - JPEG APP13
+	// Adobe Image Resource Block IDs - JPEG JPG_SEGMENT_IPTC_APP13
 	CHANNELS_ROWS_COLUMNS_DEPTH_MODE("Obsolete. Photoshop 2.0 only. Contains five 2 byte values: number of channels, rows, columns, depth, and mode.", (short)0x03e8),
 	PRINT_MANAGER_INFO("Optional. Macintosh print manager print info record.", (short)0x03e9),
 	XML("XML data.", (short)0x03ea),

@@ -30,6 +30,10 @@ public abstract class AbstractByteField extends TiffField<byte[]> {
 		return StringUtils.toHexListString(data, 0, 10);
 	}
 
+	public void setValue(String value) {
+		data = StringUtils.parseHexByteList(value);
+	}
+
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 	
 		if (data.length <= 4) {

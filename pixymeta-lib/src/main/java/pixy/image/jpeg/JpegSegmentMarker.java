@@ -23,7 +23,7 @@ import pixy.api.IFieldDefinition;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/08/2013
  */
-public enum Marker implements IFieldDefinition {
+public enum JpegSegmentMarker implements IFieldDefinition {
 
 	    /**
 	     * Define JPEG markers. 
@@ -65,41 +65,41 @@ public enum Marker implements IFieldDefinition {
 	    RST6("Restart 6", (short)0xffd6),
 	    RST7("Restart 7", (short)0xffd7),
 	    //End of RSTn definitions
-	    SOI("Start of image", (short)0xffd8),
-	    EOI("End of image", (short)0xffd9),
+		JPG_SEGMENT_START_OF_IMAGE_SOI("Start of image", (short)0xffd8),
+		JPG_SEGMENT_END_OF_IMAGE_EOI("End of image", (short)0xffd9),
 	    SOS("Start of scan", (short)0xffda),
 	    DQT("Define quantization table", (short)0xffdb),
 	    DNL("Define number of lines", (short)0xffdc),
 	    DRI("Define restart interval", (short)0xffdd),
 	    DHP("Define hierarchical progression", (short)0xffde),
 	    EXP("Expand reference components", (short)0xffdf),
-	    APP0("JFIF/JFXX/CIFF/AVI1", (short)0xffe0),
-	    APP1("EXIF/XMP/ExtendedXMP", (short)0xffe1),
-	    APP2("FPXR/ICC profile/MPF/PreviewImage", (short)0xffe2), 
+		JPG_SEGMENT_JFIF_APP0("JFIF/JFXX/CIFF/AVI1", (short)0xffe0),
+	    JPG_SEGMENT_EXIF_XMP_APP1("EXIF/XMP/ExtendedXMP", (short)0xffe1),
+	    JPG_SEGMENT_ICC_APP2("FPXR/ICC profile/MPF/PreviewImage", (short)0xffe2),
 	    APP3("Meta/Stim", (short)0xffe3), 
 	    APP4("Scalado", (short)0xffe4), 
 	    APP5("RMETA", (short)0xffe5), 
 	    APP6("EPPIM/NITF", (short)0xffe6), 
 	    APP7("", (short)0xffe7), 
 	    APP8("SPIFF", (short)0xffe8), 
-	    APP9("", (short)0xffe9), 
-	    APP10("Comment", (short)0xffea), 
+	    APP9("", (short)0xffe9),
+		JPG_SEGMENT_COMMENT_APP10("Comment", (short)0xffea),
 	    APP11("", (short)0xffeb), 
 	    APP12("Photoshop Ducky/PictureInfo", (short)0xffec), 
-	    APP13("Photoshop IRB/Adobe_CM", (short)0xffed),
+	    JPG_SEGMENT_IPTC_APP13("Photoshop IRB/Adobe_CM", (short)0xffed),
 	    APP14("Adobe DCT encoding information", (short)0xffee), 
 	    APP15("GraphicConverter", (short)0xffef), 
 	    JPG0("Reserved", (short)0xfff0),
 	    // A lot more here ...
 	    JPG13("Reserved", (short)0xfffd),
-	    COM("Comment", (short)0xfffe),
+	    JPG_SEGMENT_COMMNENTS_COM("Comment", (short)0xfffe),
 	    // End of JPEG marker definitions
 	    // Special case of arbitrary padding 0xff after segment identifier.
-	    PADDING("Padding", (short)0xffff),
+		JPG_SEGMENT_PADDING("Padding", (short)0xffff),
 	    // Special case of unknown segment identifier.
-	    UNKNOWN("Unknown", (short)0x0000);
+		JPG_SEGMENT_UNKNOWN("Unknown", (short)0x0000);
 	 	    
-	    private Marker(String description, short value) {
+	    private JpegSegmentMarker(String description, short value) {
 			this.description = description;
 			this.value = value;
 	    }
@@ -117,23 +117,23 @@ public enum Marker implements IFieldDefinition {
 		   return value;
 	    }
 	    
-	    public static Marker fromShort(short value) {
-	       	Marker marker = markerMap.get(value);
-	    	if (marker == null)
-	    	   return UNKNOWN;
-	      	return marker;
+	    public static JpegSegmentMarker fromShort(short value) {
+	       	JpegSegmentMarker jpegSegmentMarker = markerMap.get(value);
+	    	if (jpegSegmentMarker == null)
+	    	   return JPG_SEGMENT_UNKNOWN;
+	      	return jpegSegmentMarker;
 	    }
 	   
 	    @Override public String toString() {
 		   return name() + ": " + description;
 	    }
 	   
-	    private static final Map<Short, Marker> markerMap = new HashMap<Short, Marker>();
+	    private static final Map<Short, JpegSegmentMarker> markerMap = new HashMap<Short, JpegSegmentMarker>();
 	    
 	    static
 	    {
-	      for(Marker marker : values()) {
-	          markerMap.put(marker.getValue(), marker);
+	      for(JpegSegmentMarker jpegSegmentMarker : values()) {
+	          markerMap.put(jpegSegmentMarker.getValue(), jpegSegmentMarker);
 	      }
 	    }	    
    	  

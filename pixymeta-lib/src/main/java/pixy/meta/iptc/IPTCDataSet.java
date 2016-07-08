@@ -230,7 +230,7 @@ public class IPTCDataSet implements IFieldValue {
 		return getDataAsString();
 	}
 
-	// TODO !!! @Override
+	@Override
 	public void setValue(String value) {
 		tagEnum.getDataAsString(getData());
 

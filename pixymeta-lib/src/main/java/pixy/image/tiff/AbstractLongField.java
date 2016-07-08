@@ -34,7 +34,7 @@ public abstract class AbstractLongField extends TiffField<int[]> implements IInt
 
 
 	// [var, var, var]
-	// TODO !!! @Override
+	@Override
 	public void setValue(String value) {
 		data = StringUtils.parseIntList(value);
 	}

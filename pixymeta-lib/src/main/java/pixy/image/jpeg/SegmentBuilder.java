@@ -18,18 +18,18 @@ import pixy.util.Builder;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 10/11/2013
  */
-public abstract class SegmentBuilder implements Builder<Segment> {
+public abstract class SegmentBuilder implements Builder<JpegSegment> {
 	//
-	private final Marker marker;
+	private final JpegSegmentMarker jpegSegmentMarker;
 	
-	public SegmentBuilder(Marker marker) {
-		this.marker = marker;
+	public SegmentBuilder(JpegSegmentMarker jpegSegmentMarker) {
+		this.jpegSegmentMarker = jpegSegmentMarker;
 	}
 		
-	public final Segment build() {
+	public final JpegSegment build() {
 		byte[] data = buildData();
 		
-		return new Segment(marker, data.length + 2, data);
+		return new JpegSegment(jpegSegmentMarker, data.length + 2, data);
 	}
 	
 	protected abstract byte[] buildData();

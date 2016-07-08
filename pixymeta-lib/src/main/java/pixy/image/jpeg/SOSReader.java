@@ -16,35 +16,35 @@ import pixy.util.Reader;
 
 public class SOSReader implements Reader {
 	//
-	private Segment segment;
+	private JpegSegment jpegSegment;
 	private SOFReader reader;
 	
 	int Ss, Se, Ah_Al, Ah, Al;
 	
-	public SOSReader(Segment segment) throws IOException {
+	public SOSReader(JpegSegment jpegSegment) throws IOException {
 		//
-		if(segment.getMarker() != Marker.SOS) {
-			throw new IllegalArgumentException("Not a valid SOS segment!");
+		if(jpegSegment.getJpegSegmentMarker() != JpegSegmentMarker.SOS) {
+			throw new IllegalArgumentException("Not a valid SOS jpegSegment!");
 		}
 		
-		this.segment = segment;
+		this.jpegSegment = jpegSegment;
 		read();
 	}
 	
-	public SOSReader(Segment segment, SOFReader reader) throws IOException {
+	public SOSReader(JpegSegment jpegSegment, SOFReader reader) throws IOException {
 		//
-		if(segment.getMarker() != Marker.SOS) {
-			throw new IllegalArgumentException("Not a valid SOS segment!");
+		if(jpegSegment.getJpegSegmentMarker() != JpegSegmentMarker.SOS) {
+			throw new IllegalArgumentException("Not a valid SOS jpegSegment!");
 		}
 		
-		this.segment = segment;
+		this.jpegSegment = jpegSegment;
 		this.reader = reader;
 		read();
 	}
 	
 	public void read() throws IOException {
 		//
-		byte[] data = segment.getData();		
+		byte[] data = jpegSegment.getData();
 		int count = 0;
 		
 		byte numOfComponents = data[count++];

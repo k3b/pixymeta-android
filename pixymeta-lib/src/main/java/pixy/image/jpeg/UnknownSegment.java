@@ -16,17 +16,17 @@ import java.io.OutputStream;
 import pixy.io.IOUtils;
 
 /**
- * Special segment to handle JPEG Marker.UNKNOWN.
+ * Special segment to handle JPEG JpegSegmentMarker.JPG_SEGMENT_UNKNOWN.
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 05/22/2013
  */
-public class UnknownSegment extends Segment {
+public class UnknownSegment extends JpegSegment {
 
 	private short markerValue;
 	
 	public UnknownSegment(short markerValue, int length, byte[] data) {
-		super(Marker.UNKNOWN, length, data);
+		super(JpegSegmentMarker.JPG_SEGMENT_UNKNOWN, length, data);
 		this.markerValue = markerValue;
 	}
 	
@@ -41,6 +41,6 @@ public class UnknownSegment extends Segment {
 	}
 	
 	@Override public String toString() {
-		return super.toString() + "[Marker value: 0x"+ Integer.toHexString(markerValue&0xffff)+"]";
+		return super.toString() + "[JpegSegmentMarker value: 0x"+ Integer.toHexString(markerValue&0xffff)+"]";
 	}
 }

@@ -12,7 +12,7 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
     private IFieldDefinition fieldDefinition;
     private String value;
 
-    public static DefaultApiImpl UNKNOWN = new DefaultApiImpl("UNKNOWN");
+    public static DefaultApiImpl UNKNOWN = new DefaultApiImpl("JPG_SEGMENT_UNKNOWN");
     private List<IFieldValue> values = null;
 
     /** simuate IDataType, IDirectory or IFieldDefinition */
@@ -60,12 +60,14 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
         return value;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
 
     @Override
     public IDataType getDataType() {
+        if (fieldDefinition != null) return fieldDefinition.getDataType();
         return UNKNOWN;
     }
 

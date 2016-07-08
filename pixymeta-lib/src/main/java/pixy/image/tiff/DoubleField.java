@@ -38,7 +38,7 @@ public class DoubleField extends TiffField<double[]> {
 	}
 
 	// [var, var, var]
-	// TODO !!! @Override
+	@Override
 	public void setValue(String value) {
 		data = StringUtils.parseDoubleList(value);
 	}

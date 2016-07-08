@@ -24,8 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import pixy.meta.exif.Exif;
-import pixy.image.jpeg.Marker;
+import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.image.tiff.ASCIIField;
 import pixy.image.tiff.IFD;
 import pixy.image.tiff.LongField;
@@ -73,8 +72,8 @@ public class JpegExif extends Exif {
 		// Wraps output stream with a RandomAccessOutputStream
 		RandomAccessOutputStream randOS = new MemoryCacheRandomAccessOutputStream(os);
 		// Write JPEG the EXIF data
-		// Writes APP1 marker
-		IOUtils.writeShortMM(os, Marker.APP1.getValue());		
+		// Writes JPG_SEGMENT_EXIF_XMP_APP1 marker
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1.getValue());
 		// TIFF structure starts here
 		short endian = IOUtils.BIG_ENDIAN;
 		short tiffID = 0x2a; //'*'

@@ -26,6 +26,7 @@ import pixy.api.IFieldValue;
 import pixy.meta.icc.ICCProfile;
 import pixy.meta.icc.ProfileTag;
 import pixy.io.IOUtils;
+import pixy.string.StringUtils;
 
 /**
  * ICC Profile Tag Table
@@ -80,7 +81,12 @@ public class ProfileTagTable {
 
 		@Override
 		public String getValueAsString() {
-			return null;
+			return StringUtils.toHexListString(data);
+		}
+
+		@Override
+		public void setValue(String value) {
+			data = StringUtils.parseHexByteList(value);
 		}
 
 		@Override

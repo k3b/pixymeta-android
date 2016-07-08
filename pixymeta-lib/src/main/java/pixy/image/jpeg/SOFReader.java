@@ -17,7 +17,7 @@ import pixy.io.IOUtils;
 import pixy.util.Reader;
 
 /**
- * JPEG SOF segment reader
+ * JPEG SOF jpegSegment reader
  *  
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 10/09/2013
@@ -29,26 +29,26 @@ public class SOFReader implements Reader {
 	private int frameWidth;
 	private int numOfComponents;
 	private Component[] components;
-	private static final EnumSet<Marker> SOFS = 
-			EnumSet.of(Marker.SOF0, Marker.SOF1, Marker.SOF2, Marker.SOF3, Marker.SOF5, 
-		               Marker.SOF6, Marker.SOF7, Marker.SOF9, Marker.SOF10, Marker.SOF11,
-		               Marker.SOF13, Marker.SOF14, Marker.SOF15)
+	private static final EnumSet<JpegSegmentMarker> SOFS =
+			EnumSet.of(JpegSegmentMarker.SOF0, JpegSegmentMarker.SOF1, JpegSegmentMarker.SOF2, JpegSegmentMarker.SOF3, JpegSegmentMarker.SOF5,
+		               JpegSegmentMarker.SOF6, JpegSegmentMarker.SOF7, JpegSegmentMarker.SOF9, JpegSegmentMarker.SOF10, JpegSegmentMarker.SOF11,
+		               JpegSegmentMarker.SOF13, JpegSegmentMarker.SOF14, JpegSegmentMarker.SOF15)
 	        ;
 	
-	private Segment segment;
+	private JpegSegment jpegSegment;
 	
-	public SOFReader(Segment segment) throws IOException {
+	public SOFReader(JpegSegment jpegSegment) throws IOException {
 		//
-		if(!SOFS.contains(segment.getMarker())) {
-			throw new IllegalArgumentException("Not a valid SOF segment: " + segment.getMarker());
+		if(!SOFS.contains(jpegSegment.getJpegSegmentMarker())) {
+			throw new IllegalArgumentException("Not a valid SOF jpegSegment: " + jpegSegment.getJpegSegmentMarker());
 		}
 		
-		this.segment = segment;
+		this.jpegSegment = jpegSegment;
 		read();
 	}
 	
 	public int getLength() {
-		return segment.getLength();
+		return jpegSegment.getLength();
 	}
 	
 	public int getPrecision() {
@@ -73,7 +73,7 @@ public class SOFReader implements Reader {
 	
 	public void read() throws IOException {
 		//
-		byte[] data = segment.getData();
+		byte[] data = jpegSegment.getData();
 		// This is in bits/sample, usually 8, (12 and 16 not supported by most software). 
 		precision = data[0]; // Usually 8, for baseline JPEG
 		// Image frame width and height

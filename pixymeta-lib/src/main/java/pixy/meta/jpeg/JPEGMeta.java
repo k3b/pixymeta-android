@@ -23,7 +23,7 @@
  * WY    07Apr2015  Revised insertExif()
  * WY    01Apr2015  Extract IPTC as stand-alone meta data from IRB if any
  * WY    18Mar2015  Revised readAPP13(), insertIPTC() and insertIRB()
- * 				    to work with multiple APP13 segments
+ * 				    to work with multiple JPG_SEGMENT_IPTC_APP13 segments
  * WY    18Mar2015  Removed a few unused readAPPn methods
  * WY    16Mar2015  Revised insertExif() to put EXIF in the position
  * 					conforming to EXIF specification or the same place
@@ -43,6 +43,8 @@ import java.io.OutputStream;
 
 import pixy.image.BitmapFactory;
 import pixy.image.IBitmap;
+import pixy.image.jpeg.JpegSegment;
+import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.image.tiff.IFD;
 import pixy.image.tiff.TiffTag;
 import pixy.image.jpeg.COMBuilder;
@@ -50,11 +52,9 @@ import pixy.image.jpeg.Component;
 import pixy.image.jpeg.DHTReader;
 import pixy.image.jpeg.DQTReader;
 import pixy.image.jpeg.HTable;
-import pixy.image.jpeg.Marker;
 import pixy.image.jpeg.QTable;
 import pixy.image.jpeg.SOFReader;
 import pixy.image.jpeg.SOSReader;
-import pixy.image.jpeg.Segment;
 import pixy.image.jpeg.UnknownSegment;
 import pixy.io.FileCacheRandomAccessInputStream;
 import pixy.io.IOUtils;
@@ -126,7 +126,7 @@ public class JPEGMeta {
 	private static final int MAX_XMP_CHUNK_SIZE = 65504;
 	private static final int GUID_LEN = 32;
 	
-	public static final EnumSet<Marker> APPnMarkers = EnumSet.range(Marker.APP0, Marker.APP15);
+	public static final EnumSet<JpegSegmentMarker> APPnMarkers = EnumSet.range(JpegSegmentMarker.JPG_SEGMENT_JFIF_APP0, JpegSegmentMarker.APP15);
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGMeta.class);
@@ -147,7 +147,7 @@ public class JPEGMeta {
 	private static short copySOS(InputStream is, OutputStream os) throws IOException {
 		// Need special treatment.
 		int nextByte = 0;
-		short marker = 0;	
+		short currentJpegSegmentMarkerCode = 0;
 		
 		while((nextByte = IOUtils.read(is)) != -1) {
 			if(nextByte == 0xff) {
@@ -157,10 +157,10 @@ public class JPEGMeta {
 					throw new IOException("Premature end of SOS segment!");					
 				}								
 				
-				if (nextByte != 0x00) { // This is a marker
-					marker = (short)((0xff<<8)|nextByte);
+				if (nextByte != 0x00) { // This is a currentJpegSegmentMarkerCode
+					currentJpegSegmentMarkerCode = (short)((0xff<<8)|nextByte);
 					
-					switch (Marker.fromShort(marker)) {										
+					switch (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode)) {
 						case RST0:  
 						case RST1:
 						case RST2:
@@ -169,7 +169,7 @@ public class JPEGMeta {
 						case RST5:
 						case RST6:
 						case RST7:
-							IOUtils.writeShortMM(os, marker);
+							IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 							continue;
 						default:											
 					}
@@ -186,7 +186,7 @@ public class JPEGMeta {
 			throw new IOException("Premature end of SOS segment!");
 		}
 
-		return marker;
+		return currentJpegSegmentMarkerCode;
 	}
 	
 	private static void copyToEnd(InputStream is, OutputStream os) throws IOException {
@@ -203,46 +203,46 @@ public class JPEGMeta {
 		// Flag when we are done
 		boolean finished = false;
 		int length = 0;	
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI)	{
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.JPG_SEGMENT_END_OF_IMAGE_EOI)	{
 				finished = true;
 			} else { // Read markers
-				emarker = Marker.fromShort(marker);
+				currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 	
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-						marker = IOUtils.readShortMM(is);
+				    case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case PADDING:	
+				    case JPG_SEGMENT_PADDING:
 				    	int nextByte = 0;
 				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
-				    	marker = (short)((0xff<<8)|nextByte);
+				    	currentJpegSegmentMarkerCode = (short)((0xff<<8)|nextByte);
 				    	break;				
 				    case SOS:	
-				    	//marker = skipSOS(is);
+				    	//currentJpegSegmentMarkerCode = skipSOS(is);
 				    	finished = true;
 						break;
-				    case APP2:
+				    case JPG_SEGMENT_ICC_APP2:
 				    	readAPP2(is, bo);
-						marker = IOUtils.readShortMM(is);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];					   
 					    IOUtils.readFully(is, buf);				
-					    marker = IOUtils.readShortMM(is);
+					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -299,7 +299,7 @@ public class JPEGMeta {
 	}
 	
 	/**
-	 * Extracts thumbnail images from JFIF/APP0, Exif APP1 and/or Adobe APP13 segment if any.
+	 * Extracts thumbnail images from JFIF/JPG_SEGMENT_JFIF_APP0, Exif JPG_SEGMENT_EXIF_XMP_APP1 and/or Adobe JPG_SEGMENT_IPTC_APP13 segment if any.
 	 * 
 	 * @param is InputStream for the JPEG image.
 	 * @param pathToThumbnail a path or a path and name prefix combination for the extracted thumbnails.
@@ -309,37 +309,37 @@ public class JPEGMeta {
 		// Flag when we are done
 		boolean finished = false;
 		int length = 0;	
-		short marker;
-		Marker emarker;
+		short currentMarkerCode;
+		JpegSegmentMarker currentMarker;
 				
-		// The very first marker should be the start_of_image marker!
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentMarkerCode should be the start_of_image currentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentMarkerCode not found!");
 		
-		marker = IOUtils.readShortMM(is);
+		currentMarkerCode = IOUtils.readShortMM(is);
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI)	{
+			if (JpegSegmentMarker.fromShort(currentMarkerCode) == JpegSegmentMarker.JPG_SEGMENT_END_OF_IMAGE_EOI)	{
 				finished = true;
 			} else { // Read markers
-				emarker = Marker.fromShort(marker);
+				currentMarker = JpegSegmentMarker.fromShort(currentMarkerCode);
 		
-				switch (emarker) {
+				switch (currentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-				    	marker = IOUtils.readShortMM(is);
+				    case TEM: // The only stand alone currentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+				    	currentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case PADDING:	
+				    case JPG_SEGMENT_PADDING:
 				    	int nextByte = 0;
 				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
-				    	marker = (short)((0xff<<8)|nextByte);
+				    	currentMarkerCode = (short)((0xff<<8)|nextByte);
 				    	break;				
 				    case SOS:	
 						finished = true;
 						break;
-				    case APP0:
+				    case JPG_SEGMENT_JFIF_APP0:
 				    	length = IOUtils.readUnsignedShortMM(is);
 						byte[] jfif_buf = new byte[length - 2];
 					    IOUtils.readFully(is, jfif_buf);
@@ -368,9 +368,9 @@ public class JPEGMeta {
 								fout.close();
 							}
 					    }
-				    	marker = IOUtils.readShortMM(is);
+				    	currentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case APP1:
+				    case JPG_SEGMENT_EXIF_XMP_APP1:
 				    	// EXIF identifier with trailing bytes [0x00,0x00].
 						byte[] exif_buf = new byte[EXIF_ID.length()];
 						length = IOUtils.readUnsignedShortMM(is);						
@@ -399,9 +399,9 @@ public class JPEGMeta {
 						} else {
 							IOUtils.skipFully(is, length - 8);
 						}
-						marker = IOUtils.readShortMM(is);
+						currentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case APP13:
+				    case JPG_SEGMENT_IPTC_APP13:
 				    	length = IOUtils.readUnsignedShortMM(is);
 						byte[] data = new byte[length - 2];
 						IOUtils.readFully(is, data, 0, length - 2);						
@@ -433,13 +433,13 @@ public class JPEGMeta {
 								fout.close();								
 							}							
 						}				
-				    	marker = IOUtils.readShortMM(is);
+				    	currentMarkerCode = IOUtils.readShortMM(is);
 				    	break;
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    marker = IOUtils.readShortMM(is);
+					    currentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -455,48 +455,48 @@ public class JPEGMeta {
 	
 	public static void insertComments(InputStream is, OutputStream os, List<String> comments) throws IOException {
 		boolean finished = false;
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 	
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.SOS) {
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.SOS) {
 				// Write comment
 				for(String comment : comments)
 					writeComment(comment, os);
 				// Copy the rest of the data
-				IOUtils.writeShortMM(os, marker);
+				IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 				copyToEnd(is, os);
-				// No more marker to read, we are done.
+				// No more currentJpegSegmentMarkerCode to read, we are done.
 				finished = true;  
 			}  else { // Read markers
-				emarker = Marker.fromShort(marker);
+				currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 			
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
-						IOUtils.writeShortMM(os, marker);
-						marker = IOUtils.readShortMM(is);
+					case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+						IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-					case PADDING:
-						IOUtils.writeShortMM(os, marker);
+					case JPG_SEGMENT_PADDING:
+						IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 						int nextByte = 0;
 						while ((nextByte = IOUtils.read(is)) == 0xff) {
 							IOUtils.write(os, nextByte);
 						}
-						marker = (short) ((0xff << 8) | nextByte);
+						currentJpegSegmentMarkerCode = (short) ((0xff << 8) | nextByte);
 						break;
 				    default:
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 				}
 			}
 	    }
@@ -521,26 +521,26 @@ public class JPEGMeta {
 		// Copy the original image and insert EXIF data
 		boolean finished = false;
 		int length = 0;	
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)	{
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 		}
 		
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		// Create a list to hold the temporary Segments 
-		List<Segment> segments = new ArrayList<Segment>();
+		List<JpegSegment> jpegSegments = new ArrayList<JpegSegment>();
 		
-		while (!finished) { // Read through and add the segments to a list until SOS 
-			if (Marker.fromShort(marker) == Marker.SOS) {
-				// Write the items in segments list excluding the old EXIF
+		while (!finished) { // Read through and add the jpegSegments to a list until SOS
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.SOS) {
+				// Write the items in jpegSegments list excluding the old EXIF
 				for(int i = 0; i < oldExifIndex; i++) {
-					segments.get(i).write(os);
+					jpegSegments.get(i).write(os);
 				}
 				// Now we insert the EXIF data
 		    	IFD newExifSubIFD = exif.getExifIFD();
@@ -604,49 +604,49 @@ public class JPEGMeta {
 		   		exif.setThumbnail(newThumbnail);
 		   		// Now insert the new EXIF to the JPEG
 		   		exif.write(os);		     	
-		     	// Copy the remaining segments
-				for(int i = oldExifIndex + 1; i < segments.size(); i++) {
-					segments.get(i).write(os);
+		     	// Copy the remaining jpegSegments
+				for(int i = oldExifIndex + 1; i < jpegSegments.size(); i++) {
+					jpegSegments.get(i).write(os);
 				}	    	
 				// Copy the leftover stuff
-				IOUtils.writeShortMM(os, marker);
+				IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 				copyToEnd(is, os);
 				// We are done
 				finished = true;
 			} else { // Read markers
-				emarker = Marker.fromShort(marker);
+				currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 		
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
-				    	segments.add(new Segment(emarker, 0, null));
-						marker = IOUtils.readShortMM(is);
+				    case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+				    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case APP1:
+				    case JPG_SEGMENT_EXIF_XMP_APP1:
 				    	// Read and remove the old EXIF data
 				    	length = IOUtils.readUnsignedShortMM(is);
 				    	byte[] exifBytes = new byte[length - 2];
 						IOUtils.readFully(is, exifBytes);
 						// Add data to segment list
-						segments.add(new Segment(emarker, length, exifBytes));		
+						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, exifBytes));
 						// Read the EXIF data.
-						if(new String(exifBytes, 0, EXIF_ID.length()).equals(EXIF_ID)) { // We assume EXIF data exist only in one APP1
+						if(new String(exifBytes, 0, EXIF_ID.length()).equals(EXIF_ID)) { // We assume EXIF data exist only in one JPG_SEGMENT_EXIF_XMP_APP1
 							oldExif = new JpegExif(ArrayUtils.subArray(exifBytes, EXIF_ID.length(), length - EXIF_ID.length() - 2));
-							oldExifIndex = segments.size() - 1;
+							oldExifIndex = jpegSegments.size() - 1;
 						}										
-						marker = IOUtils.readShortMM(is);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;				
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    if(emarker == Marker.UNKNOWN)
-					    	segments.add(new UnknownSegment(marker, length, buf));
+					    if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
 					    else
-					    	segments.add(new Segment(emarker, length, buf));
-					    marker = IOUtils.readShortMM(is);
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -656,7 +656,7 @@ public class JPEGMeta {
 	}
 	
 	/**
-	 * Insert ICC_Profile as one or more APP2 segments
+	 * Insert ICC_Profile as one or more JPG_SEGMENT_ICC_APP2 segments
 	 * 
 	 * @param is input stream for the original image
 	 * @param os output stream to write the ICC_Profile
@@ -668,85 +668,85 @@ public class JPEGMeta {
 		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
 		boolean finished = false;
 		int length = 0;	
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 		int app0Index = -1;
 		int app1Index = -1;
 				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 	
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		// Create a list to hold the temporary Segments 
-		List<Segment> segments = new ArrayList<Segment>();
+		List<JpegSegment> jpegSegments = new ArrayList<JpegSegment>();
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.SOS) {
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.SOS) {
 				int index = Math.max(app0Index, app1Index);
-				// Write the items in segments list excluding the APP13
+				// Write the items in jpegSegments list excluding the JPG_SEGMENT_IPTC_APP13
 				for(int i = 0; i <= index; i++)
-					segments.get(i).write(os);	
+					jpegSegments.get(i).write(os);
 				writeICCProfile(os, data);
-		    	// Copy the remaining segments
-				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
-					segments.get(i).write(os);
+		    	// Copy the remaining jpegSegments
+				for(int i = (index < 0 ? 0 : index + 1); i < jpegSegments.size(); i++) {
+					jpegSegments.get(i).write(os);
 				}
 				// Copy the rest of the data
-				IOUtils.writeShortMM(os, marker);
+				IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 				copyToEnd(is, os);
-				// No more marker to read, we are done.
+				// No more currentJpegSegmentMarkerCode to read, we are done.
 				finished = true;  
 			}  else { // Read markers
-				emarker = Marker.fromShort(marker);
+				currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 			
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
-						segments.add(new Segment(emarker, 0, null));
-						marker = IOUtils.readShortMM(is);
+					case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case APP2: // Remove old ICC_Profile
+				    case JPG_SEGMENT_ICC_APP2: // Remove old ICC_Profile
 				    	byte[] icc_profile_buf = new byte[12];
 						length = IOUtils.readUnsignedShortMM(is);						
 						if(length < 14) { // This is not an ICC_Profile segment, copy it
 							icc_profile_buf = new byte[length - 2];
 							IOUtils.readFully(is, icc_profile_buf);
-							segments.add(new Segment(emarker, length, icc_profile_buf));
+							jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, icc_profile_buf));
 						} else {
 							IOUtils.readFully(is, icc_profile_buf);		
 							// ICC_PROFILE segment.
 							if (Arrays.equals(icc_profile_buf, icc_profile_id)) {
 								IOUtils.skipFully(is, length - 14);
 							} else {// Not an ICC_Profile segment, copy it
-								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 								IOUtils.writeShortMM(os, (short)length);
 								IOUtils.write(os, icc_profile_buf);
 								byte[] temp = new byte[length - ICC_PROFILE_ID.length() - 2];
 								IOUtils.readFully(is, temp);
-								segments.add(new Segment(emarker, length, ArrayUtils.concat(icc_profile_buf, temp)));
+								jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, ArrayUtils.concat(icc_profile_buf, temp)));
 							}
 						}						
-						marker = IOUtils.readShortMM(is);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case APP0:
-				    	app0Index = segments.size();
-				    case APP1:
-				    	app1Index = segments.size();
+				    case JPG_SEGMENT_JFIF_APP0:
+				    	app0Index = jpegSegments.size();
+				    case JPG_SEGMENT_EXIF_XMP_APP1:
+				    	app1Index = jpegSegments.size();
 				    default:
 				    	 length = IOUtils.readUnsignedShortMM(is);					
 				    	 byte[] buf = new byte[length - 2];
 				    	 IOUtils.readFully(is, buf);
-				    	 if(emarker == Marker.UNKNOWN)
-					    	segments.add(new UnknownSegment(marker, length, buf));
+				    	 if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
 				    	 else
-					    	segments.add(new Segment(emarker, length, buf));
-				    	 marker = IOUtils.readShortMM(is);
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+				    	 currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -757,43 +757,43 @@ public class JPEGMeta {
 	}
 	
 	/**
-	 * Inserts a list of IPTCDataSet into a JPEG APP13 Photoshop IRB segment
+	 * Inserts a list of IPTCDataSet into a JPEG JPG_SEGMENT_IPTC_APP13 Photoshop IRB segment
 	 * 
 	 * @param is InputStream for the original image
-	 * @param os OutputStream for the image with IPTC APP13 inserted
+	 * @param os OutputStream for the image with IPTC JPG_SEGMENT_IPTC_APP13 inserted
 	 * @param iptcs a collection of IPTCDataSet to be inserted
-	 * @param update if true, keep the original data, otherwise, replace the complete APP13 data 
+	 * @param update if true, keep the original data, otherwise, replace the complete JPG_SEGMENT_IPTC_APP13 data
 	 * @throws IOException
 	 */
 	public static void insertIPTC(InputStream is, OutputStream os, Collection<IPTCDataSet> iptcs, boolean update) throws IOException {
 		// Copy the original image and insert Photoshop IRB data
 		boolean finished = false;
 		int length = 0;	
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 		int app0Index = -1;
 		int app1Index = -1;		
 		
 		Map<Short, _8BIM> bimMap = null;
-		// Used to read multiple segment Adobe APP13
+		// Used to read multiple segment Adobe JPG_SEGMENT_IPTC_APP13
 		ByteArrayOutputStream eightBIMStream = null;
 				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)	{
 			is.close();
 			os.close();		
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");			
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 		}
 		
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		// Create a list to hold the temporary Segments 
-		List<Segment> segments = new ArrayList<Segment>();
+		List<JpegSegment> jpegSegments = new ArrayList<JpegSegment>();
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.SOS) {
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.SOS) {
 				if(eightBIMStream != null) {
 					IRB irb = new IRB(eightBIMStream.toByteArray());
 		    		// Shallow copy the map.
@@ -811,9 +811,9 @@ public class JPEGMeta {
 					}
 			  	}				
 				int index = Math.max(app0Index, app1Index);
-				// Write the items in segments list excluding the APP13
+				// Write the items in jpegSegments list excluding the JPG_SEGMENT_IPTC_APP13
 				for(int i = 0; i <= index; i++)
-					segments.get(i).write(os);	
+					jpegSegments.get(i).write(os);
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				// Insert IPTC data as one of IRB 8BIM block
 				for(IPTCDataSet iptc : iptcs)
@@ -822,31 +822,31 @@ public class JPEGMeta {
 				_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
 				if(bimMap != null) {
 					bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
-					writeIRB(os, bimMap.values()); // Write the whole thing as one APP13
+					writeIRB(os, bimMap.values()); // Write the whole thing as one JPG_SEGMENT_IPTC_APP13
 				} else {
-					writeIRB(os, newBIM); // Write the one and only one 8BIM as one APP13
+					writeIRB(os, newBIM); // Write the one and only one 8BIM as one JPG_SEGMENT_IPTC_APP13
 				}						
-				// Copy the remaining segments
-				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
-					segments.get(i).write(os);
+				// Copy the remaining jpegSegments
+				for(int i = (index < 0 ? 0 : index + 1); i < jpegSegments.size(); i++) {
+					jpegSegments.get(i).write(os);
 				}
 				// Copy the rest of the data
-				IOUtils.writeShortMM(os, marker);
+				IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 				copyToEnd(is, os);
-				// No more marker to read, we are done.
+				// No more currentJpegSegmentMarkerCode to read, we are done.
 				finished = true;  
 			} else {// Read markers
-		   		emarker = Marker.fromShort(marker);
+		   		currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 		
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
-						segments.add(new Segment(emarker, 0, null));
-						marker = IOUtils.readShortMM(is);
+					case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-					case APP13:
+					case JPG_SEGMENT_IPTC_APP13:
 				    	if(update) {
 				    		if(eightBIMStream == null)
 				    			eightBIMStream = new ByteArrayOutputStream();
@@ -855,21 +855,21 @@ public class JPEGMeta {
 				    		length = IOUtils.readUnsignedShortMM(is);					
 						    IOUtils.skipFully(is, length - 2);
 				    	}
-				    	marker = IOUtils.readShortMM(is);
+				    	currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				    	break;
-					case APP0:
-						app0Index = segments.size();
-					case APP1:
-						app1Index = segments.size();
+					case JPG_SEGMENT_JFIF_APP0:
+						app0Index = jpegSegments.size();
+					case JPG_SEGMENT_EXIF_XMP_APP1:
+						app1Index = jpegSegments.size();
 				    default:
 				    	length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    if(emarker == Marker.UNKNOWN)
-					    	segments.add(new UnknownSegment(marker, length, buf));
+					    if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
 					    else
-					    	segments.add(new Segment(emarker, length, buf));
-					    marker = IOUtils.readShortMM(is);
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -879,29 +879,29 @@ public class JPEGMeta {
 		// Copy the original image and insert Photoshop IRB data
 		boolean finished = false;
 		int length = 0;	
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 		int app0Index = -1;
 		int app1Index = -1;		
-		// Used to read multiple segment Adobe APP13
+		// Used to read multiple segment Adobe JPG_SEGMENT_IPTC_APP13
 		ByteArrayOutputStream eightBIMStream = null;
 				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)	{
 			is.close();
 			os.close();
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 		}
 		
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		// Create a list to hold the temporary Segments 
-		List<Segment> segments = new ArrayList<Segment>();
+		List<JpegSegment> jpegSegments = new ArrayList<JpegSegment>();
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.SOS) {
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.SOS) {
 				if(eightBIMStream != null) {
 					IRB irb = new IRB(eightBIMStream.toByteArray());
 			    	// Shallow copy the map.
@@ -915,31 +915,31 @@ public class JPEGMeta {
 					bims = bimMap.values();					
 		    	}
 				int index = Math.max(app0Index, app1Index);
-				// Write the items in segments list excluding the APP13
+				// Write the items in jpegSegments list excluding the JPG_SEGMENT_IPTC_APP13
 				for(int i = 0; i <= index; i++)
-					segments.get(i).write(os);	
+					jpegSegments.get(i).write(os);
 				writeIRB(os, bims);
-				// Copy the remaining segments
-				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
-					segments.get(i).write(os);
+				// Copy the remaining jpegSegments
+				for(int i = (index < 0 ? 0 : index + 1); i < jpegSegments.size(); i++) {
+					jpegSegments.get(i).write(os);
 				}
 				// Copy the rest of the data
-				IOUtils.writeShortMM(os, marker);
+				IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 				copyToEnd(is, os);
-				// No more marker to read, we are done.
+				// No more currentJpegSegmentMarkerCode to read, we are done.
 				finished = true;  
 			} else {// Read markers
-		   		emarker = Marker.fromShort(marker);
+		   		currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 		
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
-						segments.add(new Segment(emarker, 0, null));
-						marker = IOUtils.readShortMM(is);
+					case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case APP13: // We will keep the other IRBs from the original APP13
+				    case JPG_SEGMENT_IPTC_APP13: // We will keep the other IRBs from the original JPG_SEGMENT_IPTC_APP13
 				    	if(update) {
 				    		if(eightBIMStream == null)
 				    			eightBIMStream = new ByteArrayOutputStream();
@@ -948,21 +948,21 @@ public class JPEGMeta {
 				    		length = IOUtils.readUnsignedShortMM(is);					
 						    IOUtils.skipFully(is, length - 2);
 				    	}
-				    	marker = IOUtils.readShortMM(is);
+				    	currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				    	break;
-				    case APP0:
-				    	app0Index = segments.size();
-				    case APP1:
-				    	app1Index = segments.size();
+				    case JPG_SEGMENT_JFIF_APP0:
+				    	app0Index = jpegSegments.size();
+				    case JPG_SEGMENT_EXIF_XMP_APP1:
+				    	app1Index = jpegSegments.size();
 				    default:
 				    	length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    if(emarker == Marker.UNKNOWN)
-					    	segments.add(new UnknownSegment(marker, length, buf));
+					    if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
 					    else
-					    	segments.add(new Segment(emarker, length, buf));
-					    marker = IOUtils.readShortMM(is);
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -976,7 +976,7 @@ public class JPEGMeta {
 	}
 	
 	/*
-	 * Insert XMP into single APP1 or multiple segments. Support ExtendedXMP.
+	 * Insert XMP into single JPG_SEGMENT_EXIF_XMP_APP1 or multiple segments. Support ExtendedXMP.
 	 * 
 	 * The standard part of the XMP must be a valid XMP with packet wrapper and,
 	 * should already include the GUID for the ExtendedXMP in case of ExtendedXMP.
@@ -984,56 +984,56 @@ public class JPEGMeta {
 	private static void insertXMP(InputStream is, OutputStream os, byte[] xmp, byte[] extendedXmp, String guid) throws IOException {
 		boolean finished = false;
 		int length = 0;	
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 		int app0Index = -1;
 		int exifIndex = -1;
 		
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)	{
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 		}
 		
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		// Create a list to hold the temporary Segments 
-		List<Segment> segments = new ArrayList<Segment>();
+		List<JpegSegment> jpegSegments = new ArrayList<JpegSegment>();
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.SOS)	{
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.SOS)	{
 				int index = Math.max(app0Index, exifIndex);
-				// Write the items in segments list excluding the old XMP
+				// Write the items in jpegSegments list excluding the old XMP
 				for(int i = 0; i <= index; i++)
-					segments.get(i).write(os);				
+					jpegSegments.get(i).write(os);
 				// Now we insert the XMP data
 				writeXMP(os, xmp, extendedXmp, guid);
-				// Copy the remaining segments
-				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
-					segments.get(i).write(os);
+				// Copy the remaining jpegSegments
+				for(int i = (index < 0 ? 0 : index + 1); i < jpegSegments.size(); i++) {
+					jpegSegments.get(i).write(os);
 				}	
 				// Copy the leftover stuff
-				IOUtils.writeShortMM(os, marker);
+				IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 				copyToEnd(is, os); // Copy the rest of the data
-				finished = true; // No more marker to read, we are done.				
+				finished = true; // No more currentJpegSegmentMarkerCode to read, we are done.
 			} else { // Read markers
-				emarker = Marker.fromShort(marker);
+				currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 				
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
-				    	segments.add(new Segment(emarker, 0, null));
-						marker = IOUtils.readShortMM(is);
+				    case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+				    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case APP1:
+				    case JPG_SEGMENT_EXIF_XMP_APP1:
 				    	// Read and remove the old XMP data
 				    	length = IOUtils.readUnsignedShortMM(is);
 						byte[] xmpExtId = new byte[XMP_EXT_ID.length()];
 						IOUtils.readFully(is, xmpExtId);
-						// Remove XMP and ExtendedXMP segments.
+						// Remove XMP and ExtendedXMP jpegSegments.
 						if(Arrays.equals(xmpExtId, XMP_EXT_ID.getBytes())) {
 							IOUtils.skipFully(is, length - XMP_EXT_ID.length() - 2);
 						} else if(new String(xmpExtId, 0, XMP_ID.length()).equals(XMP_ID)) {
@@ -1041,25 +1041,25 @@ public class JPEGMeta {
 						} else { // We are going to keep other types of data							
 							byte[] temp = new byte[length - XMP_EXT_ID.length() - 2];
 							IOUtils.readFully(is, temp);
-							segments.add(new Segment(emarker, length, ArrayUtils.concat(xmpExtId, temp)));
+							jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, ArrayUtils.concat(xmpExtId, temp)));
 							// If it's EXIF, we keep the index
 							if(new String(xmpExtId, 0, EXIF_ID.length()).equals(EXIF_ID)) {
-								exifIndex = segments.size() - 1;
+								exifIndex = jpegSegments.size() - 1;
 							}
 						}
-						marker = IOUtils.readShortMM(is);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case APP0:
-				    	app0Index = segments.size();
+				    case JPG_SEGMENT_JFIF_APP0:
+				    	app0Index = jpegSegments.size();
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    if(emarker == Marker.UNKNOWN)
-					    	segments.add(new UnknownSegment(marker, length, buf));
+					    if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
 					    else
-					    	segments.add(new Segment(emarker, length, buf));
-					    marker = IOUtils.readShortMM(is);
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -1067,7 +1067,7 @@ public class JPEGMeta {
 	
 	/**
 	 * Insert a XMP instance into the image. 
-	 * The XMP instance must be able to fit into one APP1.
+	 * The XMP instance must be able to fit into one JPG_SEGMENT_EXIF_XMP_APP1.
 	 * 
 	 * @param is InputStream for the image.
 	 * @param os OutputStream for the image.
@@ -1080,7 +1080,7 @@ public class JPEGMeta {
 	
 	/**
 	 * Insert a XMP string into the image. When converted to bytes, 
-	 * the XMP part should be able to fit into one APP1.
+	 * the XMP part should be able to fit into one JPG_SEGMENT_EXIF_XMP_APP1.
 	 * 
 	 * @param is InputStream for the image.
 	 * @param os OutputStream for the image.
@@ -1258,7 +1258,7 @@ public class JPEGMeta {
         byte buf[] = new byte[len - 2];
         IOUtils.readFully(is, buf);
 		
-		DHTReader reader = new DHTReader(new Segment(Marker.DHT, len, buf));
+		DHTReader reader = new DHTReader(new JpegSegment(JpegSegmentMarker.DHT, len, buf));
 		
 		List<HTable> dcTables = reader.getDCTables();
 		List<HTable> acTables = reader.getACTables();
@@ -1273,7 +1273,7 @@ public class JPEGMeta {
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		DQTReader reader = new DQTReader(new Segment(Marker.DQT, len, buf));
+		DQTReader reader = new DQTReader(new JpegSegment(JpegSegmentMarker.DQT, len, buf));
 		List<QTable> qTables = reader.getTables();
 		m_qTables.addAll(qTables);		
 	}
@@ -1294,36 +1294,36 @@ public class JPEGMeta {
 		List<SOFReader> readers = new ArrayList<SOFReader>();
 		// Used to read multiple segment ICCProfile
 		ByteArrayOutputStream iccProfileStream = null;
-		// Used to read multiple segment Adobe APP13
+		// Used to read multiple segment Adobe JPG_SEGMENT_IPTC_APP13
 		ByteArrayOutputStream eightBIMStream = null;
 		// Used to read multiple segment XMP
 		byte[] extendedXMP = null;
 		String xmpGUID = ""; // 32 byte ASCII hex string
 		Comments comments = null;
 				
-		List<Segment> appnSegments = new ArrayList<Segment>();
+		List<JpegSegment> appnSegments = new ArrayList<JpegSegment>();
 	
 		boolean finished = false;
 		int length = 0;
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 		
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-			throw new IllegalArgumentException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)
+			throw new IllegalArgumentException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI)	{
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.JPG_SEGMENT_END_OF_IMAGE_EOI)	{
 				finished = true;
 			} else {// Read markers
-				emarker = Marker.fromShort(marker);
+				currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 	
-				switch (emarker) {
-					case APP0:
-					case APP1:
-					case APP2:
+				switch (currentJpegSegmentMarker) {
+					case JPG_SEGMENT_JFIF_APP0:
+					case JPG_SEGMENT_EXIF_XMP_APP1:
+					case JPG_SEGMENT_ICC_APP2:
 					case APP3:
 					case APP4:
 					case APP5:
@@ -1331,28 +1331,28 @@ public class JPEGMeta {
 					case APP7:
 					case APP8:
 					case APP9:
-					case APP10:
+					case JPG_SEGMENT_COMMENT_APP10:
 					case APP11:
 					case APP12:
-					case APP13:
+					case JPG_SEGMENT_IPTC_APP13:
 					case APP14:
 					case APP15:
 						byte[] appBytes = readSegmentData(is);
-						appnSegments.add(new Segment(emarker, appBytes.length + 2, appBytes));
-						marker = IOUtils.readShortMM(is);
+						appnSegments.add(new JpegSegment(currentJpegSegmentMarker, appBytes.length + 2, appBytes));
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-					case COM:
+					case JPG_SEGMENT_COMMNENTS_COM:
 						if(comments == null) comments = new Comments();
 						comments.addComment(readSegmentData(is));
-						marker = IOUtils.readShortMM(is);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				    	break;				   				
 					case DHT:
 						readDHT(is, m_acTables, m_dcTables);
-						marker = IOUtils.readShortMM(is);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 					case DQT:
 						readDQT(is, m_qTables);
-						marker = IOUtils.readShortMM(is);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 					case SOF0:
 					case SOF1:
@@ -1367,29 +1367,29 @@ public class JPEGMeta {
 					case SOF13:
 					case SOF14:
 					case SOF15:
-						readers.add(readSOF(is, emarker));
-						marker = IOUtils.readShortMM(is);
+						readers.add(readSOF(is, currentJpegSegmentMarker));
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 					case SOS:	
 						SOFReader reader = readers.get(readers.size() - 1);
-						marker = readSOS(is, reader);
+						currentJpegSegmentMarkerCode = readSOS(is, reader);
 						LOGGER.debug("\n{}", sofToString(reader));
 						break;
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone mark besides SOI, EOI, and RSTn. 
-						marker = IOUtils.readShortMM(is);
+				    case TEM: // The only stand alone mark besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case PADDING:
+				    case JPG_SEGMENT_PADDING:
 				    	int nextByte = 0;
 				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
-				    	marker = (short)((0xff<<8)|nextByte);
+				    	currentJpegSegmentMarkerCode = (short)((0xff<<8)|nextByte);
 				    	break;
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);
 					    IOUtils.skipFully(is, length - 2);
-					    marker = IOUtils.readShortMM(is);			    
+					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -1401,14 +1401,14 @@ public class JPEGMeta {
 		LOGGER.debug("\n{}", hTablesToString(m_acTables));	
 		LOGGER.debug("\n{}", hTablesToString(m_dcTables));
 			
-		for(Segment segment : appnSegments) {
-			byte[] data = segment.getData();
-			length = segment.getLength();
-			if(segment.getMarker() == Marker.APP0) {
+		for(JpegSegment jpegSegment : appnSegments) {
+			byte[] data = jpegSegment.getData();
+			length = jpegSegment.getLength();
+			if(jpegSegment.getJpegSegmentMarker() == JpegSegmentMarker.JPG_SEGMENT_JFIF_APP0) {
 				if (new String(data, 0, JFIF_ID.length()).equals(JFIF_ID)) {
 					metadataMap.put(MetadataType.JPG_JFIF, new JFIFSegment(ArrayUtils.subArray(data, JFIF_ID.length(), length - JFIF_ID.length() - 2)));
 				}
-			} else if(segment.getMarker() == Marker.APP1) {
+			} else if(jpegSegment.getJpegSegmentMarker() == JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1) {
 				// Check for EXIF
 				if(new String(data, 0, EXIF_ID.length()).equals(EXIF_ID)) {
 					// We found EXIF
@@ -1432,31 +1432,31 @@ public class JPEGMeta {
 						i += 4;
 						if(extendedXMP == null)
 							extendedXMP = new byte[(int)extendedXMPLength];
-						// Offset for the current segment
+						// Offset for the current jpegSegment
 						long offset = IOUtils.readUnsignedIntMM(data, i);
 						i += 4;
 						byte[] xmpBytes = ArrayUtils.subArray(data, i, length - XMP_EXT_ID.length() - 42);
 						System.arraycopy(xmpBytes, 0, extendedXMP, (int)offset, xmpBytes.length);
 					}
 				}
-			} else if(segment.getMarker() == Marker.APP2) {
+			} else if(jpegSegment.getJpegSegmentMarker() == JpegSegmentMarker.JPG_SEGMENT_ICC_APP2) {
 				// We're only interested in ICC_Profile
 				if (new String(data, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
 					if(iccProfileStream == null)
 						iccProfileStream = new ByteArrayOutputStream();
 					iccProfileStream.write(ArrayUtils.subArray(data, ICC_PROFILE_ID.length() + 2, length - ICC_PROFILE_ID.length() - 4));
 				}
-			} else if(segment.getMarker() == Marker.APP12) {
+			} else if(jpegSegment.getJpegSegmentMarker() == JpegSegmentMarker.APP12) {
 				if (new String(data, 0, DUCKY_ID.length()).equals(DUCKY_ID)) {
 					metadataMap.put(MetadataType.JPG_DUCKY, new DuckySegment(ArrayUtils.subArray(data, DUCKY_ID.length(), length - DUCKY_ID.length() - 2)));
 				}
-			} else if(segment.getMarker() == Marker.APP13) {
+			} else if(jpegSegment.getJpegSegmentMarker() == JpegSegmentMarker.JPG_SEGMENT_IPTC_APP13) {
 				if (new String(data, 0, PHOTOSHOP_IRB_ID.length()).equals(PHOTOSHOP_IRB_ID)) {
 					if(eightBIMStream == null)
 						eightBIMStream = new ByteArrayOutputStream();
 					eightBIMStream.write(ArrayUtils.subArray(data, PHOTOSHOP_IRB_ID.length(), length - PHOTOSHOP_IRB_ID.length() - 2));
 				}
-			} else if(segment.getMarker() == Marker.APP14) {
+			} else if(jpegSegment.getJpegSegmentMarker() == JpegSegmentMarker.APP14) {
 				if (new String(data, 0, ADOBE_ID.length()).equals(ADOBE_ID)) {
 					metadataMap.put(MetadataType.JPG_ADOBE, new AdobeSegment(ArrayUtils.subArray(data, ADOBE_ID.length(), length - ADOBE_ID.length() - 2)));
 				}
@@ -1523,13 +1523,13 @@ public class JPEGMeta {
 		return data;
 	}
 	
-	private static SOFReader readSOF(InputStream is, Marker marker) throws IOException {		
+	private static SOFReader readSOF(InputStream is, JpegSegmentMarker jpegSegmentMarker) throws IOException {
 		int len = IOUtils.readUnsignedShortMM(is);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		Segment segment = new Segment(marker, len, buf);		
-		SOFReader reader = new SOFReader(segment);
+		JpegSegment jpegSegment = new JpegSegment(jpegSegmentMarker, len, buf);
+		SOFReader reader = new SOFReader(jpegSegment);
 		
 		return reader;
 	}	
@@ -1541,25 +1541,25 @@ public class JPEGMeta {
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		Segment segment = new Segment(Marker.SOS, len, buf);
-		new SOSReader(segment, sofReader);
+		JpegSegment jpegSegment = new JpegSegment(JpegSegmentMarker.SOS, len, buf);
+		new SOSReader(jpegSegment, sofReader);
 		
 		// Actual image data follow.
 		int nextByte = 0;
-		short marker = 0;	
+		short currentJpegSegmentMarkerCode = 0;
 		
 		while((nextByte = IOUtils.read(is)) != -1) {
 			if(nextByte == 0xff) {
 				nextByte = IOUtils.read(is);
 				
 				if (nextByte == -1) {
-					throw new IOException("Premature end of SOS segment!");					
+					throw new IOException("Premature end of SOS jpegSegment!");
 				}								
 				
 				if (nextByte != 0x00) {
-					marker = (short)((0xff<<8)|nextByte);
+					currentJpegSegmentMarkerCode = (short)((0xff<<8)|nextByte);
 					
-					switch (Marker.fromShort(marker)) {										
+					switch (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode)) {
 						case RST0:  
 						case RST1:
 						case RST2:
@@ -1577,57 +1577,57 @@ public class JPEGMeta {
 		}
 		
 		if (nextByte == -1) {
-			throw new IOException("Premature end of SOS segment!");
+			throw new IOException("Premature end of SOS jpegSegment!");
 		}
 
-		return marker;
+		return currentJpegSegmentMarkerCode;
 	}
 	
 	// Remove APPn segment
-	public static void removeAPPn(Marker APPn, InputStream is, OutputStream os) throws IOException {
+	public static void removeAPPn(JpegSegmentMarker APPn, InputStream is, OutputStream os) throws IOException {
 		if(APPn.getValue() < (short)0xffe0 || APPn.getValue() > (short)0xffef)
-			throw new IllegalArgumentException("Input marker is not an APPn marker");		
+			throw new IllegalArgumentException("Input currentJpegSegmentMarkerCode is not an APPn currentJpegSegmentMarkerCode");
 		// Flag when we are done
 		boolean finished = false;
 		int length = 0;	
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if(JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 		
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI)	{
-				IOUtils.writeShortMM(os, Marker.EOI.getValue());
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.JPG_SEGMENT_END_OF_IMAGE_EOI)	{
+				IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_END_OF_IMAGE_EOI.getValue());
 				finished = true;
 			} else { // Read markers
-				emarker = Marker.fromShort(marker);
+				currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 		
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-						IOUtils.writeShortMM(os, marker);
-				    	marker = IOUtils.readShortMM(is);
+				    case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+						IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
+				    	currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-				    case PADDING:	
-				    	IOUtils.writeShortMM(os, marker);
+				    case JPG_SEGMENT_PADDING:
+				    	IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 				    	int nextByte = 0;
 				    	while((nextByte = IOUtils.read(is)) == 0xff) {
 				    		IOUtils.write(os, nextByte);
 				    	}
-				    	marker = (short)((0xff<<8)|nextByte);
+				    	currentJpegSegmentMarkerCode = (short)((0xff<<8)|nextByte);
 				    	break;				
 				    case SOS:	
-				    	IOUtils.writeShortMM(os, marker);
+				    	IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 						// use copyToEnd instead for multiple SOS
-				    	//marker = copySOS(is, os);
+				    	//currentJpegSegmentMarkerCode = copySOS(is, os);
 				    	copyToEnd(is, os);
 						finished = true; 
 						break;
@@ -1636,13 +1636,13 @@ public class JPEGMeta {
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
 					    
-					    if(emarker != APPn) { // Copy the data
-					    	IOUtils.writeShortMM(os, marker);
+					    if(currentJpegSegmentMarker != APPn) { // Copy the data
+					    	IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 					    	IOUtils.writeShortMM(os, (short)length);
 					    	IOUtils.write(os, buf);
 					    }
 					    
-					    marker = IOUtils.readShortMM(is);
+					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -1657,55 +1657,55 @@ public class JPEGMeta {
 		// Flag when we are done
 		boolean finished = false;
 		int length = 0;
-		short marker;
-		Marker emarker;
+		short currentJpegSegmentMarkerCode;
+		JpegSegmentMarker currentJpegSegmentMarker;
 
-		// The very first marker should be the start_of_image marker!
-		if (Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		// The very first currentJpegSegmentMarkerCode should be the start_of_image currentJpegSegmentMarkerCode!
+		if (JpegSegmentMarker.fromShort(IOUtils.readShortMM(is)) != JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI)
+			throw new IOException("Invalid JPEG image, expected JPG_SEGMENT_START_OF_IMAGE_SOI currentJpegSegmentMarkerCode not found!");
 			
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 
-		marker = IOUtils.readShortMM(is);
+		currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 
 		while (!finished) {
-			if (Marker.fromShort(marker) == Marker.EOI) {
-				IOUtils.writeShortMM(os, Marker.EOI.getValue());
+			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.JPG_SEGMENT_END_OF_IMAGE_EOI) {
+				IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_END_OF_IMAGE_EOI.getValue());
 				finished = true;
 			} else { // Read markers
-				emarker = Marker.fromShort(marker);
+				currentJpegSegmentMarker = JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode);
 		
-				switch (emarker) {
+				switch (currentJpegSegmentMarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
-						IOUtils.writeShortMM(os, marker);
-						marker = IOUtils.readShortMM(is);
+					case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
+						IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
+						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
-					case PADDING:
-						IOUtils.writeShortMM(os, marker);
+					case JPG_SEGMENT_PADDING:
+						IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 						int nextByte = 0;
 						while ((nextByte = IOUtils.read(is)) == 0xff) {
 							IOUtils.write(os, nextByte);
 						}
-						marker = (short) ((0xff << 8) | nextByte);
+						currentJpegSegmentMarkerCode = (short) ((0xff << 8) | nextByte);
 						break;
 					case SOS: // There should be no meta data after this segment
-						IOUtils.writeShortMM(os, marker);
+						IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 						copyToEnd(is, os);
 						finished = true;
 						break;
-					case COM:
+					case JPG_SEGMENT_COMMNENTS_COM:
 						if(metadataTypes.contains(MetadataType.COMMENT)) {
 							length = IOUtils.readUnsignedShortMM(is);
 							IOUtils.skipFully(is, length - 2);
-							marker = IOUtils.readShortMM(is);
+							currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 							break;
 						}
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 						break;						
-					case APP0:
+					case JPG_SEGMENT_JFIF_APP0:
 						if(metadataTypes.contains(MetadataType.JPG_JFIF)) {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[JFIF_ID.length()];
@@ -1714,19 +1714,19 @@ public class JPEGMeta {
 							if (Arrays.equals(temp, JFIF_ID.getBytes())) {
 								IOUtils.skipFully(is, length - JFIF_ID.length() - 2);
 							} else {
-								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp); // Write the already read bytes
 								temp = new byte[length - JFIF_ID.length() - 2];
 								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
-							marker = IOUtils.readShortMM(is);
+							currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 							break;
 						}
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 						break;
-					case APP1:
+					case JPG_SEGMENT_EXIF_XMP_APP1:
 						// We are only interested in EXIF and XMP
 						if(metadataTypes.contains(MetadataType.EXIF) || metadataTypes.contains(MetadataType.XMP)) {
 							length = IOUtils.readUnsignedShortMM(is);
@@ -1743,19 +1743,19 @@ public class JPEGMeta {
 									&& metadataTypes.contains(MetadataType.EXIF)) { // EXIF
 								IOUtils.skipFully(is, length - XMP_EXT_ID.length() - 2);
 							} else { // We don't want to remove any of them
-								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp); // Write the already read bytes
 								temp = new byte[length - XMP_EXT_ID.length() - 2];
 								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
-							marker = IOUtils.readShortMM(is);
+							currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 							break;
 						}
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 						break;
-					case APP2:
+					case JPG_SEGMENT_ICC_APP2:
 						if(metadataTypes.contains(MetadataType.ICC_PROFILE)) {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[ICC_PROFILE_ID.length()];
@@ -1764,17 +1764,17 @@ public class JPEGMeta {
 							if (Arrays.equals(temp, ICC_PROFILE_ID.getBytes())) {
 								IOUtils.skipFully(is, length - ICC_PROFILE_ID.length() - 2);
 							} else {
-								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp); // Write the already read bytes
 								temp = new byte[length - ICC_PROFILE_ID.length() - 2];
 								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
-							marker = IOUtils.readShortMM(is);
+							currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 							break;
 						}
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 						break;
 					case APP12:
 						if(metadataTypes.contains(MetadataType.JPG_DUCKY)) {
@@ -1785,19 +1785,19 @@ public class JPEGMeta {
 							if (Arrays.equals(temp, DUCKY_ID.getBytes())) {
 								IOUtils.skipFully(is, length - DUCKY_ID.length() - 2);
 							} else {
-								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp); // Write the already read bytes
 								temp = new byte[length - DUCKY_ID.length() - 2];
 								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
-							marker = IOUtils.readShortMM(is);
+							currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 							break;
 						}
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 						break;
-					case APP13:
+					case JPG_SEGMENT_IPTC_APP13:
 						if(metadataTypes.contains(MetadataType.PHOTOSHOP_IRB) || metadataTypes.contains(MetadataType.IPTC)
 							|| metadataTypes.contains(MetadataType.XMP) || metadataTypes.contains(MetadataType.EXIF)) {
 							length = IOUtils.readUnsignedShortMM(is);
@@ -1828,17 +1828,17 @@ public class JPEGMeta {
 									writeIRB(os, bimMap.values());
 								}							
 							} else {
-								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp); // Write the already read bytes
 								temp = new byte[length - PHOTOSHOP_IRB_ID.length() - 2];
 								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
-							marker = IOUtils.readShortMM(is);
+							currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 							break;
 						}
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 						break;
 					case APP14:
 						if(metadataTypes.contains(MetadataType.JPG_ADOBE)) {
@@ -1849,20 +1849,20 @@ public class JPEGMeta {
 							if (Arrays.equals(temp, ADOBE_ID.getBytes())) {
 								IOUtils.skipFully(is, length - ADOBE_ID.length() - 2);
 							} else {
-								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, currentJpegSegmentMarkerCode);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp); // Write the already read bytes
 								temp = new byte[length - ADOBE_ID.length() - 2];
 								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
-							marker = IOUtils.readShortMM(is);
+							currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 							break;
 						}
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 						break;
 					default:
-						marker = copySegment(marker, is, os);
+						currentJpegSegmentMarkerCode = copySegment(currentJpegSegmentMarkerCode, is, os);
 				}
 			}
 		}
@@ -1871,7 +1871,7 @@ public class JPEGMeta {
 	@SuppressWarnings("unused")
 	private static short skipSOS(InputStream is) throws IOException {
 		int nextByte = 0;
-		short marker = 0;	
+		short currentJpegSegmentMarkerCode = 0;
 		
 		while((nextByte = IOUtils.read(is)) != -1) {
 			if(nextByte == 0xff) {
@@ -1881,10 +1881,10 @@ public class JPEGMeta {
 					throw new IOException("Premature end of SOS segment!");					
 				}								
 				
-				if (nextByte != 0x00) { // This is a marker
-					marker = (short)((0xff<<8)|nextByte);
+				if (nextByte != 0x00) { // This is a currentJpegSegmentMarkerCode
+					currentJpegSegmentMarkerCode = (short)((0xff<<8)|nextByte);
 					
-					switch (Marker.fromShort(marker)) {										
+					switch (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode)) {
 						case RST0:  
 						case RST1:
 						case RST2:
@@ -1905,7 +1905,7 @@ public class JPEGMeta {
 			throw new IOException("Premature end of SOS segment!");
 		}
 
-		return marker;
+		return currentJpegSegmentMarkerCode;
 	}
 	
 	private static void writeComment(String comment, OutputStream os) throws IOException	{
@@ -1913,11 +1913,11 @@ public class JPEGMeta {
 	}
 	
 	/**
-	 * Write ICC_Profile as one or more APP2 segments
+	 * Write ICC_Profile as one or more JPG_SEGMENT_ICC_APP2 segments
 	 * <p>
 	 * Due to the JPEG segment length limit, we have
 	 * to split ICC_Profile data and put them into 
-	 * different APP2 segments if the data can not fit
+	 * different JPG_SEGMENT_ICC_APP2 segments if the data can not fit
 	 * into one segment.
 	 * 
 	 * @param os output stream to write the ICC_Profile
@@ -1932,14 +1932,14 @@ public class JPEGMeta {
 		int leftOver = data.length%maxICCDataLen;
 		int totalSegment = (numOfSegment == 0)? 1: ((leftOver == 0)? numOfSegment: (numOfSegment + 1));
 		for(int i = 0; i < numOfSegment; i++) {
-			IOUtils.writeShortMM(os, Marker.APP2.getValue());
+			IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_ICC_APP2.getValue());
 			IOUtils.writeShortMM(os, maxSegmentLen);
 			IOUtils.write(os, ICC_PROFILE_ID.getBytes());
 			IOUtils.writeShortMM(os, totalSegment|(i+1)<<8);
 			IOUtils.write(os, data, i*maxICCDataLen, maxICCDataLen);
 		}
 		if(leftOver != 0) {
-			IOUtils.writeShortMM(os, Marker.APP2.getValue());
+			IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_ICC_APP2.getValue());
 			IOUtils.writeShortMM(os, leftOver + 16);
 			IOUtils.write(os, ICC_PROFILE_ID.getBytes());
 			IOUtils.writeShortMM(os, totalSegment|totalSegment<<8);
@@ -1949,7 +1949,7 @@ public class JPEGMeta {
 	
 	private static void writeXMP(OutputStream os, byte[] xmp, byte[] extendedXmp, String guid) throws IOException {
 		// Write XMP
-		IOUtils.writeShortMM(os, Marker.APP1.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1.getValue());
 		// Write segment length
 		IOUtils.writeShortMM(os, XMP_ID.length() + 2 + xmp.length);
 		// Write segment data
@@ -1962,7 +1962,7 @@ public class JPEGMeta {
 			int offset = 0;
 			
 			for(int i = 0; i < numOfChunks; i++) {
-				IOUtils.writeShortMM(os, Marker.APP1.getValue());
+				IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1.getValue());
 				// Write segment length
 				IOUtils.writeShortMM(os, 2 + XMP_EXT_ID.length() + GUID_LEN + 4 + 4 + MAX_EXTENDED_XMP_CHUNK_SIZE);
 				// Write segment data
@@ -1977,7 +1977,7 @@ public class JPEGMeta {
 			int leftOver = extendedXmp.length % MAX_EXTENDED_XMP_CHUNK_SIZE;
 			
 			if(leftOver != 0) {
-				IOUtils.writeShortMM(os, Marker.APP1.getValue());
+				IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1.getValue());
 				// Write segment length
 				IOUtils.writeShortMM(os, 2 + XMP_EXT_ID.length() + GUID_LEN + 4 + 4 + leftOver);
 				// Write segment data
@@ -1997,7 +1997,7 @@ public class JPEGMeta {
 	
 	private static void writeIRB(OutputStream os, Collection<_8BIM> bims) throws IOException {
 		if(bims != null && bims.size() > 0) {
-			IOUtils.writeShortMM(os, Marker.APP13.getValue());
+			IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_IPTC_APP13.getValue());
 	    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			for(_8BIM bim : bims)
 				bim.write(bout);

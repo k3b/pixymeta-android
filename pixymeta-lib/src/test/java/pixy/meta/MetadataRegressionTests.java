@@ -10,10 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -29,8 +31,11 @@ import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.demo.j2se.TestPixyMetaJ2se;
+import pixy.image.jpeg.JpegSegment;
 import pixy.image.tiff.FieldType;
 import pixy.image.tiff.Tag;
+import pixy.io.IOUtils;
+import pixy.meta.jpeg.JpgFileProcessor;
 import pixy.string.StringUtils;
 
 // @RunWith(Parameterized.class)
@@ -236,6 +241,41 @@ public class MetadataRegressionTests {
 			if (valueAsString != null) result.append("=").append(valueAsString);
 			result.append("\n");
         }
+	}
+
+	@Test
+	// @Parameters({"12.jpg"})
+	@Parameters(method = "getAllResourceImageNamesForTest")
+	public void shouldCopyJpgFile(String fileName) throws IOException {
+		if (fileName.toLowerCase().endsWith(".jpg")) {
+			JpgFileProcessor doCopy = new JpgFileProcessor();
+
+			InputStream inputStream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
+
+			File outDir = new File(OUTDIR + "/copyResult");
+			outDir.mkdirs();
+			final File outFile = new File(outDir, fileName);
+			OutputStream outputStream = new FileOutputStream(outFile);
+			doCopy.copyStream(inputStream, outputStream);
+			inputStream.close();
+			outputStream.close();
+
+			assertContentEqual(TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName), outFile);
+		}
+	}
+
+	private void assertContentEqual(InputStream expected, File actual) throws IOException {
+		byte[] actualContent = new byte[(int) actual.length()];
+		FileInputStream isResult = new FileInputStream(actual);
+
+		IOUtils.readFully(isResult, actualContent);
+		isResult.close();
+
+		byte[] expectedContent = new byte[(int) actual.length()];
+		IOUtils.readFully(expected, expectedContent);
+		expected.close();
+
+		Assert.assertArrayEquals(expectedContent, actualContent);
 	}
 
 

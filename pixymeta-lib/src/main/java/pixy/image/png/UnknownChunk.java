@@ -16,7 +16,7 @@ import java.io.OutputStream;
 import pixy.io.IOUtils;
 
 /**
- * Special chunk to handle PNG ChunkType.UNKNOWN.
+ * Special chunk to handle PNG ChunkType.JPG_SEGMENT_UNKNOWN.
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 12/30/2012

@@ -45,7 +45,7 @@ public enum ChunkType implements IFieldDefinition {
 	HIST("hIST", 0x68495354, Attribute.ANCILLARY, 50), // Must precede the first IDAT chunk and must follow the PLTE chunk
 	TIME("tIME", 0x74494D45, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
     
-	UNKNOWN("UNKNOWN",  0x00000000, Attribute.ANCILLARY, 99); // We don't know this chunk, ranking it right before IEND
+	UNKNOWN("JPG_SEGMENT_UNKNOWN",  0x00000000, Attribute.ANCILLARY, 99); // We don't know this chunk, ranking it right before IEND
 	
 	/**
 	 * We made Attribute public for general usage outside of Attribute class.

@@ -32,17 +32,19 @@ public class FloatField extends TiffField<float[]> {
 	public float[] getData() {
 		return data.clone();
 	}
-	
+
+	@Override
 	public String getDataAsString() {
 		return Arrays.toString(data);
 	}
 
 	// [var, var, var]
-	// TODO !!! @Override
+	@Override
 	public void setValue(String value) {
 		data = StringUtils.parseFloatList(value);
 	}
 
+	@Override
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		if (data.length == 1) {
 			dataOffset = (int)os.getStreamPointer();

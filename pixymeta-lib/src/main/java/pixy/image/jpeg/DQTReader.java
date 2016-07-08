@@ -18,23 +18,23 @@ import pixy.io.IOUtils;
 import pixy.util.Reader;
 
 /**
- * JPEG DQT segment reader
+ * JPEG DQT jpegSegment reader
  *  
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 10/11/2013
  */
 public class DQTReader implements Reader {
 
-	private Segment segment;
+	private JpegSegment jpegSegment;
 	private List<QTable> qTables = new ArrayList<QTable>(4);
 	
-	public DQTReader(Segment segment) throws IOException {
+	public DQTReader(JpegSegment jpegSegment) throws IOException {
 		//
-		if(segment.getMarker() != Marker.DQT) {
-			throw new IllegalArgumentException("Not a valid DQT segment!");
+		if(jpegSegment.getJpegSegmentMarker() != JpegSegmentMarker.DQT) {
+			throw new IllegalArgumentException("Not a valid DQT jpegSegment!");
 		}
 		
-		this.segment = segment;
+		this.jpegSegment = jpegSegment;
 		read();
 	}
 	
@@ -44,8 +44,8 @@ public class DQTReader implements Reader {
 	
 	public void read() throws IOException {
 		//
-		byte[] data = segment.getData();		
-		int len = segment.getLength();
+		byte[] data = jpegSegment.getData();
+		int len = jpegSegment.getLength();
 		len -= 2;//
 		
 		int offset = 0;

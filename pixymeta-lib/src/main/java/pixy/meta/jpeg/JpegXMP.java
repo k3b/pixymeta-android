@@ -7,7 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import pixy.image.jpeg.Marker;
+import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.io.IOUtils;
 import pixy.meta.xmp.XMP;
 import pixy.string.StringUtils;
@@ -62,7 +62,7 @@ public class JpegXMP extends XMP {
 		if(xmp.length > MAX_XMP_CHUNK_SIZE)
 			throw new RuntimeException("XMP data size exceededs JPEG segment size");
 		// Write XMP segment
-		IOUtils.writeShortMM(os, Marker.APP1.getValue());
+		IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1.getValue());
 		// Write segment length
 		IOUtils.writeShortMM(os, XMP_ID.length() + 2 + xmp.length);
 		// Write segment data
@@ -75,7 +75,7 @@ public class JpegXMP extends XMP {
 			int offset = 0;
 			
 			for(int i = 0; i < numOfChunks; i++) {
-				IOUtils.writeShortMM(os, Marker.APP1.getValue());
+				IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1.getValue());
 				// Write segment length
 				IOUtils.writeShortMM(os, 2 + XMP_EXT_ID.length() + GUID_LEN + 4 + 4 + MAX_EXTENDED_XMP_CHUNK_SIZE);
 				// Write segment data
@@ -90,7 +90,7 @@ public class JpegXMP extends XMP {
 			int leftOver = extendedXmp.length % MAX_EXTENDED_XMP_CHUNK_SIZE;
 			
 			if(leftOver != 0) {
-				IOUtils.writeShortMM(os, Marker.APP1.getValue());
+				IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1.getValue());
 				// Write segment length
 				IOUtils.writeShortMM(os, 2 + XMP_EXT_ID.length() + GUID_LEN + 4 + 4 + leftOver);
 				// Write segment data

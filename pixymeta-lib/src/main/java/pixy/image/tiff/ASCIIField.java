@@ -26,17 +26,19 @@ public final class ASCIIField extends TiffField<String> {
 		super(tag, FieldType.ASCII, data.trim().length() + 1); // Remove white spaces
 		this.data = data.trim() + '\0'; // Add NULL to the end of the string
 	}
-	
+
+	@Override
 	public String getDataAsString() {
 		// ASCII field allows for multiple NUL separated strings
 		return data.trim().replace("\0", "; ");
 	}
 
-	// TODO !!! @Override
+	@Override
 	public void setValue(String value) {
 		data = value;
 	}
 
+	@Override
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		
 		byte[] buf = data.getBytes("iso-8859-1");

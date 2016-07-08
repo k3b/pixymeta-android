@@ -21,7 +21,7 @@ import pixy.io.RandomAccessOutputStream;
  * One one meta data item of basetype T living in a IFD (Image File Directory).
  * <p>
  * We could have used a TiffTag enum as the first parameter of the constructor, but this
- * will not work with unknown tags of tag type TiffTag.UNKNOWN. In that case, we cannot
+ * will not work with unknown tags of tag type TiffTag.JPG_SEGMENT_UNKNOWN. In that case, we cannot
  * use the tag values to sort the fields or as keys for a hash map as used by {@link IFD}.
  * 
  * @author Wen Yu, yuwen_66@yahoo.com

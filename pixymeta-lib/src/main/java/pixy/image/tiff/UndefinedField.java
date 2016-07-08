@@ -27,15 +27,23 @@ public final class UndefinedField extends TiffField<byte[]> {
 		super(tag, FieldType.UNDEFINED, data.length);
 		this.data = data;
 	}
-	
+
+	@Override
 	public byte[] getData() {
 		return data.clone();
 	}
-	
+
+	@Override
 	public String getDataAsString() {
 		return StringUtils.toHexListString(data, 0, 10);
 	}
-	
+
+	@Override
+	public void setValue(String value) {
+		data = StringUtils.parseHexByteList(value);
+	}
+
+	@Override
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 	
 		if (data.length <= 4) {

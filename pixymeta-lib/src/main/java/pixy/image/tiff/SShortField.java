@@ -36,8 +36,15 @@ public final class SShortField extends AbstractShortField  implements IIntableFi
 		
 		return temp;
 	}
-	
+
+	@Override
 	public String getDataAsString() {
 		return StringUtils.toListString(data, 0, 10, false);
 	}
+
+	@Override
+	public void setValue(String value) {
+		data = StringUtils.parseShortList(value);
+	}
+
 }

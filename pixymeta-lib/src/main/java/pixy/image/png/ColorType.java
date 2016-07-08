@@ -27,7 +27,7 @@ public enum ColorType {
 	GRAY_SCALE_WITH_ALPHA(4, "Gray-scale-with-alpha: each pixel is a grayscale sample, followed by an alpha sample."), 
 	TRUE_COLOR_WITH_ALPHA(6, "True-color-with-alpha: each pixel is a R,G,B triple, followed by an alpha sample."), 
     
-	UNKNOWN(999, "UNKNOWN"); // We don't know this color format
+	UNKNOWN(999, "JPG_SEGMENT_UNKNOWN"); // We don't know this color format
 	
 	private ColorType(int value, String description)
     {

@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import pixy.util.Reader;
 
 /**
- * JPEG DHT segment reader
+ * JPEG DHT jpegSegment reader
  *  
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 10/12/2013
@@ -29,17 +29,17 @@ public class DHTReader implements Reader {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(DHTReader.class);
 		
-	private Segment segment;
+	private JpegSegment jpegSegment;
 	private List<HTable> dcTables = new ArrayList<HTable>(3);
 	private List<HTable> acTables = new ArrayList<HTable>(3);
 	
-	public DHTReader(Segment segment) throws IOException {
+	public DHTReader(JpegSegment jpegSegment) throws IOException {
 		//
-		if(segment.getMarker() != Marker.DHT) {
-			throw new IllegalArgumentException("Not a valid DHT segment!");
+		if(jpegSegment.getJpegSegmentMarker() != JpegSegmentMarker.DHT) {
+			throw new IllegalArgumentException("Not a valid DHT jpegSegment!");
 		}
 		
-		this.segment = segment;
+		this.jpegSegment = jpegSegment;
 		read();
 	}
 	
@@ -53,8 +53,8 @@ public class DHTReader implements Reader {
 	
 	public void read() throws IOException {
 		//
-		byte[] data = segment.getData();		
-		int len = segment.getLength();
+		byte[] data = jpegSegment.getData();
+		int len = jpegSegment.getLength();
 		len -= 2;//
 		
 		int offset = 0;

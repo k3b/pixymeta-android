@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pixy.api.DefaultApiImpl;
 import pixy.api.IDirectory;
 import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
@@ -18,14 +19,12 @@ import pixy.meta.exif.JpegExif;
 import pixy.meta.jpeg.JPEGMeta;
 
 /**
+ * Contain all known metadata in a uniform format.
+ *
  * Created by k3b on 06.07.2016.
  */
 public class MetaHolder {
-    protected Map<MetadataType, IMetadata> data = null;
-
     public MetaHolder(Map<MetadataType, IMetadata> data) {
-        this.data = data;
-
         for (IMetadata meta : data.values()) {
             if (meta != null) add(meta.getMetaData());
         }
@@ -59,58 +58,16 @@ public class MetaHolder {
         }
     }
 
-    protected void add(IFieldValue value) {
+    protected IFieldValue add(IFieldValue value) {
         if (value != null) {
             defs2Values.put(value.getDefinition(), value);
         }
+        return value;
     }
 
-    public static class Empty implements IMetadata {
-
-        @Override
-        public byte[] getData() {
-            return new byte[0];
-        }
-
-        @Override
-        public MetadataType getType() {
-            return null;
-        }
-
-        @Override
-        public boolean isDataRead() {
-            return false;
-        }
-
-        @Override
-        public void showMetadata() {
-
-        }
-
-        /**
-         * Writes the metadata out to the output stream
-         *
-         * @param out OutputStream to write the metadata to
-         * @throws IOException
-         */
-        @Override
-        public void write(OutputStream out) throws IOException {
-
-        }
-
-        /**
-         * @return directories that belong to this MetaData
-         */
-        @Override
-        public List<IDirectory> getMetaData() {
-            return null;
-        }
-
-        @Override
-        public void read() throws IOException {
-
-        }
+    public IFieldValue add(IFieldDefinition tag, String value) {
+        IFieldValue fieldValue = new DefaultApiImpl(tag, value);
+        add(fieldValue);
+        return fieldValue;
     }
-
-    public static final Empty EMPTY = new Empty();
 }
