@@ -44,7 +44,6 @@ public interface IBitmap {
      *                 formats, like PNG which is lossless, will ignore the
      *                 quality setting
      * @param stream   The outputstream to write the compressed data.
-     * @return true if successfully compressed to the specified stream.
      */
     void compressJPG (int quality, OutputStream stream) throws IOException;
 

@@ -116,7 +116,6 @@ public class BitmapNative  implements IBitmap {
      *                 formats, like PNG which is lossless, will ignore the
      *                 quality setting
      * @param stream   The outputstream to write the compressed data.
-     * @return true if successfully compressed to the specified stream.
      */
     @Override
     public void compressJPG(int quality, OutputStream stream) throws IOException {

@@ -58,11 +58,17 @@ dependencies {
     // compile 'eu.lp0.slf4j:slf4j-android:1.7.7-1@jar'
 }
 
-task javadoc(type: Javadoc) {
+// dummy. else assemble fails because of javadoc-compile error
+task javadoc {
+}
+
+task javadoc2(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("../javadoc/")
+    ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + files(ext.androidJar)
+    // destinationDir = file("../javadoc/")
     failOnError false
 }
 
 apply from: '../uploadArchives.gradle'
+// javadocJar.dependsOn javadoc2
