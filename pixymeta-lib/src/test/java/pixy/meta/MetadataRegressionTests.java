@@ -31,19 +31,22 @@ import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.demo.j2se.TestPixyMetaJ2se;
-import pixy.image.jpeg.JpegSegment;
+import pixy.fileprocessor.jpg.JpegExifSegmentPlugin;
+import pixy.fileprocessor.jpg.JpegAdobeIRBSegmentPlugin;
+import pixy.fileprocessor.jpg.JpegJFIFSegmentPlugin;
 import pixy.image.tiff.FieldType;
 import pixy.image.tiff.Tag;
 import pixy.io.IOUtils;
-import pixy.meta.jpeg.JpgFileProcessor;
+import pixy.fileprocessor.jpg.JpgFileProcessor;
 import pixy.string.StringUtils;
+import pixy.util.FileUtils;
 
 // @RunWith(Parameterized.class)
 @RunWith(JUnitParamsRunner.class)
 public class MetadataRegressionTests {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(MetadataRegressionTests.class);
-	private static final String OUTDIR = "build/testresults/metadata/";
+	private static final File OUTDIR = new File("./build/testresults/metadata");
 
 	// resources in pixymeta-j2se-demo/resources/pixy.demo.j2se.images used by JUnitParamsRunner
 	// for details see https://github.com/Pragmatists/JUnitParams/blob/master/src/test/java/junitparams/usage/SamplesOfUsageTest.java
@@ -125,7 +128,11 @@ public class MetadataRegressionTests {
 
 	@BeforeClass
 	public static void initDirectories() {
-		new File("./" + OUTDIR).mkdirs();
+		FileUtils.delete(OUTDIR, null);
+		OUTDIR.mkdirs();
+		JpegExifSegmentPlugin.register();
+		JpegJFIFSegmentPlugin.register();
+		JpegAdobeIRBSegmentPlugin.register();
 	}
 
 	@Test
@@ -174,17 +181,30 @@ public class MetadataRegressionTests {
 	@Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldFormat(String fileName) throws IOException
 	{
-		boolean showDetailed = true;
-		StringBuffer result = new StringBuffer();
-		result.append("\n\n############\n").append(fileName).append("\n");
+		final File outdir = new File(OUTDIR, "shouldFormat");
 
+		outdir.mkdirs();
 		InputStream stream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
 		Map<MetadataType, IMetadata> metadataMap = Metadata.readMetadata(stream);
 
+		StringBuffer result = showMeta(fileName, metadataMap, outdir, true);
+		stream.close();
+
+		LOGGER.info(result.toString());
+
+	}
+
+	protected StringBuffer showMeta(String fileName, Map<MetadataType, IMetadata> metadataMap, File outdir,
+									boolean showDetailed) throws FileNotFoundException {
+		StringBuffer result = new StringBuffer();
+		result.append("\n\n############\n").append(fileName).append("\n");
+
 		for (Map.Entry<MetadataType, IMetadata> entry : metadataMap.entrySet()) {
 			result.append(entry.getKey()).append("\n");
-			 if (showDetailed) {
-				 List<IDirectory> metaDir = (entry.getValue() != null) ? entry.getValue().getMetaData() : null;
+
+			IMetadata metaData = (showDetailed) ? entry.getValue() : null;
+			 if (metaData != null) {
+				 List<IDirectory> metaDir = metaData.getMetaData();
 				 if (metaDir != null) {
 					 for (IDirectory dir : metaDir) {
 						 final List<IFieldValue> values = dir.getValues();
@@ -194,25 +214,25 @@ public class MetadataRegressionTests {
 							 }
 						 }
 					 }
-					 result.append("----------------------\n");
+					 result.append("\n----------------------\n");
 				 }
-				 entry.getValue().showMetadata();
+
+				 String dbgMessage = metaData.getDebugMessage();
+				 if (dbgMessage != null)
+					 result.append(dbgMessage).append("\n----------------------\n");
 			 }
 		}
 
 		if (showDetailed) {
-			saveResultToFile(OUTDIR + fileName + ".txt", result.toString());
+			saveResultToFile(new File(outdir,fileName + ".txt"), result.toString());
 		}
-		stream.close();
-
-		LOGGER.info(result.toString());
-
+		return result;
 	}
 
-	private void saveResultToFile(String fileName, String result) throws FileNotFoundException {
+	private void saveResultToFile(File fileName, String result) throws FileNotFoundException {
 		String charset = "UTF8";
 
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName))));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName)));
 		PrintWriter out = new PrintWriter(bw);
 		out.print(result);
 		out.flush();
@@ -252,14 +272,23 @@ public class MetadataRegressionTests {
 
 			InputStream inputStream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
 
-			File outDir = new File(OUTDIR + "/copyResult");
+			File outDir = new File(OUTDIR ,"shouldCopyJpgFile");
 			outDir.mkdirs();
+
 			final File outFile = new File(outDir, fileName);
 			OutputStream outputStream = new FileOutputStream(outFile);
-			doCopy.copyStream(inputStream, outputStream);
-			inputStream.close();
-			outputStream.close();
 
+			try {
+				doCopy.copyStream(inputStream, outputStream);
+			} finally {
+				inputStream.close();
+				outputStream.close();
+
+				Map<MetadataType, IMetadata> metadataMap = doCopy.getMetadataMap();
+				StringBuffer result = showMeta(fileName, metadataMap, outDir, true);
+
+				LOGGER.info(result.toString());
+			}
 			assertContentEqual(TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName), outFile);
 		}
 	}

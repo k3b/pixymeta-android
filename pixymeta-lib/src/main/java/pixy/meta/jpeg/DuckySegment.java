@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import pixy.io.IOUtils;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
@@ -38,7 +37,7 @@ public class DuckySegment extends Metadata {
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(DuckySegment.class);
-		
+
 	public DuckySegment() {
 		super(MetadataType.JPG_DUCKY, null);
 		datasetMap =  new EnumMap<DuckyTag, DuckyDataSet>(DuckyTag.class);

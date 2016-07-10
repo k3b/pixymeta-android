@@ -21,7 +21,7 @@ public class JpegXMP extends XMP {
 	private static final int MAX_EXTENDED_XMP_CHUNK_SIZE = 65458;
 	private static final int MAX_XMP_CHUNK_SIZE = 65504;
 	private static final int GUID_LEN = 32;
-		
+
 	public JpegXMP(byte[] data) {
 		super(data);
 	}

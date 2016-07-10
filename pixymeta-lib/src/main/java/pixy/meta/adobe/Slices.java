@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import pixy.meta.adobe.ImageResourceID;
-import pixy.meta.adobe.Slice;
-import pixy.meta.adobe._8BIM;
-
-public class Slices extends _8BIM {
+public class Slices extends AdobyMetadataBase {
 	List<Slice> slices;
 	
 	public Slices() {

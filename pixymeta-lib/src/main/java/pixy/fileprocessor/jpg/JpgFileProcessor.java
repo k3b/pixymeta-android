@@ -1,17 +1,25 @@
-package pixy.meta.jpeg;
+package pixy.fileprocessor.jpg;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import pixy.api.IMetadata;
 import pixy.image.jpeg.JpegSegment;
 import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.image.jpeg.UnknownSegment;
 import pixy.io.FileCacheRandomAccessInputStream;
 import pixy.io.IOUtils;
 import pixy.io.RandomAccessInputStream;
+import pixy.meta.MetadataType;
+import pixy.meta.adobe.AdobeIRBSegment;
+import pixy.meta.adobe.ImageResourceID;
+import pixy.meta.adobe.AdobyMetadataBase;
+import pixy.meta.iptc.IPTC;
 
 /**
  * Processes one jpg-file to read, copy,replace meta data from/to jpg files.
@@ -24,6 +32,8 @@ import pixy.io.RandomAccessInputStream;
  * Created by k3b on 07.07.2016.
  */
 public class JpgFileProcessor {
+    private Map<MetadataType, IMetadata> metadataMap = new HashMap<MetadataType, IMetadata>();
+
     /**
      * @param is input image stream
      * @param os output image stream (or null if no writing should be done)
@@ -35,7 +45,7 @@ public class JpgFileProcessor {
         if (os != null) {
             IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 
-            onModifySegments(jpegSegments);
+            onProcessSegments(jpegSegments);
             onWriteSegments(os, jpegSegments);
             IOUtils.writeShortMM(os, JpegSegmentMarker.SOS.getValue());
 
@@ -58,7 +68,7 @@ public class JpgFileProcessor {
         // Create a list to hold the temporary Segments
         List<JpegSegment> jpegSegments = new ArrayList<JpegSegment>();
 
-        int length = 0;
+        int segLengthInclMarker = 0;
         short currentJpegSegmentMarkerCode;
         JpegSegmentMarker currentJpegSegmentMarker;
 
@@ -68,39 +78,39 @@ public class JpgFileProcessor {
         while (currentJpegSegmentMarker != JpegSegmentMarker.SOS) { // Read through and add the jpegSegments to a list until SOS
             if (currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_PADDING) {
                 // padding without prior segment
-                length = 1; // 2 bytes of current marker minus first 0xff of next marker
+                int paddingCount = 1; // 2 bytes of current marker minus first 0xff of next marker
                 int nextByte = 0;
                 while ((nextByte = IOUtils.read(is)) == 0xff) {
-                    length++;
+                    paddingCount++;
                 }
-                jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null).addPadding(length));
+                jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, null).addPadding(paddingCount));
 
                 // last 0xff is first part of next marker
                 currentJpegSegmentMarkerCode = (short) ((0xff << 8) | nextByte);
 
             } else {
-                length = IOUtils.readUnsignedShortMM(is);
+                segLengthInclMarker = IOUtils.readUnsignedShortMM(is);
 
                 JpegSegment lastSegment = null;
                 if (isSkipSegment(currentJpegSegmentMarker)) {
                     // no more processing
-                    IOUtils.skipFully(is, length - 2);
+                    IOUtils.skipFully(is, segLengthInclMarker - 2);
                 } else {
                     // copy segment to buffer
-                    lastSegment = onReadSegment(is, jpegSegments, length, currentJpegSegmentMarker);
+                    lastSegment = onReadSegment(is, jpegSegments, segLengthInclMarker, currentJpegSegmentMarker);
                 }
                 currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 
                 if (currentJpegSegmentMarkerCode == JpegSegmentMarker.JPG_SEGMENT_PADDING.getValue()) {
                     // padding after segment
-                    length = 1; // 2 bytes of current marker minus first 0xff of next marker
+                    int paddingCount = 1; // 2 bytes of current marker minus first 0xff of next marker
                     int nextByte = 0;
                     while ((nextByte = IOUtils.read(is)) == 0xff) {
-                        length++;
+                        paddingCount++;
                     }
 
                     if (lastSegment != null)
-                        lastSegment.addPadding(length);
+                        lastSegment.addPadding(paddingCount);
                     // else also ignore padding after ignored segment
 
                     // last 0xff is first part of next marker
@@ -123,22 +133,54 @@ public class JpgFileProcessor {
     }
 
     protected JpegSegment onReadSegment(InputStream is, List<JpegSegment> jpegSegments,
-                               int length,
+                               int segLengthInclMarker,
                                JpegSegmentMarker currentJpegSegmentMarker) throws IOException {
-        byte[] buf = new byte[length-2];
+        byte[] buf = new byte[segLengthInclMarker-2];
         IOUtils.readFully(is, buf);
         JpegSegment segment;
         if (currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN) {
-            segment = new UnknownSegment(currentJpegSegmentMarker.getValue(), length, buf);
+            segment = new UnknownSegment(currentJpegSegmentMarker.getValue(), buf);
         } else {
-            segment = new JpegSegment(currentJpegSegmentMarker, length, buf);
+            segment = new JpegSegment(currentJpegSegmentMarker, buf);
         }
         jpegSegments.add(segment);
         return segment;
     }
 
-    protected void onModifySegments(List<JpegSegment> jpegSegments) {
+    protected void onProcessSegments(List<JpegSegment> jpegSegments) {
+        if (jpegSegments != null) {
+            for (JpegSegment segment : jpegSegments) {
+                if (segment != null) onProcessSegment(segment);
+            }
+        }
 
+        AdobeIRBSegment adobeIrbSegment = (AdobeIRBSegment) metadataMap.get(MetadataType.PHOTOSHOP_IRB);
+
+        if ((adobeIrbSegment != null)) {
+            AdobyMetadataBase iptc = adobeIrbSegment.get8BIM(ImageResourceID.IPTC_NAA.getValue());
+
+            // Extract IPTC as stand-alone meta
+            if (iptc != null) {
+                metadataMap.put(MetadataType.IPTC, new IPTC(iptc.getData()));
+            }
+        }
+    }
+
+    protected void onProcessSegment(JpegSegment jpegSegment) {
+
+        JpgSegmentPluginFactory definition = JpgSegmentPluginFactory.find(jpegSegment.getJpegSegmentMarker(), jpegSegment.getData());
+        if (definition != null) {
+            IMetadata meta = metadataMap.get(definition.type);
+
+            if (meta == null) {
+                meta = definition.create(jpegSegment.getData());
+                if (meta != null) {
+                    metadataMap.put(definition.type, meta);
+                }
+            } else {
+                meta.merge(jpegSegment.getData());
+            }
+        }
     }
 
     protected void onWriteSegments(OutputStream os, List<JpegSegment> jpegSegments) throws IOException {
@@ -161,4 +203,9 @@ public class JpgFileProcessor {
             os.write(buffer, 0, bytesRead);
         }
     }
+
+    public Map<MetadataType, IMetadata> getMetadataMap() {
+        return metadataMap;
+    }
+
 }

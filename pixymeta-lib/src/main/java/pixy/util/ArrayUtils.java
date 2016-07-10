@@ -906,9 +906,12 @@ public class ArrayUtils
     } 	
 
     public static byte[] subArray(byte[] src, int offset, int len) {
-		if(offset == 0 && len == src.length) return src;
-		if((offset < 0 || offset >= src.length) || (offset + len > src.length))
-			throw new IllegalArgumentException("Copy range out of array bounds");
+		final int src_length = src.length;
+		if(offset == 0 && len == src_length) return src;
+		if((offset < 0 || offset >= src_length) || (offset + len > src_length))
+			throw new IllegalArgumentException("Copy range " + offset +
+					".." + (offset + len - 1) +
+					" out of array bounds 0.." + (src_length-1));
 		byte[] dest = new byte[len];
 		System.arraycopy(src, offset, dest, 0, len);
 		

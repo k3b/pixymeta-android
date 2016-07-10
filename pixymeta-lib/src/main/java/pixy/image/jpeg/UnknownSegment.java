@@ -25,8 +25,8 @@ public class UnknownSegment extends JpegSegment {
 
 	private short markerValue;
 	
-	public UnknownSegment(short markerValue, int length, byte[] data) {
-		super(JpegSegmentMarker.JPG_SEGMENT_UNKNOWN, length, data);
+	public UnknownSegment(short markerValue, byte[] data) {
+		super(JpegSegmentMarker.JPG_SEGMENT_UNKNOWN, data);
 		this.markerValue = markerValue;
 	}
 	

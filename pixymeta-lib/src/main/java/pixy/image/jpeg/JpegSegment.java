@@ -32,13 +32,11 @@ import pixy.io.IOUtils;
 public class JpegSegment {
 
 	private JpegSegmentMarker jpegSegmentMarker;
-	private int length;
 	private byte[] data;
 	private int padding = 0; // number of oxff behind segment
 	
-	public JpegSegment(JpegSegmentMarker jpegSegmentMarker, int length, byte[] data) {
+	public JpegSegment(JpegSegmentMarker jpegSegmentMarker, byte[] data) {
 		this.jpegSegmentMarker = jpegSegmentMarker;
-		this.length = length;
 		this.data = data;
 	}
 	
@@ -47,7 +45,8 @@ public class JpegSegment {
 	}
 	
 	public int getLength() {
-		return length;
+		if (data == null) return 2;
+		return data.length +2;
 	}
 	
 	public byte[] getData() {
@@ -57,8 +56,8 @@ public class JpegSegment {
 	public void write(OutputStream os) throws IOException {
 		IOUtils.writeShortMM(os, jpegSegmentMarker.getValue());
 		// If this is not a stand-alone segment, write the content as well
-		if(length > 0) {
-			IOUtils.writeShortMM(os, length);
+		if(getLength() > 0) {
+			IOUtils.writeShortMM(os, getLength());
 			IOUtils.write(os, data);
 		}
 		if(padding > 0) {
@@ -83,6 +82,6 @@ public class JpegSegment {
 	}
 
 	@Override public String toString() {
-		return "" + jpegSegmentMarker + "; len " + length + ", pad " + padding;
+		return "" + jpegSegmentMarker + "; len " + getLength() + ", pad " + padding;
 	}
 }

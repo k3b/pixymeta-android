@@ -49,7 +49,7 @@ public class FileUtils {
             	}                
             } else {
             	String path = file.getAbsolutePath();
-            	if(fileExt != null && path.endsWith(fileExt)) {
+            	if(fileExt == null || path.endsWith(fileExt)) {
             		boolean result = file.delete();
             		// test if delete of file is success or not
             		if (result) {

@@ -30,8 +30,8 @@ import pixy.image.BitmapFactory;
 import pixy.image.IBitmap;
 import pixy.io.PeekHeadInputStream;
 import pixy.io.RandomAccessInputStream;
+import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.meta.adobe.ImageResourceID;
-import pixy.meta.adobe._8BIM;
 import pixy.image.ImageType;
 import pixy.io.IOUtils;
 
@@ -138,12 +138,12 @@ public class MetadataUtils {
 	}
 	
 	/**
-	 * Wraps a BufferedImage inside a Photoshop _8BIM
+	 * Wraps a BufferedImage inside a Photoshop AdobyMetadataBase
 	 * @param thumbnail input thumbnail image
 	 * @return a Photoshop _8BMI
 	 * @throws IOException
 	 */
-	public static _8BIM createThumbnail8BIM(IBitmap thumbnail) throws IOException {
+	public static AdobyMetadataBase createThumbnail8BIM(IBitmap thumbnail) throws IOException {
 		// Create memory buffer to write data
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		// Compress the thumbnail
@@ -174,7 +174,7 @@ public class MetadataUtils {
 		IOUtils.writeShortMM(bout, planes);
 		bout.write(data);
 		// Create 8BIM
-		_8BIM bim = new _8BIM(ImageResourceID.THUMBNAIL_RESOURCE_PS5, "thumbnail", bout.toByteArray());
+		AdobyMetadataBase bim = new AdobyMetadataBase(ImageResourceID.THUMBNAIL_RESOURCE_PS5, "thumbnail", bout.toByteArray());
 	
 		return bim;
 	}

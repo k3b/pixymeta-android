@@ -16,7 +16,7 @@
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    15Apr2015  Changed the argument type for insertIPTC() and insertIRB()
  * WY    07Apr2015  Removed insertICCProfile() AWT related code
- * WY    07Apr2015  Merge Adobe IRB IPTC and TIFF IPTC data if both exist
+ * WY    07Apr2015  Merge Adobe AdobeIRBSegment IPTC and TIFF IPTC data if both exist
  * WY    13Mar2015  Initial creation
  */
 
@@ -47,12 +47,12 @@ import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.image.tiff.UnknownTag;
 import pixy.api.IMetadata;
 import pixy.meta.MetadataType;
+import pixy.meta.adobe.AdobeIRBSegment;
+import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.meta.adobe.DDB;
-import pixy.meta.adobe.IRB;
 import pixy.meta.adobe.IRBThumbnail;
 import pixy.meta.adobe.ThumbnailResource;
 import pixy.meta.adobe.ImageResourceID;
-import pixy.meta.adobe._8BIM;
 import pixy.meta.exif.Exif;
 import pixy.meta.exif.ExifTag;
 import pixy.meta.exif.GPSTag;
@@ -489,9 +489,9 @@ public class TIFFMeta {
 		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP);
 		if(f_photoshop != null) {
 			byte[] data = (byte[])f_photoshop.getData();
-			IRB irb = new IRB(data);
-			if(irb.containsThumbnail()) {
-				IRBThumbnail thumbnail = irb.getThumbnail();
+			AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment(data);
+			if(adobeIrbSegment.containsThumbnail()) {
+				IRBThumbnail thumbnail = adobeIrbSegment.getThumbnail();
 				return thumbnail;					
 			}		
 		}
@@ -762,7 +762,7 @@ public class TIFFMeta {
 	 * or override them depending on the input parameter "update."
 	 * <p>
 	 * There is a possibility that IPTC data presents in more than one places such as a normal TIFF
-	 * tag, or buried inside a Photoshop IPTC-NAA Image Resource Block (IRB), or even in a XMP block.
+	 * tag, or buried inside a Photoshop IPTC-NAA Image Resource Block (AdobeIRBSegment), or even in a XMP block.
 	 * Currently this method does the following thing: if no IPTC data was found from both Photoshop or 
 	 * normal IPTC tag, we insert the IPTC data with a normal IPTC tag. If IPTC data is found both as
 	 * a Photoshop tag and a normal IPTC tag, depending on the "update" parameter, we will either delete
@@ -796,10 +796,10 @@ public class TIFFMeta {
 		TiffField<?> f_iptc = workingPage.removeField(TiffTag.IPTC);		
 		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP);
 		if(f_photoshop != null) { // Read 8BIMs
-			IRB irb = new IRB((byte[])f_photoshop.getData());
+			AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment((byte[])f_photoshop.getData());
 			// Shallow copy the map.
-			Map<Short, _8BIM> bims = new HashMap<Short, _8BIM>(irb.get8BIM());
-			_8BIM photoshop_iptc = bims.remove(ImageResourceID.IPTC_NAA.getValue());
+			Map<Short, AdobyMetadataBase> bims = new HashMap<Short, AdobyMetadataBase>(adobeIrbSegment.get8BIM());
+			AdobyMetadataBase photoshop_iptc = bims.remove(ImageResourceID.IPTC_NAA.getValue());
 			if(photoshop_iptc != null) { // If we have IPTC
 				if(update) { // If we need to keep the old data, copy it
 					if(f_iptc != null) {// We are going to synchronize the two IPTC data
@@ -820,10 +820,10 @@ public class TIFFMeta {
 			for(IPTCDataSet dataset : iptcs) {
 				dataset.write(bout);
 			}
-			_8BIM iptc_bim = new _8BIM(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());
+			AdobyMetadataBase iptc_bim = new AdobyMetadataBase(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());
 			bout.reset();
 			iptc_bim.write(bout); // Write the IPTC 8BIM first
-			for(_8BIM bim : bims.values()) // Copy the other 8BIMs if any
+			for(AdobyMetadataBase bim : bims.values()) // Copy the other 8BIMs if any
 				bim.write(bout);
 			// Add a new Photoshop tag field to TIFF
 			workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP, bout.toByteArray()));
@@ -848,11 +848,11 @@ public class TIFFMeta {
 		writeToStream(rout, firstIFDOffset);	
 	}
 	
-	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, Collection<_8BIM> bims, boolean update) throws IOException {
+	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, Collection<AdobyMetadataBase> bims, boolean update) throws IOException {
 		insertIRB(rin, rout, 0, bims, update);
 	}
 	
-	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, Collection<_8BIM> bims, boolean update) throws IOException {
+	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, Collection<AdobyMetadataBase> bims, boolean update) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
@@ -868,12 +868,12 @@ public class TIFFMeta {
 		if(update) {
 			TiffField<?> f_irb = workingPage.getField(TiffTag.PHOTOSHOP);
 			if(f_irb != null) {
-				IRB irb = new IRB((byte[])f_irb.getData());
+				AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment((byte[])f_irb.getData());
 				// Shallow copy the map.
-	    		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
-				for(_8BIM bim : bims) // Replace the original data
+	    		Map<Short, AdobyMetadataBase> bimMap = new HashMap<Short, AdobyMetadataBase>(adobeIrbSegment.get8BIM());
+				for(AdobyMetadataBase bim : bims) // Replace the original data
 					bimMap.put(bim.getID(), bim);
-				// In case we have two ThumbnailResource IRB, remove the Photoshop4.0 one
+				// In case we have two ThumbnailResource AdobeIRBSegment, remove the Photoshop4.0 one
 				if(bimMap.containsKey(ImageResourceID.THUMBNAIL_RESOURCE_PS4.getValue()) 
 						&& bimMap.containsKey(ImageResourceID.THUMBNAIL_RESOURCE_PS5.getValue()))
 					bimMap.remove(ImageResourceID.THUMBNAIL_RESOURCE_PS4.getValue());
@@ -881,7 +881,7 @@ public class TIFFMeta {
 			}
 		}
 		
-		for(_8BIM bim : bims)
+		for(AdobyMetadataBase bim : bims)
 			bim.write(bout);
 		
 		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP, bout.toByteArray()));
@@ -903,7 +903,7 @@ public class TIFFMeta {
 	public static void insertThumbnail(RandomAccessInputStream rin, RandomAccessOutputStream rout, IBitmap thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		_8BIM bim = new ThumbnailResource(thumbnail);
+		AdobyMetadataBase bim = new ThumbnailResource(thumbnail);
 		insertIRB(rin, rout, Arrays.asList(bim), true);
 	}
 	
@@ -1361,12 +1361,12 @@ public class TIFFMeta {
 			metadataMap.put(MetadataType.XMP, new TiffXMP((byte[])field.getData()));
 		}
 		field = currIFD.getField(TiffTag.PHOTOSHOP);
-		if(field != null) { // We have found Photoshop IRB
-			IRB irb = new IRB((byte[])field.getData());
-			metadataMap.put(MetadataType.PHOTOSHOP_IRB, irb);
-			_8BIM photoshop_8bim = irb.get8BIM(ImageResourceID.IPTC_NAA.getValue());
-			if(photoshop_8bim != null) { // If we have IPTC data inside Photoshop, keep it
-				IPTC iptc = new IPTC(photoshop_8bim.getData());
+		if(field != null) { // We have found Photoshop AdobeIRBSegment
+			AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment((byte[])field.getData());
+			metadataMap.put(MetadataType.PHOTOSHOP_IRB, adobeIrbSegment);
+			AdobyMetadataBase photoshop_AdobyMetadataBase = adobeIrbSegment.get8BIM(ImageResourceID.IPTC_NAA.getValue());
+			if(photoshop_AdobyMetadataBase != null) { // If we have IPTC data inside Photoshop, keep it
+				IPTC iptc = new IPTC(photoshop_AdobyMetadataBase.getData());
 				metadataMap.put(MetadataType.IPTC, iptc);
 			}
 		}
@@ -1379,7 +1379,7 @@ public class TIFFMeta {
 				iptcData = ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN);
 			else
 				iptcData = (byte[])field.getData();
-			if(iptc != null) // If we have IPTC data from IRB, consolidate it with the current data
+			if(iptc != null) // If we have IPTC data from AdobeIRBSegment, consolidate it with the current data
 				iptcData = ArrayUtils.concat(iptcData, iptc.getData());
 			metadataMap.put(MetadataType.IPTC, new IPTC(iptcData));
 		}		
@@ -1439,7 +1439,7 @@ public class TIFFMeta {
 					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
-						// We only remove XMP and keep the other IRB data untouched.
+						// We only remove XMP and keep the other AdobeIRBSegment data untouched.
 						removeMetadataFromIRB(workingPage, data, ImageResourceID.XMP_METADATA);
 					}
 					break;
@@ -1448,7 +1448,7 @@ public class TIFFMeta {
 					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
-						// We only remove IPTC_NAA and keep the other IRB data untouched.
+						// We only remove IPTC_NAA and keep the other AdobeIRBSegment data untouched.
 						removeMetadataFromIRB(workingPage, data, ImageResourceID.IPTC_NAA);
 					}
 					break;
@@ -1457,7 +1457,7 @@ public class TIFFMeta {
 					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
-						// We only remove ICC_PROFILE and keep the other IRB data untouched.
+						// We only remove ICC_PROFILE and keep the other AdobeIRBSegment data untouched.
 						removeMetadataFromIRB(workingPage, data, ImageResourceID.ICC_PROFILE);
 					}
 					break;
@@ -1470,7 +1470,7 @@ public class TIFFMeta {
 					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
-						// We only remove EXIF and keep the other IRB data untouched.
+						// We only remove EXIF and keep the other AdobeIRBSegment data untouched.
 						removeMetadataFromIRB(workingPage, data, ImageResourceID.EXIF_DATA1, ImageResourceID.EXIF_DATA3);
 					}
 					break;
@@ -1489,16 +1489,16 @@ public class TIFFMeta {
 	}
 	
 	private static void removeMetadataFromIRB(IFD workingPage, byte[] data, ImageResourceID ... ids) throws IOException {
-		IRB irb = new IRB(data);
+		AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment(data);
 		// Shallow copy the map.
-		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());								
-		// We only remove XMP and keep the other IRB data untouched.
+		Map<Short, AdobyMetadataBase> bimMap = new HashMap<Short, AdobyMetadataBase>(adobeIrbSegment.get8BIM());
+		// We only remove XMP and keep the other AdobeIRBSegment data untouched.
 		for(ImageResourceID id : ids)
 			bimMap.remove(id.getValue());
 		if(bimMap.size() > 0) {
-		   	// Write back the IRB
+		   	// Write back the AdobeIRBSegment
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			for(_8BIM bim : bimMap.values())
+			for(AdobyMetadataBase bim : bimMap.values())
 				bim.write(bout);
 			// Add new PHOTOSHOP field
 			workingPage.addField(new ByteField(TiffTag.PHOTOSHOP, bout.toByteArray()));

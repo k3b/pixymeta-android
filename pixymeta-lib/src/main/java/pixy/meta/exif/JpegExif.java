@@ -34,9 +34,11 @@ import pixy.io.IOUtils;
 import pixy.io.MemoryCacheRandomAccessOutputStream;
 import pixy.io.RandomAccessOutputStream;
 import pixy.io.WriteStrategyMM;
+import pixy.meta.MetadataType;
+import pixy.meta.jpeg.JPEGMeta;
+import pixy.fileprocessor.jpg.JpgFileProcessor;
 
 public class JpegExif extends Exif {
-
 	public JpegExif() {
 		;
 	}
@@ -44,7 +46,7 @@ public class JpegExif extends Exif {
 	public JpegExif(byte[] data) {
 		super(data);
 	}
-	
+
 	private IFD createImageIFD() {
 		// Create Image IFD (IFD0)
 		IFD imageIFD = new IFD();

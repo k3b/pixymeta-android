@@ -29,12 +29,10 @@ import java.util.List;
 import java.util.Map;
 
 import pixy.api.IFieldDefinition;
-import pixy.meta.adobe.ImageResourceID;
-import pixy.meta.adobe._8BIM;
 import pixy.meta.iptc.IPTC;
 import pixy.meta.iptc.IPTCDataSet;
 
-public class IPTC_NAA extends _8BIM {
+public class IPTC_NAA extends AdobyMetadataBase {
 	//
 	private IPTC iptc;
 		

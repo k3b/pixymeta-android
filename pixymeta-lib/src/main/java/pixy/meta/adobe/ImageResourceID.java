@@ -24,7 +24,7 @@ import java.util.Map;
 import pixy.string.StringUtils;
 
 /**
- * Defines Image Resource IDs for Adobe Image Resource Block (IRB)
+ * Defines Image Resource IDs for Adobe Image Resource Block (AdobeIRBSegment)
  *  
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 06/10/2013

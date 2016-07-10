@@ -66,7 +66,7 @@ public class ICCProfile extends Metadata {
 
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(ICCProfile.class);
-	
+
 	public static void showProfile(byte[] data) {
 		if(data != null && data.length > 0) {
 			ICCProfile icc_profile = new ICCProfile(data);
@@ -89,7 +89,7 @@ public class ICCProfile extends Metadata {
 	
 	private ICCProfileHeader header;	
 	private ProfileTagTable tagTable;
-	
+
 	public ICCProfile(byte[] profile) {
 		super(MetadataType.ICC_PROFILE, profile);
 		ensureDataRead();

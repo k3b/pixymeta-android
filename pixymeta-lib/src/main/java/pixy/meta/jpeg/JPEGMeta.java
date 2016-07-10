@@ -21,7 +21,7 @@
  * WY    01Jul2015  Added support for non-standard XMP identifier
  * WY    15Apr2015  Changed the argument type for insertIPTC() and insertIRB()
  * WY    07Apr2015  Revised insertExif()
- * WY    01Apr2015  Extract IPTC as stand-alone meta data from IRB if any
+ * WY    01Apr2015  Extract IPTC as stand-alone meta data from AdobeIRBSegment if any
  * WY    18Mar2015  Revised readAPP13(), insertIPTC() and insertIRB()
  * 				    to work with multiple JPG_SEGMENT_IPTC_APP13 segments
  * WY    18Mar2015  Removed a few unused readAPPn methods
@@ -60,6 +60,8 @@ import pixy.io.FileCacheRandomAccessInputStream;
 import pixy.io.IOUtils;
 import pixy.io.RandomAccessInputStream;
 import pixy.api.IMetadata;
+import pixy.meta.adobe.AdobeIRBSegment;
+import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.string.Base64;
 import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
@@ -83,9 +85,7 @@ import org.w3c.dom.NodeList;
 
 import pixy.meta.MetadataType;
 import pixy.meta.Thumbnail;
-import pixy.meta.adobe.IRB;
 import pixy.meta.adobe.ImageResourceID;
-import pixy.meta.adobe._8BIM;
 import pixy.meta.exif.Exif;
 import pixy.meta.exif.ExifThumbnail;
 import pixy.meta.adobe.ThumbnailResource;
@@ -110,7 +110,7 @@ public class JPEGMeta {
 	// This is a non_standard XMP identifier which sometimes found in images from GettyImages
 	public static final String NON_STANDARD_XMP_ID = "XMP\0://ns.adobe.com/xap/1.0/\0";
 	public static final String XMP_EXT_ID = "http://ns.adobe.com/xmp/extension/\0";
-	// Photoshop IRB identification with trailing byte [0x00].
+	// Photoshop AdobeIRBSegment identification with trailing byte [0x00].
 	public static final String PHOTOSHOP_IRB_ID = "Photoshop 3.0\0";
 	// EXIF identifier with trailing bytes [0x00, 0x00].
 	public static final String EXIF_ID = "Exif\0\0";
@@ -410,9 +410,9 @@ public class JPEGMeta {
 						while(data[i] != 0) i++;
 						
 						if(new String(data, 0, i++).equals("Photoshop 3.0")) {
-							IRB irb = new IRB(ArrayUtils.subArray(data, i, data.length - i));
-							if(irb.containsThumbnail()) {
-								Thumbnail thumbnail = irb.getThumbnail();
+							AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment(ArrayUtils.subArray(data, i, data.length - i));
+							if(adobeIrbSegment.containsThumbnail()) {
+								Thumbnail thumbnail = adobeIrbSegment.getThumbnail();
 								// Create output path
 								String outpath = "";
 								if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
@@ -621,7 +621,7 @@ public class JPEGMeta {
 					case JPG0:
 					case JPG13:
 				    case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
-				    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+				    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, null));
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 				    case JPG_SEGMENT_EXIF_XMP_APP1:
@@ -630,7 +630,7 @@ public class JPEGMeta {
 				    	byte[] exifBytes = new byte[length - 2];
 						IOUtils.readFully(is, exifBytes);
 						// Add data to segment list
-						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, exifBytes));
+						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, exifBytes));
 						// Read the EXIF data.
 						if(new String(exifBytes, 0, EXIF_ID.length()).equals(EXIF_ID)) { // We assume EXIF data exist only in one JPG_SEGMENT_EXIF_XMP_APP1
 							oldExif = new JpegExif(ArrayUtils.subArray(exifBytes, EXIF_ID.length(), length - EXIF_ID.length() - 2));
@@ -643,9 +643,9 @@ public class JPEGMeta {
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
 					    if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
-					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, buf));
 					    else
-					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, buf));
 					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
@@ -708,7 +708,7 @@ public class JPEGMeta {
 					case JPG0:
 					case JPG13:
 					case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
-						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, null));
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 				    case JPG_SEGMENT_ICC_APP2: // Remove old ICC_Profile
@@ -717,7 +717,7 @@ public class JPEGMeta {
 						if(length < 14) { // This is not an ICC_Profile segment, copy it
 							icc_profile_buf = new byte[length - 2];
 							IOUtils.readFully(is, icc_profile_buf);
-							jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, icc_profile_buf));
+							jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, icc_profile_buf));
 						} else {
 							IOUtils.readFully(is, icc_profile_buf);		
 							// ICC_PROFILE segment.
@@ -729,7 +729,7 @@ public class JPEGMeta {
 								IOUtils.write(os, icc_profile_buf);
 								byte[] temp = new byte[length - ICC_PROFILE_ID.length() - 2];
 								IOUtils.readFully(is, temp);
-								jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, ArrayUtils.concat(icc_profile_buf, temp)));
+								jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, ArrayUtils.concat(icc_profile_buf, temp)));
 							}
 						}						
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
@@ -743,9 +743,9 @@ public class JPEGMeta {
 				    	 byte[] buf = new byte[length - 2];
 				    	 IOUtils.readFully(is, buf);
 				    	 if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
-					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, buf));
 				    	 else
-					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, buf));
 				    	 currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
@@ -757,7 +757,7 @@ public class JPEGMeta {
 	}
 	
 	/**
-	 * Inserts a list of IPTCDataSet into a JPEG JPG_SEGMENT_IPTC_APP13 Photoshop IRB segment
+	 * Inserts a list of IPTCDataSet into a JPEG JPG_SEGMENT_IPTC_APP13 Photoshop AdobeIRBSegment segment
 	 * 
 	 * @param is InputStream for the original image
 	 * @param os OutputStream for the image with IPTC JPG_SEGMENT_IPTC_APP13 inserted
@@ -766,7 +766,7 @@ public class JPEGMeta {
 	 * @throws IOException
 	 */
 	public static void insertIPTC(InputStream is, OutputStream os, Collection<IPTCDataSet> iptcs, boolean update) throws IOException {
-		// Copy the original image and insert Photoshop IRB data
+		// Copy the original image and insert Photoshop AdobeIRBSegment data
 		boolean finished = false;
 		int length = 0;	
 		short currentJpegSegmentMarkerCode;
@@ -774,7 +774,7 @@ public class JPEGMeta {
 		int app0Index = -1;
 		int app1Index = -1;		
 		
-		Map<Short, _8BIM> bimMap = null;
+		Map<Short, AdobyMetadataBase> bimMap = null;
 		// Used to read multiple segment Adobe JPG_SEGMENT_IPTC_APP13
 		ByteArrayOutputStream eightBIMStream = null;
 				
@@ -795,10 +795,10 @@ public class JPEGMeta {
 		while (!finished) {	        
 			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.SOS) {
 				if(eightBIMStream != null) {
-					IRB irb = new IRB(eightBIMStream.toByteArray());
+					AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment(eightBIMStream.toByteArray());
 		    		// Shallow copy the map.
-		    		bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
-					_8BIM iptcBIM = bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
+		    		bimMap = new HashMap<Short, AdobyMetadataBase>(adobeIrbSegment.get8BIM());
+					AdobyMetadataBase iptcBIM = bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
 					if(iptcBIM != null) { // Keep the original values
 						IPTC iptc = new IPTC(iptcBIM.getData());
 						// Shallow copy the map
@@ -815,11 +815,11 @@ public class JPEGMeta {
 				for(int i = 0; i <= index; i++)
 					jpegSegments.get(i).write(os);
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				// Insert IPTC data as one of IRB 8BIM block
+				// Insert IPTC data as one of AdobeIRBSegment 8BIM block
 				for(IPTCDataSet iptc : iptcs)
 					iptc.write(bout);
 				// Create 8BIM for IPTC
-				_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
+				AdobyMetadataBase newBIM = new AdobyMetadataBase(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
 				if(bimMap != null) {
 					bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
 					writeIRB(os, bimMap.values()); // Write the whole thing as one JPG_SEGMENT_IPTC_APP13
@@ -843,7 +843,7 @@ public class JPEGMeta {
 					case JPG0:
 					case JPG13:
 					case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
-						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, null));
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 					case JPG_SEGMENT_IPTC_APP13:
@@ -866,17 +866,17 @@ public class JPEGMeta {
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
 					    if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
-					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, buf));
 					    else
-					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, buf));
 					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
 	    }
 	}
 	
-	public static void insertIRB(InputStream is, OutputStream os, Collection<_8BIM> bims, boolean update) throws IOException {
-		// Copy the original image and insert Photoshop IRB data
+	public static void insertIRB(InputStream is, OutputStream os, Collection<AdobyMetadataBase> bims, boolean update) throws IOException {
+		// Copy the original image and insert Photoshop AdobeIRBSegment data
 		boolean finished = false;
 		int length = 0;	
 		short currentJpegSegmentMarkerCode;
@@ -903,12 +903,12 @@ public class JPEGMeta {
 		while (!finished) {	        
 			if (JpegSegmentMarker.fromShort(currentJpegSegmentMarkerCode) == JpegSegmentMarker.SOS) {
 				if(eightBIMStream != null) {
-					IRB irb = new IRB(eightBIMStream.toByteArray());
+					AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment(eightBIMStream.toByteArray());
 			    	// Shallow copy the map.
-		    		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
-					for(_8BIM bim : bims) // Replace the original data
+		    		Map<Short, AdobyMetadataBase> bimMap = new HashMap<Short, AdobyMetadataBase>(adobeIrbSegment.get8BIM());
+					for(AdobyMetadataBase bim : bims) // Replace the original data
 						bimMap.put(bim.getID(), bim);
-					// In case we have two ThumbnailResource IRB, remove the Photoshop4.0 one
+					// In case we have two ThumbnailResource AdobeIRBSegment, remove the Photoshop4.0 one
 					if(bimMap.containsKey(ImageResourceID.THUMBNAIL_RESOURCE_PS4.getValue()) 
 							&& bimMap.containsKey(ImageResourceID.THUMBNAIL_RESOURCE_PS5.getValue()))
 						bimMap.remove(ImageResourceID.THUMBNAIL_RESOURCE_PS4.getValue());
@@ -936,7 +936,7 @@ public class JPEGMeta {
 					case JPG0:
 					case JPG13:
 					case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
-						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+						jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, null));
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 				    case JPG_SEGMENT_IPTC_APP13: // We will keep the other IRBs from the original JPG_SEGMENT_IPTC_APP13
@@ -959,9 +959,9 @@ public class JPEGMeta {
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
 					    if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
-					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, buf));
 					    else
-					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, buf));
 					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
@@ -971,8 +971,8 @@ public class JPEGMeta {
 	public static void insertIRBThumbnail(InputStream is, OutputStream os, IBitmap thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		_8BIM bim = new ThumbnailResource(thumbnail);
-		insertIRB(is, os, Arrays.asList(bim), true); // Set true to keep other IRB blocks
+		AdobyMetadataBase bim = new ThumbnailResource(thumbnail);
+		insertIRB(is, os, Arrays.asList(bim), true); // Set true to keep other AdobeIRBSegment blocks
 	}
 	
 	/*
@@ -1025,7 +1025,7 @@ public class JPEGMeta {
 					case JPG0:
 					case JPG13:
 				    case TEM: // The only stand alone currentJpegSegmentMarkerCode besides JPG_SEGMENT_START_OF_IMAGE_SOI, JPG_SEGMENT_END_OF_IMAGE_EOI, and RSTn.
-				    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, 0, null));
+				    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, null));
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 				    case JPG_SEGMENT_EXIF_XMP_APP1:
@@ -1041,7 +1041,7 @@ public class JPEGMeta {
 						} else { // We are going to keep other types of data							
 							byte[] temp = new byte[length - XMP_EXT_ID.length() - 2];
 							IOUtils.readFully(is, temp);
-							jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, ArrayUtils.concat(xmpExtId, temp)));
+							jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, ArrayUtils.concat(xmpExtId, temp)));
 							// If it's EXIF, we keep the index
 							if(new String(xmpExtId, 0, EXIF_ID.length()).equals(EXIF_ID)) {
 								exifIndex = jpegSegments.size() - 1;
@@ -1056,9 +1056,9 @@ public class JPEGMeta {
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
 					    if(currentJpegSegmentMarker == JpegSegmentMarker.JPG_SEGMENT_UNKNOWN)
-					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, length, buf));
+					    	jpegSegments.add(new UnknownSegment(currentJpegSegmentMarkerCode, buf));
 					    else
-					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, length, buf));
+					    	jpegSegments.add(new JpegSegment(currentJpegSegmentMarker, buf));
 					    currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				}
 			}
@@ -1258,7 +1258,7 @@ public class JPEGMeta {
         byte buf[] = new byte[len - 2];
         IOUtils.readFully(is, buf);
 		
-		DHTReader reader = new DHTReader(new JpegSegment(JpegSegmentMarker.DHT, len, buf));
+		DHTReader reader = new DHTReader(new JpegSegment(JpegSegmentMarker.DHT, buf));
 		
 		List<HTable> dcTables = reader.getDCTables();
 		List<HTable> acTables = reader.getACTables();
@@ -1273,7 +1273,7 @@ public class JPEGMeta {
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		DQTReader reader = new DQTReader(new JpegSegment(JpegSegmentMarker.DQT, len, buf));
+		DQTReader reader = new DQTReader(new JpegSegment(JpegSegmentMarker.DQT, buf));
 		List<QTable> qTables = reader.getTables();
 		m_qTables.addAll(qTables);		
 	}
@@ -1338,7 +1338,7 @@ public class JPEGMeta {
 					case APP14:
 					case APP15:
 						byte[] appBytes = readSegmentData(is);
-						appnSegments.add(new JpegSegment(currentJpegSegmentMarker, appBytes.length + 2, appBytes));
+						appnSegments.add(new JpegSegment(currentJpegSegmentMarker, appBytes));
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
 					case JPG_SEGMENT_COMMNENTS_COM:
@@ -1471,9 +1471,9 @@ public class JPEGMeta {
 		}
 		
 		if(eightBIMStream != null) {
-			IRB irb = new IRB(eightBIMStream.toByteArray());	
-			metadataMap.put(MetadataType.PHOTOSHOP_IRB, irb);
-			_8BIM iptc = irb.get8BIM(ImageResourceID.IPTC_NAA.getValue());
+			AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment(eightBIMStream.toByteArray());
+			metadataMap.put(MetadataType.PHOTOSHOP_IRB, adobeIrbSegment);
+			AdobyMetadataBase iptc = adobeIrbSegment.get8BIM(ImageResourceID.IPTC_NAA.getValue());
 			// Extract IPTC as stand-alone meta
 			if(iptc != null) {
 				metadataMap.put(MetadataType.IPTC, new IPTC(iptc.getData()));
@@ -1502,11 +1502,11 @@ public class JPEGMeta {
 		
 		meta = metadataMap.get(MetadataType.PHOTOSHOP_IRB);
 		if(meta != null) {
-			IRB irb = (IRB)meta;
-			if(!irb.isDataRead())
-				irb.read();
-			if(irb.containsThumbnail()) {
-				thumbnails.put("PHOTOSHOP_IRB", irb.getThumbnail());
+			AdobeIRBSegment adobeIrbSegment = (AdobeIRBSegment)meta;
+			if(!adobeIrbSegment.isDataRead())
+				adobeIrbSegment.read();
+			if(adobeIrbSegment.containsThumbnail()) {
+				thumbnails.put("PHOTOSHOP_IRB", adobeIrbSegment.getThumbnail());
 			}
 		}
 		
@@ -1528,7 +1528,7 @@ public class JPEGMeta {
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		JpegSegment jpegSegment = new JpegSegment(jpegSegmentMarker, len, buf);
+		JpegSegment jpegSegment = new JpegSegment(jpegSegmentMarker, buf);
 		SOFReader reader = new SOFReader(jpegSegment);
 		
 		return reader;
@@ -1541,7 +1541,7 @@ public class JPEGMeta {
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		JpegSegment jpegSegment = new JpegSegment(JpegSegmentMarker.SOS, len, buf);
+		JpegSegment jpegSegment = new JpegSegment(JpegSegmentMarker.SOS, buf);
 		new SOSReader(jpegSegment, sofReader);
 		
 		// Actual image data follow.
@@ -1803,28 +1803,28 @@ public class JPEGMeta {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[PHOTOSHOP_IRB_ID.length()];
 							IOUtils.readFully(is, temp);	
-							// PHOTOSHOP IRB segment
+							// PHOTOSHOP AdobeIRBSegment segment
 							if (Arrays.equals(temp, PHOTOSHOP_IRB_ID.getBytes())) {
 								temp = new byte[length - PHOTOSHOP_IRB_ID.length() - 2];
 								IOUtils.readFully(is, temp);
-								IRB irb = new IRB(temp);
+								AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment(temp);
 								// Shallow copy the map.
-								Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());								
+								Map<Short, AdobyMetadataBase> bimMap = new HashMap<Short, AdobyMetadataBase>(adobeIrbSegment.get8BIM());
 								if(!metadataTypes.contains(MetadataType.PHOTOSHOP_IRB)) {
 									if(metadataTypes.contains(MetadataType.IPTC)) {
-										// We only remove IPTC_NAA and keep the other IRB data untouched.
+										// We only remove IPTC_NAA and keep the other AdobeIRBSegment data untouched.
 										bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
 									} 
 									if(metadataTypes.contains(MetadataType.XMP)) {
-										// We only remove XMP and keep the other IRB data untouched.
+										// We only remove XMP and keep the other AdobeIRBSegment data untouched.
 										bimMap.remove(ImageResourceID.XMP_METADATA.getValue());
 									} 
 									if(metadataTypes.contains(MetadataType.EXIF)) {
-										// We only remove EXIF and keep the other IRB data untouched.
+										// We only remove EXIF and keep the other AdobeIRBSegment data untouched.
 										bimMap.remove(ImageResourceID.EXIF_DATA1.getValue());
 										bimMap.remove(ImageResourceID.EXIF_DATA3.getValue());
 									}
-									// Write back the IRB
+									// Write back the AdobeIRBSegment
 									writeIRB(os, bimMap.values());
 								}							
 							} else {
@@ -1990,16 +1990,16 @@ public class JPEGMeta {
 		}
 	}
 	
-	private static void writeIRB(OutputStream os, _8BIM ... bims) throws IOException {
+	private static void writeIRB(OutputStream os, AdobyMetadataBase... bims) throws IOException {
 		if(bims != null && bims.length > 0)
 			writeIRB(os, Arrays.asList(bims));
 	}
 	
-	private static void writeIRB(OutputStream os, Collection<_8BIM> bims) throws IOException {
+	private static void writeIRB(OutputStream os, Collection<AdobyMetadataBase> bims) throws IOException {
 		if(bims != null && bims.size() > 0) {
 			IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_IPTC_APP13.getValue());
 	    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			for(_8BIM bim : bims)
+			for(AdobyMetadataBase bim : bims)
 				bim.write(bout);
 			// Write segment length
 			IOUtils.writeShortMM(os, 14 + 2 +  bout.size());

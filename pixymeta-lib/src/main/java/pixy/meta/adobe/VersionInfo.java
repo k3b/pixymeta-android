@@ -11,7 +11,7 @@
  *
  * VersionInfo.java
  * <p>
- * Adobe IRB version info resource wrapper
+ * Adobe AdobeIRBSegment version info resource wrapper
  *
  * Who   Date       Description
  * ====  =========  =================================================
@@ -28,12 +28,10 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pixy.meta.adobe.ImageResourceID;
-import pixy.meta.adobe._8BIM;
 import pixy.io.IOUtils;
 import pixy.string.StringUtils;
 
-public class VersionInfo extends _8BIM {
+public class VersionInfo extends AdobyMetadataBase {
 	//
 	private int version;
 	private boolean hasRealMergedData;

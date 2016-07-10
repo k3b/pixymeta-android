@@ -9,7 +9,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * _8BIM.java
+ * AdobyMetadataBase.java
  *
  * Who   Date       Description
  * ====  =========  =================================================================
@@ -27,27 +27,27 @@ import org.slf4j.LoggerFactory;
 import pixy.io.IOUtils;
 import pixy.string.StringUtils;
 
-public class _8BIM {
+public class AdobyMetadataBase {
 	private short id;
 	private String name;
 	protected int size;
 	protected byte[] data;
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(_8BIM.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdobyMetadataBase.class);
 	
-	public _8BIM(short id, String name, byte[] data) {
+	public AdobyMetadataBase(short id, String name, byte[] data) {
 		this(id, name, (data == null)?0:data.length, data);
 	}
 	
-	public _8BIM(short id, String name, int size, byte[] data) {
+	public AdobyMetadataBase(short id, String name, int size, byte[] data) {
 		this.id = id;
 		this.name = name;
 		this.size = size;
 		this.data = data;
 	}
 	
-	public _8BIM(ImageResourceID eId, String name, byte[] data) {
+	public AdobyMetadataBase(ImageResourceID eId, String name, byte[] data) {
 		this(eId.getValue(), name, data);
 	}
 	
@@ -89,7 +89,7 @@ public class _8BIM {
 	}
 	
 	public void write(OutputStream os) throws IOException {
-		// Write IRB id
+		// Write AdobeIRBSegment id
 		os.write("8BIM".getBytes());
 		// Write resource id
 		IOUtils.writeShortMM(os, id); 		

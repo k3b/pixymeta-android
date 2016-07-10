@@ -29,7 +29,7 @@ public abstract class SegmentBuilder implements Builder<JpegSegment> {
 	public final JpegSegment build() {
 		byte[] data = buildData();
 		
-		return new JpegSegment(jpegSegmentMarker, data.length + 2, data);
+		return new JpegSegment(jpegSegmentMarker, data);
 	}
 	
 	protected abstract byte[] buildData();

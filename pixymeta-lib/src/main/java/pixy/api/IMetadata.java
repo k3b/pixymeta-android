@@ -32,4 +32,9 @@ public interface IMetadata extends MetadataReader {
 	 * @return directories that belong to this MetaData
 	 * */
 	List<IDirectory> getMetaData();
+
+	void merge(byte[] data);
+
+	String getDebugMessage();
+	IMetadata setDebugMessageBuffer(StringBuilder debugMessageBuffer);
 }

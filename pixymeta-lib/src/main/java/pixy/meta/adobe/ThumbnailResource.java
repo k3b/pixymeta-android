@@ -34,7 +34,7 @@ import pixy.meta.Thumbnail;
 import pixy.util.ArrayUtils;
 import pixy.util.MetadataUtils;
 
-public class ThumbnailResource extends _8BIM {
+public class ThumbnailResource extends AdobyMetadataBase {
 	// Check to make sure id is either ImageResourceID.THUMBNAIL_RESOURCE_PS4
 	// or ImageResourceID.THUMBNAIL_RESOURCE_PS5
 	private static ImageResourceID validateID(ImageResourceID id) {
@@ -185,7 +185,7 @@ public class ThumbnailResource extends _8BIM {
 				colors = MetadataUtils.toARGB(thumbnailData);
 			thumbnail.setImage(BitmapFactory.createBitmap(colors, width, height,totalSize, thumbnailData, paddedRowBytes, id));
 		} else
-			throw new UnsupportedOperationException("Unsupported IRB thumbnail data type: " + dataType);
+			throw new UnsupportedOperationException("Unsupported AdobeIRBSegment thumbnail data type: " + dataType);
 	}
 	
 	private void read() {

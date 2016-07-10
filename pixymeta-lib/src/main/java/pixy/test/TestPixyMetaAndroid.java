@@ -21,7 +21,7 @@ import pixy.api.IMetadata;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.IPTC_NAA;
-import pixy.meta.adobe._8BIM;
+import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.meta.exif.Exif;
 import pixy.meta.exif.ExifTag;
 import pixy.meta.exif.JpegExif;
@@ -163,13 +163,13 @@ public class TestPixyMetaAndroid {
 		return iptcs;
 	}
 	
-	private static List<_8BIM> createPhotoshopIPTC() {
+	private static List<AdobyMetadataBase> createPhotoshopIPTC() {
 		IPTC_NAA iptc = new IPTC_NAA();
 		iptc.addField(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2016, yuwen_66@yahoo.com");
 		iptc.addField(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!");
 		iptc.addField(IPTCApplicationTag.CATEGORY, "ICAFE");
 		
-		return new ArrayList<_8BIM>(Arrays.asList(iptc));
+		return new ArrayList<AdobyMetadataBase>(Arrays.asList(iptc));
 	}
 	
 	private static IBitmap createThumbnail(String filePath) throws IOException {

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import pixy.io.IOUtils;
 
-public class JPEGQuality extends _8BIM {
+public class JPEGQuality extends AdobyMetadataBase {
 	public enum Format {
 		FORMAT_STANDARD(0x0000),
 		FORMAT_OPTIMISED(0x0001),

@@ -39,8 +39,9 @@ import org.slf4j.LoggerFactory;
 import pixy.api.IDirectory;
 import pixy.api.IMetadata;
 import pixy.image.IBitmap;
+import pixy.meta.adobe.AdobyMetadataBase;
+import pixy.util.ArrayUtils;
 import pixy.util.MetadataUtils;
-import pixy.meta.adobe._8BIM;
 import pixy.meta.bmp.BMPMeta;
 import pixy.meta.exif.Exif;
 import pixy.meta.gif.GIFMeta;
@@ -62,13 +63,9 @@ import pixy.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/12/2015
  */
-public abstract class Metadata implements IMetadata {
+public abstract class Metadata extends MetadataBase {
 	public static final int IMAGE_MAGIC_NUMBER_LEN = 4;
-	// Fields
-	private MetadataType type;
-	protected byte[] data;
-	protected boolean isDataRead;
-	
+
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);		
 	
@@ -260,15 +257,15 @@ public abstract class Metadata implements IMetadata {
 		peekHeadInputStream.shallowClose();
 	}
 	
-	public static void insertIRB(InputStream is, OutputStream out, Collection<_8BIM> bims) throws IOException {
+	public static void insertIRB(InputStream is, OutputStream out, Collection<AdobyMetadataBase> bims) throws IOException {
 		insertIRB(is, out, bims, false);
 	}
 	
-	public static void insertIRB(InputStream is, OutputStream os, Collection<_8BIM> bims, boolean update) throws IOException {
+	public static void insertIRB(InputStream is, OutputStream os, Collection<AdobyMetadataBase> bims, boolean update) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = MetadataUtils.guessImageType(peekHeadInputStream);		
-		// Delegate IRB inserting to corresponding image tweaker.
+		// Delegate AdobeIRBSegment inserting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
 				JPEGMeta.insertIRB(peekHeadInputStream, os, bims, update);
@@ -285,11 +282,11 @@ public abstract class Metadata implements IMetadata {
 			case PCX:
 			case TGA:
 			case BMP:
-				LOGGER.info("{} image format does not support IRB data", imageType);
+				LOGGER.info("{} image format does not support AdobeIRBSegment data", imageType);
 				break;
 			default:
 				peekHeadInputStream.close();
-				throw new IllegalArgumentException("IRB data inserting is not supported for " + imageType + " image");				
+				throw new IllegalArgumentException("AdobeIRBSegment data inserting is not supported for " + imageType + " image");
 		}
 		peekHeadInputStream.shallowClose();
 	}
@@ -298,7 +295,7 @@ public abstract class Metadata implements IMetadata {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = MetadataUtils.guessImageType(peekHeadInputStream);		
-		// Delegate IRB thumbnail inserting to corresponding image tweaker.
+		// Delegate AdobeIRBSegment thumbnail inserting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
 				JPEGMeta.insertIRBThumbnail(peekHeadInputStream, out, thumbnail);
@@ -315,11 +312,11 @@ public abstract class Metadata implements IMetadata {
 			case PCX:
 			case TGA:
 			case BMP:
-				LOGGER.info("{} image format does not support IRB thumbnail", imageType);
+				LOGGER.info("{} image format does not support AdobeIRBSegment thumbnail", imageType);
 				break;
 			default:
 				peekHeadInputStream.close();
-				throw new IllegalArgumentException("IRB thumbnail inserting is not supported for " + imageType + " image");				
+				throw new IllegalArgumentException("AdobeIRBSegment thumbnail inserting is not supported for " + imageType + " image");
 		}
 		peekHeadInputStream.shallowClose();
 	}
@@ -482,59 +479,7 @@ public abstract class Metadata implements IMetadata {
 	}
 	
 	public Metadata(MetadataType type, byte[] data) {
-		this.type = type;
-		this.data = data;
-	}
-	
-	protected void ensureDataRead() {
-		if(!isDataRead) {
-			try {
-				read();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}			
-		}
-	}
-	
-	@Override
-	public byte[] getData() {
-		if(data != null)
-			return data.clone();
-		
-		return null;
-	}
-	
-	@Override
-	public MetadataType getType() {
-		return type;
-	}
-	
-	@Override
-	public boolean isDataRead() {
-		return isDataRead;
+		super(type, data);
 	}
 
-	//TODO implement for all
-	// public abstract void addField(IFieldDefinition tag, Object data);
-
-	/**
-	 * Writes the metadata out to the output stream
-	 * 
-	 * @param out OutputStream to write the metadata to
-	 * @throws IOException
-	 */
-	@Override
-	public void write(OutputStream out) throws IOException {
-		byte[] data = getData();
-		if(data != null)
-			out.write(data);
-	}
-
-	/**
-	 * @return directories that belong to this MetaData
-	 * */
-	@Override
-	public List<IDirectory> getMetaData() {
-		return null;
-	}
 }

@@ -86,7 +86,7 @@ public enum JpegSegmentMarker implements IFieldDefinition {
 		JPG_SEGMENT_COMMENT_APP10("Comment", (short)0xffea),
 	    APP11("", (short)0xffeb), 
 	    APP12("Photoshop Ducky/PictureInfo", (short)0xffec), 
-	    JPG_SEGMENT_IPTC_APP13("Photoshop IRB/Adobe_CM", (short)0xffed),
+	    JPG_SEGMENT_IPTC_APP13("Photoshop AdobeIRBSegment/Adobe_CM", (short)0xffed),
 	    APP14("Adobe DCT encoding information", (short)0xffee), 
 	    APP15("GraphicConverter", (short)0xffef), 
 	    JPG0("Reserved", (short)0xfff0),

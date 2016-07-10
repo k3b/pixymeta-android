@@ -1,0 +1,82 @@
+package pixy.fileprocessor.jpg;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
+
+import pixy.api.IMetadata;
+import pixy.image.jpeg.JpegSegmentMarker;
+import pixy.meta.MetadataType;
+import pixy.util.ArrayUtils;
+
+/**
+ * Factory to create SegmentPlugin-s
+ * Created by k3b on 09.07.2016.
+ */
+public class JpgSegmentPluginFactory {
+    // Obtain a logger instance
+    private static final Logger LOGGER = LoggerFactory.getLogger(JpgSegmentPluginFactory.class);
+
+
+    static List<JpgSegmentPluginFactory> factories = new ArrayList<JpgSegmentPluginFactory>();
+
+    public final MetadataType type;
+    private final JpegSegmentMarker marker;
+    private final String subMarker;
+    private final Class<? extends IMetadata> jpegExifClass;
+    private boolean debug = false;
+
+    private JpgSegmentPluginFactory(MetadataType type, JpegSegmentMarker marker, String subMarker, Class<? extends IMetadata> jpegExifClass) {
+        this.type = type;
+        this.marker = marker;
+        this.subMarker = subMarker;
+        this.jpegExifClass = jpegExifClass;
+    }
+
+    /** each plugin implementation registeres here in it-s static constructor */
+    public static JpgSegmentPluginFactory register(MetadataType type, JpegSegmentMarker marker, String subMarker, Class<? extends IMetadata> jpegExifClass) {
+        LOGGER.info("JpgSegmentPluginFactory.register " + jpegExifClass.getSimpleName());
+        final JpgSegmentPluginFactory factory = new JpgSegmentPluginFactory(type, marker, subMarker, jpegExifClass);
+        factories.add(factory);
+        return factory;
+    }
+
+    public static JpgSegmentPluginFactory find(JpegSegmentMarker marker, byte[] data) {
+        for (JpgSegmentPluginFactory processor : factories) {
+            if (marker == processor.marker) {
+                String subMarker = processor.subMarker;
+                if (new String(data, 0, subMarker.length()).equals(subMarker)) {
+                    return processor;
+                }
+            }
+        }
+        return null;
+    }
+
+    public IMetadata create(byte[] data) {
+        try {
+            data = ArrayUtils.subArray(data, subMarker.length(), data.length - subMarker.length());
+            Constructor<? extends IMetadata> constructor = jpegExifClass.getConstructor(byte[].class);
+            final IMetadata metadata = constructor.newInstance(data);
+            if (debug) {
+                metadata.setDebugMessageBuffer(new StringBuilder());
+            }
+            return metadata;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override public String toString() {
+        return jpegExifClass.getSimpleName() + "[" + marker.getName() + "," + subMarker +  "]";
+    }
+
+    public JpgSegmentPluginFactory setDebug(boolean debug) {
+        this.debug = debug;
+        return this;
+    }
+}

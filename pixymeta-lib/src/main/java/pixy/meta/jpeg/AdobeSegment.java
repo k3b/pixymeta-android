@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.string.StringUtils;
@@ -37,7 +38,7 @@ public class AdobeSegment extends Metadata {
 	private int m_APP14Flags0;
 	private int m_APP14Flags1;
 	private int m_ColorTransform;
-	
+
 	public AdobeSegment(byte[] data) {
 		super(MetadataType.JPG_ADOBE, data);
 		ensureDataRead();

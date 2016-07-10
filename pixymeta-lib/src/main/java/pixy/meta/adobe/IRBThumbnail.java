@@ -15,7 +15,7 @@
  * ====  =========  ===========================================================
  * WY    27Apr2015  Added copy constructor
  * WY    10Apr2015  Implemented base class Thumbnail abstract method write()
- * WY    13Mar2015  Initial creation for IRBReader to encapsulate IRB thumbnail
+ * WY    13Mar2015  Initial creation for IRBReader to encapsulate AdobeIRBSegment thumbnail
  */
 
 package pixy.meta.adobe;
