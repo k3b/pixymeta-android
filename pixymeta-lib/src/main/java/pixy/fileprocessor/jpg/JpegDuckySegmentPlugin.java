@@ -9,7 +9,7 @@ import pixy.meta.jpeg.JPEGMeta;
  * A jpg-file specific {@link pixy.meta.exif.Exif} plugin for {@link JpgFileProcessor}
  * Created by k3b on 09.07.2016.
  */
-class JpegDuckySegmentPlugin extends DuckySegment {
+public class JpegDuckySegmentPlugin extends DuckySegment {
 
     static {
         JpgSegmentPluginFactory.register(MetadataType.JPG_DUCKY, JpegSegmentMarker.APP12,

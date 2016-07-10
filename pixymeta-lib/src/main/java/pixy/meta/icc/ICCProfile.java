@@ -92,11 +92,8 @@ public class ICCProfile extends Metadata {
 
 	public ICCProfile(byte[] profile) {
 		super(MetadataType.ICC_PROFILE, profile);
-		ensureDataRead();
-	}
-	
-	public ICCProfile(InputStream is) throws IOException {
-		this(IOUtils.inputStreamToByteArray(is));
+		// setDebugMessageBuffer(new StringBuilder());
+		// ensureDataRead();
 	}
 	
 	public boolean canBeUsedIndependently() {
@@ -269,6 +266,9 @@ public class ICCProfile extends Metadata {
 	
 	public void read() throws IOException {
 		if(!isDataRead) {
+			if (isDebugEnabled()) {
+				debug("read " + data.length);
+			}
 			this.header = new ICCProfileHeader();
 			this.tagTable = new ProfileTagTable();
 			readHeader(data);
@@ -364,6 +364,7 @@ public class ICCProfile extends Metadata {
 
 	@Override
 	public List<IDirectory> getMetaData() {
+		ensureDataRead();
 		List<IDirectory> result =  new ArrayList<IDirectory>();
 		result.add(getHeader());
 		result.add(new DefaultApiImpl("ICC-Table", new ArrayList<IFieldValue>(tagTable.getTagEntries())));

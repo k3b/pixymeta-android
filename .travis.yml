@@ -15,5 +15,9 @@ before_install:
  
  
 script:
-  - ./gradlew assemble pixymeta-j2se-demo:runFatJar
+  - ./gradlew assemble pixymeta-j2se-demo:runFatJar pixymeta-lib:test pixymeta-lib:jacocoTestReport
   - ls -l pixymeta-j2se-demo/build/testresults/
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  

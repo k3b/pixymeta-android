@@ -31,9 +31,13 @@ import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.demo.j2se.TestPixyMetaJ2se;
+import pixy.fileprocessor.jpg.JpegAdobeDctSegmentPlugin;
+import pixy.fileprocessor.jpg.JpegDuckySegmentPlugin;
 import pixy.fileprocessor.jpg.JpegExifSegmentPlugin;
 import pixy.fileprocessor.jpg.JpegAdobeIRBSegmentPlugin;
+import pixy.fileprocessor.jpg.JpegICCSegmentPlugin;
 import pixy.fileprocessor.jpg.JpegJFIFSegmentPlugin;
+import pixy.fileprocessor.jpg.JpegXMPSegmentPlugin;
 import pixy.image.tiff.FieldType;
 import pixy.image.tiff.Tag;
 import pixy.io.IOUtils;
@@ -130,9 +134,13 @@ public class MetadataRegressionTests {
 	public static void initDirectories() {
 		FileUtils.delete(OUTDIR, null);
 		OUTDIR.mkdirs();
-		JpegExifSegmentPlugin.register();
-		JpegJFIFSegmentPlugin.register();
+		JpegAdobeDctSegmentPlugin.register();
 		JpegAdobeIRBSegmentPlugin.register();
+		JpegDuckySegmentPlugin.register();
+		JpegExifSegmentPlugin.register();
+		JpegICCSegmentPlugin.register();
+		JpegJFIFSegmentPlugin.register();
+		JpegXMPSegmentPlugin.register();
 	}
 
 	@Test
@@ -185,9 +193,16 @@ public class MetadataRegressionTests {
 
 		outdir.mkdirs();
 		InputStream stream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
-		Map<MetadataType, IMetadata> metadataMap = Metadata.readMetadata(stream);
+		Map<MetadataType, IMetadata> metadataMap = null;
+		StringBuffer result = null;
+		try {
+			metadataMap = Metadata.readMetadata(stream);
+			// result.append(ex.getMessage()).append("\n").append(ex.getStackTrace()).append("\n");
+		} catch (Exception ex) {
+		} finally {
+		}
 
-		StringBuffer result = showMeta(fileName, metadataMap, outdir, true);
+		result = showMeta(fileName, metadataMap, outdir, true);
 		stream.close();
 
 		LOGGER.info(result.toString());
@@ -204,22 +219,27 @@ public class MetadataRegressionTests {
 
 			IMetadata metaData = (showDetailed) ? entry.getValue() : null;
 			 if (metaData != null) {
-				 List<IDirectory> metaDir = metaData.getMetaData();
-				 if (metaDir != null) {
-					 for (IDirectory dir : metaDir) {
-						 final List<IFieldValue> values = dir.getValues();
-						 if (values != null) {
-							 for (IFieldValue value : values) {
-								 formatValue(result, dir, value);
+				 try {
+					 List<IDirectory> metaDir = metaData.getMetaData();
+					 if (metaDir != null) {
+						 for (IDirectory dir : metaDir) {
+							 final List<IFieldValue> values = dir.getValues();
+							 if (values != null) {
+								 for (IFieldValue value : values) {
+									 formatValue(result, dir, value);
+								 }
 							 }
 						 }
+						 result.append("\n----------------------\n");
 					 }
-					 result.append("\n----------------------\n");
-				 }
 
-				 String dbgMessage = metaData.getDebugMessage();
-				 if (dbgMessage != null)
-					 result.append(dbgMessage).append("\n----------------------\n");
+				 } catch (Exception ex) {
+					 result.append(ex.getMessage()).append("\n").append(ex.getStackTrace()).append("\n");
+				 } finally {
+					 String dbgMessage = metaData.getDebugMessage();
+					 if (dbgMessage != null)
+						 result.append(dbgMessage).append("\n----------------------\n");
+				 }
 			 }
 		}
 

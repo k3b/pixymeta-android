@@ -9,7 +9,7 @@ import pixy.meta.jpeg.JpegXMP;
  * A jpg-file specific {@link JpegXMP} plugin for {@link JpgFileProcessor}
  * Created by k3b on 09.07.2016.
  */
-class JpegXMPSegmentPlugin extends JpegXMP {
+public class JpegXMPSegmentPlugin extends JpegXMP {
 
     static {
         JpgSegmentPluginFactory.register(MetadataType.XMP, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1,
