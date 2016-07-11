@@ -4,14 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import pixy.api.IFieldDefinition;
-import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
-import pixy.image.ImageType;
-import pixy.image.tiff.Tag;
 import pixy.meta.MetadataType;
-import pixy.meta.exif.ExifTag;
-import pixy.meta.exif.JpegExif;
 import pixy.meta.jpeg.JPEGMeta;
 
 /**

@@ -21,10 +21,9 @@ package pixy.meta.exif;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import pixy.meta.exif.Exif;
-import pixy.image.tiff.IFD;
+import pixy.image.exifFields.IFD;
 
-public class TiffExif extends Exif {
+public class TiffExif extends ExifMetaSegment {
 
 	public TiffExif() {
 		;

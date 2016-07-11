@@ -36,21 +36,19 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pixy.api.IDirectory;
 import pixy.api.IMetadata;
 import pixy.image.IBitmap;
+import pixy.image.ImageType;
 import pixy.meta.adobe.AdobyMetadataBase;
-import pixy.util.ArrayUtils;
+import pixy.meta.exif.ExifMetaSegment;
+import pixy.meta.tiff.TIFFMetaUtils;
 import pixy.util.MetadataUtils;
 import pixy.meta.bmp.BMPMeta;
-import pixy.meta.exif.Exif;
 import pixy.meta.gif.GIFMeta;
 import pixy.meta.iptc.IPTCDataSet;
 import pixy.meta.jpeg.JPEGMeta;
 import pixy.meta.png.PNGMeta;
-import pixy.meta.tiff.TIFFMeta;
 import pixy.meta.xmp.XMP;
-import pixy.image.ImageType;
 import pixy.io.FileCacheRandomAccessInputStream;
 import pixy.io.FileCacheRandomAccessOutputStream;
 import pixy.io.PeekHeadInputStream;
@@ -78,7 +76,7 @@ public abstract class Metadata extends MetadataBase {
 	public static void extractThumbnails(InputStream is, String pathToThumbnail) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, IMAGE_MAGIC_NUMBER_LEN);
-		ImageType imageType = MetadataUtils.guessImageType(peekHeadInputStream);		
+		ImageType imageType = MetadataUtils.guessImageType(peekHeadInputStream);
 		// Delegate thumbnail extracting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
@@ -86,7 +84,7 @@ public abstract class Metadata extends MetadataBase {
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
-				TIFFMeta.extractThumbnail(randIS, pathToThumbnail);
+				TIFFMetaUtils.extractThumbnail(randIS, pathToThumbnail);
 				randIS.shallowClose();
 				break;
 			case PNG:
@@ -125,7 +123,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
-				TIFFMeta.insertComments(comments, randIS, randOS);
+				TIFFMetaUtils.insertComments(comments, randIS, randOS);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -150,21 +148,21 @@ public abstract class Metadata extends MetadataBase {
 	/**
 	 * @param is input image stream 
 	 * @param os output image stream
-	 * @param exif Exif instance
+	 * @param exif ExifMetaSegment instance
 	 * @throws IOException 
 	 */
-	public static void insertExif(InputStream is, OutputStream os, Exif exif) throws IOException {
+	public static void insertExif(InputStream is, OutputStream os, ExifMetaSegment exif) throws IOException {
 		insertExif(is, os, exif, false);
 	}
 	
 	/**
 	 * @param is input image stream 
 	 * @param os output image stream
-	 * @param exif Exif instance
+	 * @param exif ExifMetaSegment instance
 	 * @param update true to keep the original data, otherwise false
 	 * @throws IOException 
 	 */
-	public static void insertExif(InputStream is, OutputStream os, Exif exif, boolean update) throws IOException {
+	public static void insertExif(InputStream is, OutputStream os, ExifMetaSegment exif, boolean update) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = MetadataUtils.guessImageType(peekHeadInputStream);		
@@ -176,7 +174,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
-				TIFFMeta.insertExif(randIS, randOS, exif, update);
+				TIFFMetaUtils.insertExif(randIS, randOS, exif, update);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -206,7 +204,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
-				TIFFMeta.insertICCProfile(icc_profile, 0, randIS, randOS);
+				TIFFMetaUtils.insertICCProfile(icc_profile, 0, randIS, randOS);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -239,7 +237,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
-				TIFFMeta.insertIPTC(randIS, randOS, iptcs, update);
+				TIFFMetaUtils.insertIPTC(randIS, randOS, iptcs, update);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -273,7 +271,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
-				TIFFMeta.insertIRB(randIS, randOS, bims, update);
+				TIFFMetaUtils.insertIRB(randIS, randOS, bims, update);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -303,7 +301,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
-				TIFFMeta.insertThumbnail(randIS, randOS, thumbnail);
+				TIFFMetaUtils.insertThumbnail(randIS, randOS, thumbnail);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -333,7 +331,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
-				TIFFMeta.insertXMP(xmp, randIS, randOS);
+				TIFFMetaUtils.insertXMP(xmp, randIS, randOS);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -367,7 +365,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
-				TIFFMeta.insertXMP(xmp, randIS, randOS);
+				TIFFMetaUtils.insertXMP(xmp, randIS, randOS);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -417,7 +415,7 @@ public abstract class Metadata extends MetadataBase {
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
-				metadataMap = TIFFMeta.readMetadata(randIS);
+				metadataMap = TIFFMetaUtils.readMetadata(randIS);
 				randIS.shallowClose();
 				break;
 			case PNG:
@@ -462,7 +460,7 @@ public abstract class Metadata extends MetadataBase {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
-				TIFFMeta.removeMetadata(randIS, randOS, metadataTypes);
+				TIFFMetaUtils.removeMetadata(randIS, randOS, metadataTypes);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;

@@ -24,7 +24,6 @@ import javax.imageio.stream.ImageOutputStream;
 
 import pixy.image.IBitmap;
 import pixy.meta.adobe.ImageResourceID;
-import pixy.util.MetadataUtils;
 
 /**
  * Created by k3b on 31.05.2016.

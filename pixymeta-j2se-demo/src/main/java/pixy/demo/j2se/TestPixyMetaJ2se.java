@@ -17,15 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 import pixy.image.IBitmap;
-import pixy.image.tiff.FieldType;
-import pixy.image.tiff.TiffTag;
+import pixy.image.exifFields.FieldType;
+import pixy.image.exifFields.TiffTag;
 import pixy.j2se.BitmapFactoryNative;
 import pixy.api.IMetadata;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.meta.adobe.IPTC_NAA;
-import pixy.meta.exif.Exif;
+import pixy.meta.exif.ExifMetaSegment;
 import pixy.meta.exif.ExifTag;
 import pixy.meta.exif.JpegExif;
 import pixy.meta.exif.TiffExif;
@@ -213,9 +213,9 @@ public class TestPixyMetaJ2se {
     }
 
     // This method is for testing only
-    private static Exif populateExif(Class<?> exifClass) throws IOException {
+    private static ExifMetaSegment populateExif(Class<?> exifClass) throws IOException {
         // Create an EXIF wrapper
-        Exif exif = exifClass == (TiffExif.class)?new TiffExif() : new JpegExif();
+        ExifMetaSegment exif = exifClass == (TiffExif.class)?new TiffExif() : new JpegExif();
         exif.addField(TiffTag.WINDOWS_XP_AUTHOR, FieldType.WINDOWSXP, "Author");
         exif.addField(TiffTag.WINDOWS_XP_KEYWORDS, FieldType.WINDOWSXP, "Copyright;Author");
         DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");

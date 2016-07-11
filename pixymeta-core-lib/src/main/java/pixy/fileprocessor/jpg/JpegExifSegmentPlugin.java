@@ -3,25 +3,24 @@ package pixy.fileprocessor.jpg;
 import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.meta.MetadataType;
 import pixy.meta.exif.ExifMetaSegment;
-import pixy.meta.jpeg.DuckySegment;
-import pixy.meta.jpeg.JPEGMeta;
+import pixy.meta.exif.JpegExif;
+import pixy.fileprocessor.jpg.JpegMetaDef;
 
 /**
  * A jpg-file specific {@link ExifMetaSegment} plugin for {@link JpgFileProcessor}
  * Created by k3b on 09.07.2016.
  */
-public class JpegDuckySegmentPlugin extends DuckySegment {
-
+public class JpegExifSegmentPlugin extends JpegExif {
     static {
-        JpgSegmentPluginFactory.register(MetadataType.JPG_DUCKY, JpegSegmentMarker.APP12,
-                JPEGMeta.DUCKY_ID, JpegDuckySegmentPlugin.class);
+        JpgSegmentPluginFactory.register(MetadataType.EXIF, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1,
+                JpegMetaDef.EXIF_ID, JpegExifSegmentPlugin.class);
     }
 
     /** make shure that static constructor was called */
     public static void register(){}
 
     /** Created via reflection by {@link pixy.fileprocessor.jpg.JpgSegmentPluginFactory} */
-    public JpegDuckySegmentPlugin(byte[] data) {
+    public JpegExifSegmentPlugin(byte[] data) {
         super(data);
     }
 

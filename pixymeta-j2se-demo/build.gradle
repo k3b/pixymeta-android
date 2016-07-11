@@ -60,6 +60,8 @@ dependencies {
     compile 'com.twelvemonkeys.imageio:imageio-tiff:3.2.1'
 
     compile project(':pixymeta-ext-lib')
+    compile project(':pixymeta-core-lib')
+
     compile project(':pixymeta-j2se-lib')
 	
 }

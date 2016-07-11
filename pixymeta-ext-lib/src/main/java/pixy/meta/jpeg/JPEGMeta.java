@@ -41,12 +41,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import pixy.fileprocessor.jpg.JpegMetaDef;
 import pixy.image.BitmapFactory;
 import pixy.image.IBitmap;
 import pixy.image.jpeg.JpegSegment;
 import pixy.image.jpeg.JpegSegmentMarker;
-import pixy.image.tiff.IFD;
-import pixy.image.tiff.TiffTag;
+import pixy.image.exifFields.IFD;
+import pixy.image.exifFields.TiffTag;
 import pixy.image.jpeg.COMBuilder;
 import pixy.image.jpeg.Component;
 import pixy.image.jpeg.DHTReader;
@@ -62,6 +63,7 @@ import pixy.io.RandomAccessInputStream;
 import pixy.api.IMetadata;
 import pixy.meta.adobe.AdobeIRBSegment;
 import pixy.meta.adobe.AdobyMetadataBase;
+import pixy.meta.exif.ExifMetaSegment;
 import pixy.string.Base64;
 import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
@@ -86,7 +88,6 @@ import org.w3c.dom.NodeList;
 import pixy.meta.MetadataType;
 import pixy.meta.Thumbnail;
 import pixy.meta.adobe.ImageResourceID;
-import pixy.meta.exif.Exif;
 import pixy.meta.exif.ExifThumbnail;
 import pixy.meta.adobe.ThumbnailResource;
 import pixy.meta.exif.JpegExif;
@@ -104,16 +105,7 @@ import pixy.util.MetadataUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/25/2013
  */
-public class JPEGMeta {
-	// Constants
-	public static final String XMP_ID = "http://ns.adobe.com/xap/1.0/\0";
-	// This is a non_standard XMP identifier which sometimes found in images from GettyImages
-	public static final String NON_STANDARD_XMP_ID = "XMP\0://ns.adobe.com/xap/1.0/\0";
-	public static final String XMP_EXT_ID = "http://ns.adobe.com/xmp/extension/\0";
-	// Photoshop AdobeIRBSegment identification with trailing byte [0x00].
-	public static final String PHOTOSHOP_IRB_ID = "Photoshop 3.0\0";
-	// EXIF identifier with trailing bytes [0x00, 0x00].
-	public static final String EXIF_ID = "Exif\0\0";
+public class JPEGMeta extends JpegMetaDef {
 	// ICC_PROFILE identifier with trailing byte [0x00].
 	public static final String ICC_PROFILE_ID = "ICC_PROFILE\0";
 	public static final String JFIF_ID = "JFIF\0"; // JFIF
@@ -121,9 +113,6 @@ public class JPEGMeta {
 	public static final String DUCKY_ID = "Ducky"; // no trailing NULL
 	public static final String PICTURE_INFO_ID = "[picture info]"; // no trailing NULL
 	public static final String ADOBE_ID = "Adobe"; // no trailing NULL
-	// Largest size for each extended XMP chunk
-	private static final int MAX_EXTENDED_XMP_CHUNK_SIZE = 65458;
-	private static final int MAX_XMP_CHUNK_SIZE = 65504;
 	private static final int GUID_LEN = 32;
 	
 	public static final EnumSet<JpegSegmentMarker> APPnMarkers = EnumSet.range(JpegSegmentMarker.JPG_SEGMENT_JFIF_APP0, JpegSegmentMarker.APP15);
@@ -299,7 +288,7 @@ public class JPEGMeta {
 	}
 	
 	/**
-	 * Extracts thumbnail images from JFIF/JPG_SEGMENT_JFIF_APP0, Exif JPG_SEGMENT_EXIF_XMP_APP1 and/or Adobe JPG_SEGMENT_IPTC_APP13 segment if any.
+	 * Extracts thumbnail images from JFIF/JPG_SEGMENT_JFIF_APP0, ExifMetaSegment JPG_SEGMENT_EXIF_XMP_APP1 and/or Adobe JPG_SEGMENT_IPTC_APP13 segment if any.
 	 * 
 	 * @param is InputStream for the JPEG image.
 	 * @param pathToThumbnail a path or a path and name prefix combination for the extracted thumbnails.
@@ -379,7 +368,7 @@ public class JPEGMeta {
 						if (Arrays.equals(exif_buf, EXIF_ID.getBytes())) {
 							exif_buf = new byte[length - 8];
 						    IOUtils.readFully(is, exif_buf);
-						    Exif exif = new JpegExif(exif_buf);
+						    ExifMetaSegment exif = new JpegExif(exif_buf);
 						    if(exif.containsThumbnail()) {
 						    	String outpath = "";
 								if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
@@ -505,18 +494,18 @@ public class JPEGMeta {
 	/**
 	 * @param is input image stream 
 	 * @param os output image stream
-	 * @param exif Exif instance
+	 * @param exif ExifMetaSegment instance
 	 * @param update True to keep the original data, otherwise false
 	 * @throws Exception 
 	 */
-	public static void insertExif(InputStream is, OutputStream os, Exif exif, boolean update) throws IOException {
+	public static void insertExif(InputStream is, OutputStream os, ExifMetaSegment exif, boolean update) throws IOException {
 		// We need thumbnail image but don't have one, create one from the current image input stream
 		if(exif.isThumbnailRequired() && !exif.containsThumbnail()) {
 			is = new FileCacheRandomAccessInputStream(is);
 			// Insert thumbnail into EXIF wrapper
 			exif.setThumbnailImage(MetadataUtils.createThumbnail(is));
 		}
-		Exif oldExif = null;
+		ExifMetaSegment oldExif = null;
 		int oldExifIndex = -1;
 		// Copy the original image and insert EXIF data
 		boolean finished = false;
@@ -1492,7 +1481,7 @@ public class JPEGMeta {
 		// Extract thumbnails to ImageMetadata
 		IMetadata meta = metadataMap.get(MetadataType.EXIF);
 		if(meta != null) {
-			Exif exif = (Exif)meta;
+			ExifMetaSegment exif = (ExifMetaSegment)meta;
 			if(!exif.isDataRead())
 				exif.read();
 			if(exif.containsThumbnail()) {
