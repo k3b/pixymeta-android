@@ -29,29 +29,39 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pixy.meta.Metadata;
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDataType;
+import pixy.api.IDirectory;
+import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
+import pixy.meta.MetadataBase;
 import pixy.meta.MetadataType;
+import pixy.string.StringUtils;
 
-public class Comments extends Metadata {
+public class Comments extends MetadataBase implements IDirectory, IFieldValue {
+	private static final String NAME = "Comment";
+
+	public static final IDataType StringLines = new DefaultApiImpl("StringLines");
+	public static final IFieldDefinition CommentTag = new DefaultApiImpl(NAME, StringLines) {
+		// must be its own type to allow matching tag.class => handler
+	};
+
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(Comments.class);
 		
 	private Queue<byte[]> queue;
-	private List<String> comments;
+	private List<String> comments = null;
 	
-	public Comments() {
+	public Comments(byte[] comment) {
 		super(MetadataType.COMMENT, null);
 		queue = new LinkedList<byte[]>();
 		comments = new ArrayList<String>();
+
+		if (comment != null) {
+			addComment(comment);
+		}
 	}
 	
-	public Comments(List<String> comments) {
-		super(MetadataType.COMMENT, null);
-		queue = new LinkedList<byte[]>();
-		if(comments == null) throw new IllegalArgumentException("Input is null");
-		this.comments = comments;
-	}
-
 	public List<String> getComments() {
 		ensureDataRead();
 		return Collections.unmodifiableList(comments);
@@ -90,5 +100,61 @@ public class Comments extends Metadata {
 		    LOGGER.info("Comment: {}", comment);
 		
 		LOGGER.info("Comments end <=");
-	}	
+	}
+
+	private List<IDirectory> directoryList = null;
+	/**
+	 * @return directories that belong to this MetaData
+	 * */
+	@Override
+	public List<IDirectory> getMetaData() {
+		ensureDataRead();
+		if (directoryList == null) {
+			directoryList = new ArrayList<IDirectory>();
+			directoryList.add(this);
+		}
+		return directoryList;
+	}
+
+	@Override
+	public IDirectory setName(String name) {
+		return this;
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	private List<IFieldValue> valueList = null;
+
+	@Override
+	public List<IFieldValue> getValues() {
+		ensureDataRead();
+		if (valueList == null) {
+			valueList = new ArrayList<IFieldValue>();
+			valueList.add(this);
+		}
+		return valueList;
+	}
+
+	@Override
+	public IFieldDefinition getDefinition() {
+		return CommentTag;
+	}
+
+	@Override
+	public String getValueAsString() {
+		return StringUtils.toStringLines(this.comments);
+	}
+
+	@Override
+	public void setValue(String value) {
+		this.comments = StringUtils.fromLines(value);
+	}
+
+	@Override
+	public IDataType getDataType() {
+		return StringLines;
+	}
 }

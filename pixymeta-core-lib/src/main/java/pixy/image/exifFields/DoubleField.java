@@ -22,7 +22,7 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 12/04/2014
  */
-public class DoubleField extends TiffField<double[]> {
+public class DoubleField extends ExifField<double[]> {
 
 	public DoubleField(Tag tag, double[] data) {
 		super(tag, pixy.image.exifFields.FieldType.DOUBLE, data.length);

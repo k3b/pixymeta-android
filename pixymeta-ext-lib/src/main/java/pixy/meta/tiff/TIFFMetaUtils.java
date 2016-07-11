@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import pixy.api.IMetadata;
+import pixy.image.exifFields.ExifField;
+import pixy.image.exifFields.ExifTag;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.AdobeIRBSegment;
 import pixy.meta.adobe.AdobyMetadataBase;
@@ -61,8 +63,6 @@ import pixy.image.exifFields.ByteField;
 import pixy.image.exifFields.FieldType;
 import pixy.image.exifFields.IFD;
 import pixy.image.exifFields.LongField;
-import pixy.image.exifFields.TiffField;
-import pixy.image.exifFields.TiffTag;
 import pixy.image.exifFields.UndefinedField;
 import pixy.image.exifFields.TIFFImage;
 import pixy.io.IOUtils;
@@ -107,13 +107,13 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = IfdMetaUtils.readHeader(rin);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		TiffField<?> f_iccProfile = workingPage.getField(TiffTag.ICC_PROFILE);
+		ExifField<?> f_iccProfile = workingPage.getField(ExifTag.ICC_PROFILE);
 		if(f_iccProfile != null) {
 			return (byte[])f_iccProfile.getData();
 		}
@@ -130,13 +130,13 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = IfdMetaUtils.readHeader(rin);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP);
+		ExifField<?> f_photoshop = workingPage.getField(ExifTag.PHOTOSHOP);
 		if(f_photoshop != null) {
 			byte[] data = (byte[])f_photoshop.getData();
 			AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment(data);
@@ -184,7 +184,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -199,7 +199,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 			commentsBuilder.append('\0');
 		}
 		
-		workingPage.addField(new ASCIIField(TiffTag.IMAGE_DESCRIPTION, commentsBuilder.toString()));
+		workingPage.addField(new ASCIIField(ExifTag.IMAGE_DESCRIPTION, commentsBuilder.toString()));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -225,14 +225,14 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD imageIFD = ifds.get(pageNumber);
-		IFD exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
-		IFD gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
+		IFD exifSubIFD = imageIFD.getChild(ExifTag.EXIF_SUB_IFD);
+		IFD gpsSubIFD = imageIFD.getChild(ExifTag.GPS_SUB_IFD);
 		IFD newImageIFD = exif.getImageIFD();
 		IFD newExifSubIFD = exif.getExifIFD();
 		IFD newGpsSubIFD = exif.getGPSIFD();
@@ -247,8 +247,8 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		}
 		
 		if(newExifSubIFD != null) {
-			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD, new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);		
+			imageIFD.addField(new LongField(ExifTag.EXIF_SUB_IFD, new int[]{0})); // Place holder
+			imageIFD.addChild(ExifTag.EXIF_SUB_IFD, newExifSubIFD);
 		}
 		
 		if(update && gpsSubIFD != null && newGpsSubIFD != null) {
@@ -257,8 +257,8 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		}
 		
 		if(newGpsSubIFD != null) {
-			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD, new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.GPS_SUB_IFD, newGpsSubIFD);		
+			imageIFD.addField(new LongField(ExifTag.GPS_SUB_IFD, new int[]{0})); // Place holder
+			imageIFD.addChild(ExifTag.GPS_SUB_IFD, newGpsSubIFD);
 		}
 		
 		int writeOffset = FIRST_WRITE_OFFSET;
@@ -286,13 +286,13 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		workingPage.addField(new UndefinedField(TiffTag.ICC_PROFILE, icc_profile));
+		workingPage.addField(new UndefinedField(ExifTag.ICC_PROFILE, icc_profile));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -330,7 +330,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -340,8 +340,8 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		
 		// See if we also have regular IPTC tag field
-		TiffField<?> f_iptc = workingPage.removeField(TiffTag.IPTC);		
-		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP);
+		ExifField<?> f_iptc = workingPage.removeField(ExifTag.IPTC);
+		ExifField<?> f_photoshop = workingPage.getField(ExifTag.PHOTOSHOP);
 		if(f_photoshop != null) { // Read 8BIMs
 			AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment((byte[])f_photoshop.getData());
 			// Shallow copy the map.
@@ -373,7 +373,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 			for(AdobyMetadataBase bim : bims.values()) // Copy the other 8BIMs if any
 				bim.write(bout);
 			// Add a new Photoshop tag field to TIFF
-			workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP, bout.toByteArray()));
+			workingPage.addField(new UndefinedField(ExifTag.PHOTOSHOP, bout.toByteArray()));
 		} else { // We don't have photoshop, add IPTC to regular IPTC tag field
 			if(f_iptc != null && update) {
 				byte[] data = null;
@@ -386,7 +386,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 			for(IPTCDataSet dataset : iptcs) {
 				dataset.write(bout);
 			}		
-			workingPage.addField(new UndefinedField(TiffTag.IPTC, bout.toByteArray()));
+			workingPage.addField(new UndefinedField(ExifTag.IPTC, bout.toByteArray()));
 		}
 		
 		offset = copyPages(ifds, offset, rin, rout);
@@ -403,7 +403,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 	
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -413,7 +413,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		
 		if(update) {
-			TiffField<?> f_irb = workingPage.getField(TiffTag.PHOTOSHOP);
+			ExifField<?> f_irb = workingPage.getField(ExifTag.PHOTOSHOP);
 			if(f_irb != null) {
 				AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment((byte[])f_irb.getData());
 				// Shallow copy the map.
@@ -431,7 +431,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		for(AdobyMetadataBase bim : bims)
 			bim.write(bout);
 		
-		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP, bout.toByteArray()));
+		workingPage.addField(new UndefinedField(ExifTag.PHOTOSHOP, bout.toByteArray()));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -478,13 +478,13 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		workingPage.addField(new UndefinedField(TiffTag.XMP, xmp));
+		workingPage.addField(new UndefinedField(ExifTag.XMP, xmp));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -509,21 +509,21 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 
 		int offset = IfdMetaUtils.readHeader(rin);
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD currIFD = ifds.get(pageNumber);
-		TiffField<?> field = currIFD.getField(TiffTag.ICC_PROFILE); 
+		ExifField<?> field = currIFD.getField(ExifTag.ICC_PROFILE);
 		if(field != null) { // We have found ICC_Profile
 			metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile((byte[])field.getData()));
 		}
-		field = currIFD.getField(TiffTag.XMP);
+		field = currIFD.getField(ExifTag.XMP);
 		if(field != null) { // We have found XMP
 			metadataMap.put(MetadataType.XMP, new TiffXMP((byte[])field.getData()));
 		}
-		field = currIFD.getField(TiffTag.PHOTOSHOP);
+		field = currIFD.getField(ExifTag.PHOTOSHOP);
 		if(field != null) { // We have found Photoshop AdobeIRBSegment
 			AdobeIRBSegment adobeIrbSegment = new AdobeIRBSegment((byte[])field.getData());
 			metadataMap.put(MetadataType.PHOTOSHOP_IRB, adobeIrbSegment);
@@ -533,7 +533,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 				metadataMap.put(MetadataType.IPTC, iptc);
 			}
 		}
-		field = currIFD.getField(TiffTag.IPTC);
+		field = currIFD.getField(ExifTag.IPTC);
 		if(field != null) { // We have found IPTC data
 			IPTC iptc = (IPTC)(metadataMap.get(MetadataType.IPTC));
 			byte[] iptcData = null;
@@ -546,19 +546,19 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 				iptcData = ArrayUtils.concat(iptcData, iptc.getData());
 			metadataMap.put(MetadataType.IPTC, new IPTC(iptcData));
 		}		
-		field = currIFD.getField(TiffTag.EXIF_SUB_IFD);
+		field = currIFD.getField(ExifTag.EXIF_SUB_IFD);
 		if(field != null) { // We have found EXIF SubIFD
 			metadataMap.put(MetadataType.EXIF, new TiffExif(currIFD));
 		}
-		field = currIFD.getField(TiffTag.IMAGE_SOURCE_DATA);
+		field = currIFD.getField(ExifTag.IMAGE_SOURCE_DATA);
 		if(field != null) {
 			boolean bigEndian = (rin.getEndian() == IOUtils.BIG_ENDIAN);
 			ReadStrategy readStrategy = bigEndian?ReadStrategyMM.getInstance():ReadStrategyII.getInstance();
 			metadataMap.put(MetadataType.PHOTOSHOP_DDB, new DDB((byte[])field.getData(), readStrategy));
 		}
-		field = currIFD.getField(TiffTag.IMAGE_DESCRIPTION);
+		field = currIFD.getField(ExifTag.IMAGE_DESCRIPTION);
 		if(field != null) { // We have Comment
-			Comments comments = new pixy.meta.image.Comments();
+			Comments comments = new pixy.meta.image.Comments(null);
 			comments.addComment(field.getDataAsString());
 			metadataMap.put(MetadataType.COMMENT, comments);
 		}
@@ -586,20 +586,20 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		IfdMetaUtils.readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		IfdMetaUtils.readIFDs(null, null, ExifTag.class, ifds, offset, rin);
 	
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
 		
-		TiffField<?> metadata = null;
+		ExifField<?> metadata = null;
 		
 		for(MetadataType metaType : metadataTypes) {
 			switch(metaType) {
 				case XMP:
-					workingPage.removeField(TiffTag.XMP);
-					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
+					workingPage.removeField(ExifTag.XMP);
+					metadata = workingPage.removeField(ExifTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove XMP and keep the other AdobeIRBSegment data untouched.
@@ -607,8 +607,8 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 					}
 					break;
 				case IPTC:
-					workingPage.removeField(TiffTag.IPTC);
-					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
+					workingPage.removeField(ExifTag.IPTC);
+					metadata = workingPage.removeField(ExifTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove IPTC_NAA and keep the other AdobeIRBSegment data untouched.
@@ -616,8 +616,8 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 					}
 					break;
 				case ICC_PROFILE:
-					workingPage.removeField(TiffTag.ICC_PROFILE);
-					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
+					workingPage.removeField(ExifTag.ICC_PROFILE);
+					metadata = workingPage.removeField(ExifTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove ICC_PROFILE and keep the other AdobeIRBSegment data untouched.
@@ -625,12 +625,12 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 					}
 					break;
 				case PHOTOSHOP_IRB:
-					workingPage.removeField(TiffTag.PHOTOSHOP);
+					workingPage.removeField(ExifTag.PHOTOSHOP);
 					break;
 				case EXIF:
-					workingPage.removeField(TiffTag.EXIF_SUB_IFD);
-					workingPage.removeField(TiffTag.GPS_SUB_IFD);
-					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
+					workingPage.removeField(ExifTag.EXIF_SUB_IFD);
+					workingPage.removeField(ExifTag.GPS_SUB_IFD);
+					metadata = workingPage.removeField(ExifTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove EXIF and keep the other AdobeIRBSegment data untouched.
@@ -664,7 +664,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 			for(AdobyMetadataBase bim : bimMap.values())
 				bim.write(bout);
 			// Add new PHOTOSHOP field
-			workingPage.addField(new ByteField(TiffTag.PHOTOSHOP, bout.toByteArray()));
+			workingPage.addField(new ByteField(ExifTag.PHOTOSHOP, bout.toByteArray()));
 		}		
 	}
 	

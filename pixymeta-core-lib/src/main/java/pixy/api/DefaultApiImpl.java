@@ -11,6 +11,7 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
     private String name;
     private IFieldDefinition fieldDefinition;
     private String value;
+    private IDataType dataType = UNKNOWN;
 
     public static DefaultApiImpl UNKNOWN = new DefaultApiImpl("JPG_SEGMENT_UNKNOWN");
     private List<IFieldValue> values = null;
@@ -25,6 +26,11 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
     public DefaultApiImpl(IFieldDefinition fieldDefinition, String value) {
         this.fieldDefinition = fieldDefinition;
         this.value = value;
+    }
+
+    public DefaultApiImpl(String name, IDataType dataType) {
+        this.dataType = dataType;
+        this.name = name;
     }
 
     public DefaultApiImpl(String name, List<IFieldValue> values) {
@@ -68,7 +74,7 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
     @Override
     public IDataType getDataType() {
         if (fieldDefinition != null) return fieldDefinition.getDataType();
-        return UNKNOWN;
+        return dataType;
     }
 
     public static boolean isNull(Object candidate) {

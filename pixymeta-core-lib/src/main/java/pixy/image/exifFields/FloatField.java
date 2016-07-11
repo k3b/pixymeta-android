@@ -22,7 +22,7 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 12/04/2014
  */
-public class FloatField extends TiffField<float[]> {
+public class FloatField extends ExifField<float[]> {
 
 	public FloatField(pixy.image.exifFields.Tag tag, float[] data) {
 		super(tag, pixy.image.exifFields.FieldType.FLOAT, data.length);

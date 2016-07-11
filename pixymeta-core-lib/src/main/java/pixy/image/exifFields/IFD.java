@@ -50,7 +50,7 @@ public class IFD implements IDirectory {
 	private Map<Tag, IFD> children = new HashMap<Tag, IFD>();
 	
 	/** Create a fields map to hold all of the fields for this IFD */
-	private Map<Short, TiffField<?>> tiffFields = new HashMap<Short, TiffField<?>>();
+	private Map<Short, ExifField<?>> tiffFields = new HashMap<Short, ExifField<?>>();
 
 	private int endOffset;
 	
@@ -72,12 +72,12 @@ public class IFD implements IDirectory {
 		return this;
 	}
 	
-	public void addField(TiffField<?> tiffField) {
-		tiffFields.put(tiffField.getTag(), tiffField);
+	public void addField(ExifField<?> exifField) {
+		tiffFields.put(exifField.getTag(), exifField);
 	}
 	
-	public void addFields(Collection<TiffField<?>> tiffFields) {
-		for(TiffField<?> field : tiffFields) {
+	public void addFields(Collection<ExifField<?>> exifFields) {
+		for(ExifField<?> field : exifFields) {
 			addField(field);
 		}
 	}
@@ -95,7 +95,7 @@ public class IFD implements IDirectory {
 		return endOffset;
 	}
 	
-	public TiffField<?> getField(Tag tag) {
+	public ExifField<?> getField(Tag tag) {
 		return tiffFields.get(tag.getValue());
 	}
 	
@@ -105,7 +105,7 @@ public class IFD implements IDirectory {
 	 * @return a String representation of the field
 	 */
 	public String getFieldAsString(Tag tag) {
-		TiffField<?> field = tiffFields.get(tag.getValue());
+		ExifField<?> field = tiffFields.get(tag.getValue());
 		if(field != null) {
 			FieldType ftype = field.getType();
 			String suffix = null;
@@ -120,7 +120,7 @@ public class IFD implements IDirectory {
 	}
 	
 	/** Get all the fields for this IFD from the internal map. */
-	public Collection<TiffField<?>> getFields() {
+	public Collection<ExifField<?>> getFields() {
 		return Collections.unmodifiableCollection(tiffFields.values());
 	}
 	
@@ -142,7 +142,7 @@ public class IFD implements IDirectory {
 	}
 	
 	/** Remove a specific field associated with the given tag */
-	public TiffField<?> removeField(Tag tag) {
+	public ExifField<?> removeField(Tag tag) {
 		return tiffFields.remove(tag.getValue());
 	}
 	
@@ -171,7 +171,7 @@ public class IFD implements IDirectory {
 	public int write(RandomAccessOutputStream os, int offset) throws IOException {
 		startOffset = offset;
 		// Write this IFD and its children, if any, to the RandomAccessOutputStream
-		List<TiffField<?>> list = new ArrayList<TiffField<?>>(tiffFields.values());
+		List<ExifField<?>> list = new ArrayList<ExifField<?>>(tiffFields.values());
 		// Make sure tiffFields are in incremental order.
 		Collections.sort(list);
 		os.seek(offset);
@@ -182,9 +182,9 @@ public class IFD implements IDirectory {
 		int toOffset = endOffset;
 		os.seek(offset); // Set first field offset.
 				
-		for (TiffField<?> tiffField : list)
+		for (ExifField<?> exifField : list)
 		{
-			toOffset = tiffField.write(os, toOffset);
+			toOffset = exifField.write(os, toOffset);
 			offset += 12; // Move to next field. Each field is of fixed length 12.
 			os.seek(offset); // Reset position to next directory field.
 		}
@@ -201,9 +201,9 @@ public class IFD implements IDirectory {
 			    Tag key = entry.getKey();
 			    IFD value = entry.getValue();
 			    // Update parent field if present, otherwise skip
-			    TiffField<?> tiffField = this.getField(key);
-			    if(tiffField != null) {
-			    	int dataPos = tiffField.getDataOffset();
+			    ExifField<?> exifField = this.getField(key);
+			    if(exifField != null) {
+			    	int dataPos = exifField.getDataOffset();
 					os.seek(dataPos);
 					os.writeInt(toOffset);
 					os.seek(toOffset);

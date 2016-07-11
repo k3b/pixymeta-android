@@ -18,16 +18,16 @@ import pixy.api.IFieldValue;
 import pixy.io.RandomAccessOutputStream;
 
 /**
- * One one meta data item of basetype T living in a IFD (Image File Directory).
+ * One meta data item of basetype T living in a IFD (Image File Directory).
  * <p>
- * We could have used a TiffTag enum as the first parameter of the constructor, but this
- * will not work with unknown tags of tag type TiffTag.JPG_SEGMENT_UNKNOWN. In that case, we cannot
+ * We could have used a ExifTag enum as the first parameter of the constructor, but this
+ * will not work with unknown tags of tag type ExifTag.JPG_SEGMENT_UNKNOWN. In that case, we cannot
  * use the tag values to sort the fields or as keys for a hash map as used by {@link IFD}.
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
  */
-public abstract class TiffField<T> implements Comparable<TiffField<?>>, IFieldValue{
+public abstract class ExifField<T> implements Comparable<ExifField<?>>, IFieldValue{
 	private final pixy.image.exifFields.FieldType fieldType;
 	private final int length;
 	private final pixy.image.exifFields.Tag tag;
@@ -35,13 +35,13 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>>, IFieldVa
 
 	protected int dataOffset;
 	
-	public TiffField(pixy.image.exifFields.Tag tag, pixy.image.exifFields.FieldType fieldType, int length) {
+	public ExifField(pixy.image.exifFields.Tag tag, pixy.image.exifFields.FieldType fieldType, int length) {
 		this.fieldType = fieldType;
 		this.length = length;
 		this.tag = tag;
 	}
 	
-	public int compareTo(TiffField<?> that) {
+	public int compareTo(ExifField<?> that) {
 		return (this.getTag()&0xffff) - (that.getTag()&0xffff);
     }
 	

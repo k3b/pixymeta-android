@@ -21,7 +21,7 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 02/05/2013
  */
-public final class UndefinedField extends TiffField<byte[]> {
+public final class UndefinedField extends ExifField<byte[]> {
 
 	public UndefinedField(pixy.image.exifFields.Tag tag, byte[] data) {
 		super(tag, pixy.image.exifFields.FieldType.UNDEFINED, data.length);

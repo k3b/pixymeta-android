@@ -32,6 +32,7 @@ import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.demo.j2se.TestPixyMetaJ2se;
 import pixy.fileprocessor.jpg.JpegAdobeDctSegmentPlugin;
+import pixy.fileprocessor.jpg.JpegCommentSegmentPlugin;
 import pixy.fileprocessor.jpg.JpegDuckySegmentPlugin;
 import pixy.fileprocessor.jpg.JpegExifSegmentPlugin;
 import pixy.fileprocessor.jpg.JpegAdobeIRBSegmentPlugin;
@@ -141,6 +142,7 @@ public class MetadataRegressionTests {
 		JpegICCSegmentPlugin.register();
 		JpegJFIFSegmentPlugin.register();
 		JpegXMPSegmentPlugin.register();
+		JpegCommentSegmentPlugin.register();
 	}
 
 	@Test

@@ -16,7 +16,7 @@ import pixy.api.IIntableField;
 import pixy.io.RandomAccessOutputStream;
 import pixy.string.StringUtils;
 
-public abstract class AbstractLongField extends TiffField<int[]> implements IIntableField {
+public abstract class AbstractLongField extends ExifField<int[]> implements IIntableField {
 
 	public AbstractLongField(pixy.image.exifFields.Tag tag, pixy.image.exifFields.FieldType fieldType, int[] data) {
 		super(tag, fieldType, data.length);

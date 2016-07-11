@@ -46,9 +46,9 @@ public enum FieldType implements IDataType {
 		this.value = value;
 	}
 	
-	public static TiffField<?> createField(Tag tag, FieldType type, Object data) {
+	public static ExifField<?> createField(Tag tag, FieldType type, Object data) {
 		if(data == null) throw new IllegalArgumentException("Input data is null");
-    	TiffField<?> retValue = null;
+    	ExifField<?> retValue = null;
     	Class<?> typeClass = data.getClass();
     	switch(type) {
     		case ASCII:

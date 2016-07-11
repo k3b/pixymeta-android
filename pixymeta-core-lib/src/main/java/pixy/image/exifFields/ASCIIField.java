@@ -20,7 +20,7 @@ import pixy.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/06/2013
  */
-public final class ASCIIField extends TiffField<String> {
+public final class ASCIIField extends ExifField<String> {
 
 	public ASCIIField(Tag tag, String data) { // ASCII field is NUL- terminated ASCII string
 		super(tag, FieldType.ASCII, data.trim().length() + 1); // Remove white spaces

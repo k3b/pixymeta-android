@@ -17,7 +17,7 @@ import java.util.Map;
 import pixy.api.IDataType;
 import pixy.image.exifFields.FieldType;
 import pixy.image.exifFields.Tag;
-import pixy.image.exifFields.TiffTag;
+import pixy.image.exifFields.ExifTag;
 import pixy.string.StringUtils;
 
 /**
@@ -182,7 +182,7 @@ public enum GPSTag implements Tag {
     public static Tag fromShort(short value) {
        	GPSTag tag = tagMap.get(value);
     	if (tag == null)
-    	   return TiffTag.UNKNOWN;
+    	   return ExifTag.UNKNOWN;
    		return tag;
     }
     

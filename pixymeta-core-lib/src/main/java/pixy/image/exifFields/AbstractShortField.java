@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import pixy.io.RandomAccessOutputStream;
 
-public abstract class AbstractShortField extends TiffField<short[]> {
+public abstract class AbstractShortField extends ExifField<short[]> {
 
 	public AbstractShortField(pixy.image.exifFields.Tag tag, pixy.image.exifFields.FieldType fieldType, short[] data) {
 		super(tag, fieldType, data.length);

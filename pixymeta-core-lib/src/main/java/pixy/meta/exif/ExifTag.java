@@ -17,7 +17,6 @@ import java.util.Map;
 import pixy.api.IDataType;
 import pixy.image.exifFields.FieldType;
 import pixy.image.exifFields.Tag;
-import pixy.image.exifFields.TiffTag;
 import pixy.string.StringUtils;
 
 /**
@@ -202,7 +201,7 @@ public enum ExifTag implements Tag {
     public static Tag fromShort(short value) {
        	ExifTag exifTag = tagMap.get(value);
     	if (exifTag == null)
-    	   return TiffTag.UNKNOWN;
+    	   return pixy.image.exifFields.ExifTag.UNKNOWN;
    		return exifTag;
     }
     

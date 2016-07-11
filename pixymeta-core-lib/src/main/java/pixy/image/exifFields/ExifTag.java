@@ -19,12 +19,12 @@ import pixy.api.IDataType;
 import pixy.string.StringUtils;
 
 /**
- * TiffField tag enumeration.
+ * ExifField tag enumeration.
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
  */
-public enum TiffTag implements Tag {	
+public enum ExifTag implements Tag {
 	// Definition includes all baseline and extended tags.	
 	NEW_SUBFILE_TYPE("NewSubfileType", (short)0x00FE, Attribute.BASELINE, FieldType.LONG) {
 		public String getFieldAsString(Object value) {
@@ -68,13 +68,13 @@ public enum TiffTag implements Tag {
 	
 	COMPRESSION("Compression", (short)0x0103, Attribute.BASELINE, FieldType.SHORT) {
 		public String getFieldAsString(Object value) {
-			return TiffFieldEnum.Compression.fromValue(((int[])value)[0]).getDescription();
+			return ExifFieldEnum.Compression.fromValue(((int[])value)[0]).getDescription();
 		}
 	},
 	
 	PHOTOMETRIC_INTERPRETATION("PhotometricInterpretation", (short)0x0106, Attribute.BASELINE, FieldType.SHORT) {
 		public String getFieldAsString(Object value) {
-			return TiffFieldEnum.PhotoMetric.fromValue(((int[])value)[0]).getDescription();
+			return ExifFieldEnum.PhotoMetric.fromValue(((int[])value)[0]).getDescription();
 		}
 	},
 	
@@ -166,7 +166,7 @@ public enum TiffTag implements Tag {
 	
 	PLANAR_CONFIGURATTION("PlanarConfiguration", (short)0x011C, Attribute.BASELINE, FieldType.SHORT) {
 		public String getFieldAsString(Object value) {
-			return TiffFieldEnum.PlanarConfiguration.fromValue(((int[])value)[0]).getDescription();
+			return ExifFieldEnum.PlanarConfiguration.fromValue(((int[])value)[0]).getDescription();
 		}
 	},
 	
@@ -605,20 +605,20 @@ public enum TiffTag implements Tag {
 		}
 	} 
 	
-	private static final Map<Short, TiffTag> tagMap = new HashMap<Short, TiffTag>();
+	private static final Map<Short, ExifTag> tagMap = new HashMap<Short, ExifTag>();
 	
 	static
     {
-      for(TiffTag tiffTag : values()) {
-           tagMap.put(tiffTag.getValue(), tiffTag);
+      for(ExifTag exifTag : values()) {
+           tagMap.put(exifTag.getValue(), exifTag);
       }
     }	
 	
 	public static Tag fromShort(short value) {
-       	TiffTag tiffTag = tagMap.get(value);
-    	if (tiffTag == null)
+       	ExifTag exifTag = tagMap.get(value);
+    	if (exifTag == null)
     	   return UNKNOWN;
-       	return tiffTag;
+       	return exifTag;
     }
 	
 	private final String name;
@@ -629,11 +629,11 @@ public enum TiffTag implements Tag {
 
 	private FieldType fieldType = FieldType.UNKNOWN;;
 
-	private TiffTag(String name, short value, Attribute attribute) {
+	private ExifTag(String name, short value, Attribute attribute) {
 		this(name, value, attribute, null);
 	}
 
-	private TiffTag(String name, short value, Attribute attribute, FieldType fieldType) {
+	private ExifTag(String name, short value, Attribute attribute, FieldType fieldType) {
 
 		this.name = name;
 		this.value = value;

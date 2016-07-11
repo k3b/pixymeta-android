@@ -48,7 +48,7 @@ public class JpgSegmentPluginFactory {
         for (JpgSegmentPluginFactory processor : factories) {
             if (marker == processor.marker) {
                 String subMarker = processor.subMarker;
-                if (new String(data, 0, subMarker.length()).equals(subMarker)) {
+                if ((subMarker == null) || (new String(data, 0, subMarker.length()).equals(subMarker))) {
                     return processor;
                 }
             }
@@ -58,7 +58,8 @@ public class JpgSegmentPluginFactory {
 
     public IMetadata create(byte[] data) {
         try {
-            data = ArrayUtils.subArray(data, subMarker.length(), data.length - subMarker.length());
+            final int subMarkerLen = (subMarker == null) ? 0 : subMarker.length();
+            data = ArrayUtils.subArray(data, subMarkerLen, data.length - subMarkerLen);
             Constructor<? extends IMetadata> constructor = jpegExifClass.getConstructor(byte[].class);
             final IMetadata metadata = constructor.newInstance(data);
             if (debug) {

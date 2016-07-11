@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import pixy.image.exifFields.ExifField;
+import pixy.image.exifFields.ExifFieldEnum;
 import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.image.exifFields.ASCIIField;
 import pixy.image.exifFields.ByteField;
@@ -26,9 +28,7 @@ import pixy.image.exifFields.RationalField;
 import pixy.image.exifFields.SRationalField;
 import pixy.image.exifFields.ShortField;
 import pixy.image.exifFields.Tag;
-import pixy.image.exifFields.TiffField;
-import pixy.image.exifFields.TiffFieldEnum;
-import pixy.image.exifFields.TiffTag;
+import pixy.image.exifFields.ExifTag;
 import pixy.image.exifFields.UndefinedField;
 import pixy.image.exifFields.UnknownTag;
 import pixy.io.IOUtils;
@@ -116,7 +116,7 @@ public class IfdMetaUtils {
                         rin.seek(rin.readInt());
                         rin.readFully(data, 0, field_length);
                     }
-                    TiffField<byte[]> byteField = null;
+                    ExifField<byte[]> byteField = null;
                     if(ftype == FieldType.BYTE)
                         byteField = new ByteField(ftag, data);
                     else
@@ -135,7 +135,7 @@ public class IfdMetaUtils {
                         rin.seek(rin.readInt());
                         rin.readFully(data, 0, field_length);
                     }
-                    TiffField<String> ascIIField = new ASCIIField(ftag, new String(data, 0, data.length, "UTF-8"));
+                    ExifField<String> ascIIField = new ASCIIField(ftag, new String(data, 0, data.length, "UTF-8"));
                     tiffIFD.addField(ascIIField);
                     offset += 4;
                     break;
@@ -162,7 +162,7 @@ public class IfdMetaUtils {
                             toOffset += 2;
                         }
                     }
-                    TiffField<short[]> shortField = new ShortField(ftag, sdata);
+                    ExifField<short[]> shortField = new ShortField(ftag, sdata);
                     tiffIFD.addField(shortField);
                     break;
                 case LONG:
@@ -181,36 +181,36 @@ public class IfdMetaUtils {
                             toOffset += 4;
                         }
                     }
-                    TiffField<int[]> longField = new LongField(ftag, ldata);
+                    ExifField<int[]> longField = new LongField(ftag, ldata);
                     tiffIFD.addField(longField);
 
-                    if ((ftag == TiffTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
+                    if ((ftag == pixy.image.exifFields.ExifTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
                         try { // If something bad happens, we skip the sub IFD
-                            readIFD(tiffIFD, TiffTag.EXIF_SUB_IFD, ExifTag.class, rin, null, ldata[0]);
+                            readIFD(tiffIFD, pixy.image.exifFields.ExifTag.EXIF_SUB_IFD, pixy.meta.exif.ExifTag.class, rin, null, ldata[0]);
                         } catch(Exception e) {
-                            tiffIFD.removeField(TiffTag.EXIF_SUB_IFD);
+                            tiffIFD.removeField(pixy.image.exifFields.ExifTag.EXIF_SUB_IFD);
                             e.printStackTrace();
                         }
-                    } else if ((ftag == TiffTag.GPS_SUB_IFD) && (ldata[0] != 0)) {
+                    } else if ((ftag == pixy.image.exifFields.ExifTag.GPS_SUB_IFD) && (ldata[0] != 0)) {
                         try {
-                            readIFD(tiffIFD, TiffTag.GPS_SUB_IFD, GPSTag.class, rin, null, ldata[0]);
+                            readIFD(tiffIFD, pixy.image.exifFields.ExifTag.GPS_SUB_IFD, GPSTag.class, rin, null, ldata[0]);
                         } catch(Exception e) {
-                            tiffIFD.removeField(TiffTag.GPS_SUB_IFD);
+                            tiffIFD.removeField(ExifTag.GPS_SUB_IFD);
                             e.printStackTrace();
                         }
-                    } else if((ftag == ExifTag.EXIF_INTEROPERABILITY_OFFSET) && (ldata[0] != 0)) {
+                    } else if((ftag == pixy.meta.exif.ExifTag.EXIF_INTEROPERABILITY_OFFSET) && (ldata[0] != 0)) {
                         try {
-                            readIFD(tiffIFD, ExifTag.EXIF_INTEROPERABILITY_OFFSET, InteropTag.class, rin, null, ldata[0]);
+                            readIFD(tiffIFD, pixy.meta.exif.ExifTag.EXIF_INTEROPERABILITY_OFFSET, InteropTag.class, rin, null, ldata[0]);
                         } catch(Exception e) {
-                            tiffIFD.removeField(ExifTag.EXIF_INTEROPERABILITY_OFFSET);
+                            tiffIFD.removeField(pixy.meta.exif.ExifTag.EXIF_INTEROPERABILITY_OFFSET);
                             e.printStackTrace();
                         }
-                    } else if (ftag == TiffTag.SUB_IFDS) {
+                    } else if (ftag == pixy.image.exifFields.ExifTag.SUB_IFDS) {
                         for(int ifd = 0; ifd < ldata.length; ifd++) {
                             try {
-                                readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0]);
+                                readIFD(tiffIFD, pixy.image.exifFields.ExifTag.SUB_IFDS, pixy.image.exifFields.ExifTag.class, rin, null, ldata[0]);
                             } catch(Exception e) {
-                                tiffIFD.removeField(TiffTag.SUB_IFDS);
+                                tiffIFD.removeField(pixy.image.exifFields.ExifTag.SUB_IFDS);
                                 e.printStackTrace();
                             }
                         }
@@ -232,7 +232,7 @@ public class IfdMetaUtils {
                             toOffset += 4;
                         }
                     }
-                    TiffField<float[]> floatField = new FloatField(ftag, fdata);
+                    ExifField<float[]> floatField = new FloatField(ftag, fdata);
                     tiffIFD.addField(floatField);
 
                     break;
@@ -246,7 +246,7 @@ public class IfdMetaUtils {
                         ddata[j] = rin.readDouble();
                         toOffset += 8;
                     }
-                    TiffField<double[]> doubleField = new DoubleField(ftag, ddata);
+                    ExifField<double[]> doubleField = new DoubleField(ftag, ddata);
                     tiffIFD.addField(doubleField);
 
                     break;
@@ -265,7 +265,7 @@ public class IfdMetaUtils {
                         ldata[j+1] = rin.readInt();
                         toOffset += 4;
                     }
-                    TiffField<int[]> rationalField = null;
+                    ExifField<int[]> rationalField = null;
                     if(ftype == FieldType.SRATIONAL) {
                         rationalField = new SRationalField(ftag, ldata);
                     } else {
@@ -290,10 +290,10 @@ public class IfdMetaUtils {
                             toOffset += 4;
                         }
                     }
-                    TiffField<int[]> ifdField = new IFDField(ftag, ldata);
+                    ExifField<int[]> ifdField = new IFDField(ftag, ldata);
                     tiffIFD.addField(ifdField);
                     for(int ifd = 0; ifd < ldata.length; ifd++) {
-                        readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0]);
+                        readIFD(tiffIFD, pixy.image.exifFields.ExifTag.SUB_IFDS, pixy.image.exifFields.ExifTag.class, rin, null, ldata[0]);
                     }
 
                     break;
@@ -313,7 +313,7 @@ public class IfdMetaUtils {
     }
 
     static Tag getTagFromId(Method fromShortMethod, short tag, FieldType ftype) {
-        Tag ftag = TiffTag.UNKNOWN;
+        Tag ftag = pixy.image.exifFields.ExifTag.UNKNOWN;
         try {
 ftag = (Tag) fromShortMethod.invoke(null, tag);
 } catch (IllegalAccessException e) {
@@ -324,7 +324,7 @@ e.printStackTrace();
 e.printStackTrace();
 }
 
-        if (ftag == TiffTag.UNKNOWN) {
+        if (ftag == pixy.image.exifFields.ExifTag.UNKNOWN) {
             ftag = new UnknownTag(tag, "(?? " + Integer.toHexString(tag&0xffff) +" ??)", ftype);
         }
 
@@ -355,7 +355,7 @@ e.printStackTrace();
 
     public static void readIFDs(List<IFD> list, RandomAccessInputStream rin) throws IOException {
         int offset = readHeader(rin);
-        readIFDs(null, null, TiffTag.class, list, offset, rin);
+        readIFDs(null, null, pixy.image.exifFields.ExifTag.class, list, offset, rin);
     }
 
     public static void printIFDs(Collection<IFD> list, String indent) {
@@ -364,7 +364,7 @@ e.printStackTrace();
 
         for(IFD currIFD : list) {
             LOGGER.info("IFD #{}", id);
-            printIFD(currIFD, TiffTag.class, indent);
+            printIFD(currIFD, ExifTag.class, indent);
             id++;
         }
     }
@@ -378,22 +378,22 @@ e.printStackTrace();
     private static void print(IFD currIFD, Class<? extends Tag> tagClass, String indent, StringBuilder ifds) {
         // Use reflection to invoke fromShort(short) fromShort
         Method fromShort = IfdMetaUtils.getFromShortMethod(tagClass);
-        Collection<TiffField<?>> fields = currIFD.getFields();
+        Collection<ExifField<?>> fields = currIFD.getFields();
         int i = 0;
 
-        for(TiffField<?> field : fields) {
+        for(ExifField<?> field : fields) {
             ifds.append(indent);
             ifds.append("Field #" + i + "\n");
             ifds.append(indent);
             FieldType ftype = field.getType();
             short tag = field.getTag();
-            Tag ftag = TiffTag.UNKNOWN;
-            if(tag == ExifTag.PADDING.getValue()) {
-                ftag = ExifTag.PADDING;
+            Tag ftag = pixy.image.exifFields.ExifTag.UNKNOWN;
+            if(tag == pixy.meta.exif.ExifTag.PADDING.getValue()) {
+                ftag = pixy.meta.exif.ExifTag.PADDING;
             } else  {
                 ftag = IfdMetaUtils.getTagFromId(fromShort, tag, ftype);
             }
-            if (ftag == TiffTag.UNKNOWN) {
+            if (ftag == pixy.image.exifFields.ExifTag.UNKNOWN) {
                 LOGGER.warn("Tag: {} {}{}{} {}", ftag, "[Value: 0x", Integer.toHexString(tag&0xffff), "]", "(Unknown)");
             } else {
                 ifds.append("Tag: " + ftag + "\n");
@@ -418,18 +418,18 @@ e.printStackTrace();
 
         Map<Tag, IFD> children = currIFD.getChildren();
 
-        if(children.get(TiffTag.EXIF_SUB_IFD) != null) {
+        if(children.get(pixy.image.exifFields.ExifTag.EXIF_SUB_IFD) != null) {
             ifds.append(indent + "--------- ");
             ifds.append("<<ExifMetaSegment SubIFD starts>>\n");
-            print(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, indent + "--------- ", ifds);
+            print(children.get(pixy.image.exifFields.ExifTag.EXIF_SUB_IFD), pixy.meta.exif.ExifTag.class, indent + "--------- ", ifds);
             ifds.append(indent + "--------- ");
             ifds.append("<<ExifMetaSegment SubIFD ends>>\n");
         }
 
-        if(children.get(TiffTag.GPS_SUB_IFD) != null) {
+        if(children.get(pixy.image.exifFields.ExifTag.GPS_SUB_IFD) != null) {
             ifds.append(indent + "--------- ");
             ifds.append("<<GPS SubIFD starts>>\n");
-            print(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, indent + "--------- ", ifds);
+            print(children.get(pixy.image.exifFields.ExifTag.GPS_SUB_IFD), GPSTag.class, indent + "--------- ", ifds);
             ifds.append(indent + "--------- ");
             ifds.append("<<GPS SubIFD ends>>\n");
         }
@@ -445,7 +445,7 @@ e.printStackTrace();
         int offset = copyHeader(rin, rout);
 
         // Step 1: read the IFDs into a list first
-        IfdMetaUtils.readIFDs(null, null, TiffTag.class, list, offset, rin);
+        IfdMetaUtils.readIFDs(null, null, pixy.image.exifFields.ExifTag.class, list, offset, rin);
         // Step 2: remove pages from a multiple page TIFF
         int pagesRetained = list.size();
         List<IFD> newList = new ArrayList<IFD>();
@@ -461,8 +461,8 @@ e.printStackTrace();
         }
         // Reset pageNumber for the existing pages
         for(int i = 0; i < list.size(); i++) {
-            list.get(i).removeField(TiffTag.PAGE_NUMBER);
-            list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
+            list.get(i).removeField(pixy.image.exifFields.ExifTag.PAGE_NUMBER);
+            list.get(i).addField(new ShortField(pixy.image.exifFields.ExifTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
         }
         // End of removing pages
         // Step 3: copy the remaining pages
@@ -482,7 +482,7 @@ e.printStackTrace();
 
         int offset = copyHeader(rin, rout);
         // Step 1: read the IFDs into a list first
-        IfdMetaUtils.readIFDs(null, null, TiffTag.class, list, offset, rin);
+        IfdMetaUtils.readIFDs(null, null, pixy.image.exifFields.ExifTag.class, list, offset, rin);
         // Step 2: remove pages from a multiple page TIFF
         int pagesRetained = list.size();
         List<IFD> newList = new ArrayList<IFD>();
@@ -498,8 +498,8 @@ e.printStackTrace();
         // End of removing pages
         // Reset pageNumber for the existing pages
         for(int i = 0; i < list.size(); i++) {
-            list.get(i).removeField(TiffTag.PAGE_NUMBER);
-            list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
+            list.get(i).removeField(pixy.image.exifFields.ExifTag.PAGE_NUMBER);
+            list.get(i).addField(new ShortField(pixy.image.exifFields.ExifTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
         }
         // Step 3: copy the remaining pages
         // 0x08 is the first write offset
@@ -573,15 +573,15 @@ e.printStackTrace();
         rout.seek(offset);
 
         // Original image data start from these offsets.
-        TiffField<?> stripOffSets = ifd.removeField(TiffTag.STRIP_OFFSETS);
+        ExifField<?> stripOffSets = ifd.removeField(pixy.image.exifFields.ExifTag.STRIP_OFFSETS);
 
         if(stripOffSets == null)
-            stripOffSets = ifd.removeField(TiffTag.TILE_OFFSETS);
+            stripOffSets = ifd.removeField(pixy.image.exifFields.ExifTag.TILE_OFFSETS);
 
-        TiffField<?> stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS);
+        ExifField<?> stripByteCounts = ifd.getField(pixy.image.exifFields.ExifTag.STRIP_BYTE_COUNTS);
 
         if(stripByteCounts == null)
-            stripByteCounts = ifd.getField(TiffTag.TILE_BYTE_COUNTS);
+            stripByteCounts = ifd.getField(pixy.image.exifFields.ExifTag.TILE_BYTE_COUNTS);
 		/*
 		 * Make sure this will work in the case when neither STRIP_OFFSETS nor TILE_OFFSETS presents.
 		 * Not sure if this will ever happen for TIFF. JPEG EXIF data do not contain these fields.
@@ -591,20 +591,20 @@ e.printStackTrace();
             int[] off = stripOffSets.getDataAsLong();
             int[] temp = new int[off.length];
 
-            TiffField<?> tiffField = ifd.getField(TiffTag.COMPRESSION);
+            ExifField<?> exifField = ifd.getField(pixy.image.exifFields.ExifTag.COMPRESSION);
 
             // Uncompressed image with one strip or tile (may contain wrong StripByteCounts value)
             // Bug fix for uncompressed image with one strip and wrong StripByteCounts value
-            if((tiffField == null ) || (tiffField != null && tiffField.getDataAsLong()[0] == 1)) { // Uncompressed data
+            if((exifField == null ) || (exifField != null && exifField.getDataAsLong()[0] == 1)) { // Uncompressed data
                 int planaryConfiguration = 1;
 
-                tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);
-                if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
+                exifField = ifd.getField(ExifTag.PLANAR_CONFIGURATTION);
+                if(exifField != null) planaryConfiguration = exifField.getDataAsLong()[0];
 
-                tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
+                exifField = ifd.getField(ExifTag.SAMPLES_PER_PIXEL);
 
                 int samplesPerPixel = 1;
-                if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
+                if(exifField != null) samplesPerPixel = exifField.getDataAsLong()[0];
 
                 // If there is only one strip/samplesPerPixel strips for PlanaryConfiguration = 2
                 if((planaryConfiguration == 1 && off.length == 1) || (planaryConfiguration == 2 && off.length == samplesPerPixel))
@@ -629,22 +629,22 @@ e.printStackTrace();
                 offset += buf.length;
             }
 
-            if(ifd.getField(TiffTag.STRIP_BYTE_COUNTS) != null)
-                stripOffSets = new LongField(TiffTag.STRIP_OFFSETS, temp);
+            if(ifd.getField(pixy.image.exifFields.ExifTag.STRIP_BYTE_COUNTS) != null)
+                stripOffSets = new LongField(pixy.image.exifFields.ExifTag.STRIP_OFFSETS, temp);
             else
-                stripOffSets = new LongField(TiffTag.TILE_OFFSETS, temp);
+                stripOffSets = new LongField(pixy.image.exifFields.ExifTag.TILE_OFFSETS, temp);
             ifd.addField(stripOffSets);
         }
 
         // Add software field.
         String softWare = "PIXYMETA-ANDROID - https://github.com/dragon66/pixymeta-android\0";
-        ifd.addField(new ASCIIField(TiffTag.SOFTWARE, softWare));
+        ifd.addField(new ASCIIField(ExifTag.SOFTWARE, softWare));
 
 		/* The following are added to work with old-style JPEG compression (type 6) */
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
-        TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT);
+        ExifField<?> jpegIFOffset = ifd.removeField(pixy.image.exifFields.ExifTag.JPEG_INTERCHANGE_FORMAT);
         if(jpegIFOffset != null) {
-            TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
+            ExifField<?> jpegIFByteCount = ifd.removeField(pixy.image.exifFields.ExifTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
             try {
                 if(jpegIFByteCount != null) {
                     rin.seek(jpegIFOffset.getDataAsLong()[0]);
@@ -657,28 +657,28 @@ e.printStackTrace();
                     long startOffset = rout.getStreamPointer();
                     copyJPEGIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
                     long endOffset = rout.getStreamPointer();
-                    ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[]{(int)(endOffset - startOffset)}));
+                    ifd.addField(new LongField(pixy.image.exifFields.ExifTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[]{(int)(endOffset - startOffset)}));
                 }
-                jpegIFOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT, new int[]{offset});
+                jpegIFOffset = new LongField(pixy.image.exifFields.ExifTag.JPEG_INTERCHANGE_FORMAT, new int[]{offset});
                 ifd.addField(jpegIFOffset);
             } catch (EOFException ex) {;};
         }
 		/* Another flavor of the old style JPEG compression type 6 contains separate tables */
-        TiffField<?> jpegTable = ifd.removeField(TiffTag.JPEG_DC_TABLES);
+        ExifField<?> jpegTable = ifd.removeField(pixy.image.exifFields.ExifTag.JPEG_DC_TABLES);
         if(jpegTable != null) {
             try {
                 ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
             } catch(EOFException ex) {;}
         }
 
-        jpegTable = ifd.removeField(TiffTag.JPEG_AC_TABLES);
+        jpegTable = ifd.removeField(ExifTag.JPEG_AC_TABLES);
         if(jpegTable != null) {
             try {
                 ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
             } catch(EOFException ex) {;}
         }
 
-        jpegTable = ifd.removeField(TiffTag.JPEG_Q_TABLES);
+        jpegTable = ifd.removeField(ExifTag.JPEG_Q_TABLES);
         if(jpegTable != null) {
             try {
                 ifd.addField(copyJPEGQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
@@ -690,7 +690,7 @@ e.printStackTrace();
         return (int)rout.getStreamPointer();
     }
 
-    private static TiffField<?> copyJPEGHufTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException
+    private static ExifField<?> copyJPEGHufTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, ExifField<?> field, int curPos) throws IOException
     {
         int[] data = field.getDataAsLong();
         int[] tmp = new int[data.length];
@@ -716,10 +716,10 @@ e.printStackTrace();
             IOUtils.write(rout, htable);
         }
 
-        if(TiffTag.fromShort(field.getTag()) == TiffTag.JPEG_AC_TABLES)
-            return new LongField(TiffTag.JPEG_AC_TABLES, tmp);
+        if(pixy.image.exifFields.ExifTag.fromShort(field.getTag()) == pixy.image.exifFields.ExifTag.JPEG_AC_TABLES)
+            return new LongField(pixy.image.exifFields.ExifTag.JPEG_AC_TABLES, tmp);
 
-        return new LongField(TiffTag.JPEG_DC_TABLES, tmp);
+        return new LongField(pixy.image.exifFields.ExifTag.JPEG_DC_TABLES, tmp);
     }
 
     private static void copyJPEGIFByteCount(RandomAccessInputStream rin, RandomAccessOutputStream rout, int offset, int outOffset) throws IOException {
@@ -774,7 +774,7 @@ e.printStackTrace();
         }
     }
 
-    private static TiffField<?> copyJPEGQTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException
+    private static ExifField<?> copyJPEGQTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, ExifField<?> field, int curPos) throws IOException
     {
         byte[] qtable = new byte[64];
         int[] data = field.getDataAsLong();
@@ -788,7 +788,7 @@ e.printStackTrace();
             curPos += 64;
         }
 
-        return new LongField(TiffTag.JPEG_Q_TABLES, tmp);
+        return new LongField(pixy.image.exifFields.ExifTag.JPEG_Q_TABLES, tmp);
     }
 
     private static short copyJPEGSOS(RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException	{
@@ -854,20 +854,20 @@ e.printStackTrace();
     // Used to calculate how many bytes to read in case we have only one strip or tile
     private static int[] getBytes2Read(IFD ifd) {
         // Let's calculate how many bytes we are supposed to read
-        TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH);
-        int imageWidth = tiffField.getDataAsLong()[0];
-        tiffField = ifd.getField(TiffTag.IMAGE_LENGTH);
-        int imageHeight = tiffField.getDataAsLong()[0];
+        ExifField<?> exifField = ifd.getField(pixy.image.exifFields.ExifTag.IMAGE_WIDTH);
+        int imageWidth = exifField.getDataAsLong()[0];
+        exifField = ifd.getField(pixy.image.exifFields.ExifTag.IMAGE_LENGTH);
+        int imageHeight = exifField.getDataAsLong()[0];
 
         // For YCbCr image only
         int horizontalSampleFactor = 2; // Default 2X2
         int verticalSampleFactor = 2; // Not 1X1
 
-        int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION).getDataAsLong()[0];
+        int photoMetric = ifd.getField(pixy.image.exifFields.ExifTag.PHOTOMETRIC_INTERPRETATION).getDataAsLong()[0];
 
         // Correction for imageWidth and imageHeight for YCbCr image
-        if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
-            TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING);
+        if(photoMetric == ExifFieldEnum.PhotoMetric.YCbCr.getValue()) {
+            ExifField<?> f_YCbCrSubSampling = ifd.getField(pixy.image.exifFields.ExifTag.YCbCr_SUB_SAMPLING);
 
             if(f_YCbCrSubSampling != null) {
                 int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
@@ -880,23 +880,23 @@ e.printStackTrace();
 
         int samplesPerPixel = 1;
 
-        tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
-        if(tiffField != null) {
-            samplesPerPixel = tiffField.getDataAsLong()[0];
+        exifField = ifd.getField(pixy.image.exifFields.ExifTag.SAMPLES_PER_PIXEL);
+        if(exifField != null) {
+            samplesPerPixel = exifField.getDataAsLong()[0];
         }
 
         int bitsPerSample = 1;
 
-        tiffField = ifd.getField(TiffTag.BITS_PER_SAMPLE);
-        if(tiffField != null) {
-            bitsPerSample = tiffField.getDataAsLong()[0];
+        exifField = ifd.getField(pixy.image.exifFields.ExifTag.BITS_PER_SAMPLE);
+        if(exifField != null) {
+            bitsPerSample = exifField.getDataAsLong()[0];
         }
 
         int tileWidth = -1;
         int tileLength = -1;
 
-        TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH);
-        TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH);
+        ExifField<?> f_tileLength = ifd.getField(ExifTag.TILE_LENGTH);
+        ExifField<?> f_tileWidth = ifd.getField(pixy.image.exifFields.ExifTag.TILE_WIDTH);
 
         if(f_tileWidth != null) {
             tileWidth = f_tileWidth.getDataAsLong()[0];
@@ -906,7 +906,7 @@ e.printStackTrace();
         int rowsPerStrip = imageHeight;
         int rowWidth = imageWidth;
 
-        TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP);
+        ExifField<?> f_rowsPerStrip = ifd.getField(pixy.image.exifFields.ExifTag.ROWS_PER_STRIP);
         if(f_rowsPerStrip != null) rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];
 
         if(rowsPerStrip > imageHeight) rowsPerStrip = imageHeight;
@@ -918,8 +918,8 @@ e.printStackTrace();
 
         int planaryConfiguration = 1;
 
-        tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);
-        if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
+        exifField = ifd.getField(pixy.image.exifFields.ExifTag.PLANAR_CONFIGURATTION);
+        if(exifField != null) planaryConfiguration = exifField.getDataAsLong()[0];
 
         int[] totalBytes2Read = new int[samplesPerPixel];
 
@@ -928,7 +928,7 @@ e.printStackTrace();
         else
             totalBytes2Read[0] = totalBytes2Read[1] = totalBytes2Read[2] = ((rowWidth*bitsPerSample + 7)/8)*rowsPerStrip;
 
-        if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
+        if(photoMetric == ExifFieldEnum.PhotoMetric.YCbCr.getValue()) {
             if(samplesPerPixel != 3) samplesPerPixel = 3;
 
             int[] sampleBytesPerRow = new int[samplesPerPixel];
@@ -945,7 +945,7 @@ e.printStackTrace();
             totalBytes2Read[1] = sampleBytesPerRow[1]*sampleRowsPerStrip[1];
             totalBytes2Read[2] = totalBytes2Read[1];
 
-            if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
+            if(exifField != null) planaryConfiguration = exifField.getDataAsLong()[0];
 
             if(planaryConfiguration == 1)
                 totalBytes2Read[0] = totalBytes2Read[0] + totalBytes2Read[1] + totalBytes2Read[2];

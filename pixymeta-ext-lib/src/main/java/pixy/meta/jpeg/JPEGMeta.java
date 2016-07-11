@@ -47,7 +47,7 @@ import pixy.image.IBitmap;
 import pixy.image.jpeg.JpegSegment;
 import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.image.exifFields.IFD;
-import pixy.image.exifFields.TiffTag;
+import pixy.image.exifFields.ExifTag;
 import pixy.image.jpeg.COMBuilder;
 import pixy.image.jpeg.Component;
 import pixy.image.jpeg.DHTReader;
@@ -582,9 +582,9 @@ public class JPEGMeta extends JpegMetaDef {
 		    	// If we have ImageIFD, set Image IFD attached with EXIF and GPS
 		     	if(imageIFD != null) {
 		    		if(exifSubIFD != null)
-			    		imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exifSubIFD);
+			    		imageIFD.addChild(ExifTag.EXIF_SUB_IFD, exifSubIFD);
 		    		if(gpsSubIFD != null)
-			    		imageIFD.addChild(TiffTag.GPS_SUB_IFD, gpsSubIFD);
+			    		imageIFD.addChild(ExifTag.GPS_SUB_IFD, gpsSubIFD);
 		    		exif.setImageIFD(imageIFD);
 		    	} else { // Otherwise, set EXIF and GPS IFD separately
 		    		exif.setExifIFD(exifSubIFD);
@@ -1320,7 +1320,6 @@ public class JPEGMeta extends JpegMetaDef {
 					case APP7:
 					case APP8:
 					case APP9:
-					case JPG_SEGMENT_COMMENT_APP10:
 					case APP11:
 					case APP12:
 					case JPG_SEGMENT_IPTC_APP13:
@@ -1330,8 +1329,9 @@ public class JPEGMeta extends JpegMetaDef {
 						appnSegments.add(new JpegSegment(currentJpegSegmentMarker, appBytes));
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 						break;
+					case JPG_SEGMENT_COMMENT_APP10:
 					case JPG_SEGMENT_COMMNENTS_COM:
-						if(comments == null) comments = new Comments();
+						if(comments == null) comments = new Comments(null);
 						comments.addComment(readSegmentData(is));
 						currentJpegSegmentMarkerCode = IOUtils.readShortMM(is);
 				    	break;				   				

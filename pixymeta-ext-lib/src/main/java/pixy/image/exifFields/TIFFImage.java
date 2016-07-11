@@ -42,11 +42,11 @@ public class TIFFImage implements Iterable<pixy.image.exifFields.IFD> {
 		this.workingPage = 0;
 	}
 	
-	public void addField(TiffField<?> field) {
+	public void addField(ExifField<?> field) {
 		ifds.get(workingPage).addField(field);
 	}
 	
-	public TiffField<?> getField(Tag tag) {
+	public ExifField<?> getField(Tag tag) {
 		return ifds.get(workingPage).getField(tag);
 	}
 	
@@ -62,7 +62,7 @@ public class TIFFImage implements Iterable<pixy.image.exifFields.IFD> {
 		return numOfPages;
 	}
 	
-	public TiffField<?> removeField(Tag tag) {
+	public ExifField<?> removeField(Tag tag) {
 		return ifds.get(workingPage).removeField(tag);
 	}
 	
@@ -84,8 +84,8 @@ public class TIFFImage implements Iterable<pixy.image.exifFields.IFD> {
 		// Reset pageNumber if we have more than 1 pages
 		if(numOfPages > 1) { 
 			for(int i = 0; i < ifds.size(); i++) {
-				ifds.get(i).removeField(pixy.image.exifFields.TiffTag.PAGE_NUMBER);
-				ifds.get(i).addField(new pixy.image.exifFields.ShortField(pixy.image.exifFields.TiffTag.PAGE_NUMBER, new short[]{(short)i, (short)(numOfPages - 1)}));
+				ifds.get(i).removeField(ExifTag.PAGE_NUMBER);
+				ifds.get(i).addField(new pixy.image.exifFields.ShortField(ExifTag.PAGE_NUMBER, new short[]{(short)i, (short)(numOfPages - 1)}));
 			}
 		}
 		TIFFMetaUtils.write(this, out);

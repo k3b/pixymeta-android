@@ -34,7 +34,10 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.*;
 
@@ -1057,4 +1060,21 @@ public class StringUtils {
 	}
 
 	private StringUtils(){} // Prevents instantiation
+
+	public static String toStringLines(List<String> comments) {
+		StringBuilder result = new StringBuilder();
+		if (comments != null) {
+			for (String line : comments) {
+				if ((line != null) && (line.length() > 0)) {
+					result.append(line).append("\n");
+				}
+			}
+		}
+		return result.toString();
+	}
+
+	public static List<String> fromLines(String value) {
+		if (value == null) return new ArrayList<String>();
+		return Arrays.asList(value.split("\n"));
+	}
 }

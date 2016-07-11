@@ -24,12 +24,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import pixy.image.exifFields.*;
+import pixy.image.exifFields.ExifTag;
 import pixy.image.jpeg.JpegSegmentMarker;
-import pixy.image.exifFields.ASCIIField;
-import pixy.image.exifFields.IFD;
-import pixy.image.exifFields.LongField;
-import pixy.image.exifFields.TiffField;
-import pixy.image.exifFields.TiffTag;
 import pixy.io.IOUtils;
 import pixy.io.MemoryCacheRandomAccessOutputStream;
 import pixy.io.RandomAccessOutputStream;
@@ -47,14 +44,14 @@ public class JpegExif extends ExifMetaSegment {
 	private IFD createImageIFD() {
 		// Create Image IFD (IFD0)
 		IFD imageIFD = new IFD();
-		TiffField<?> tiffField = new ASCIIField(TiffTag.IMAGE_DESCRIPTION, "ExifMetaSegment created by JPEGTweaker");
-		imageIFD.addField(tiffField);
+		ExifField<?> exifField = new ASCIIField(ExifTag.IMAGE_DESCRIPTION, "ExifMetaSegment created by JPEGTweaker");
+		imageIFD.addField(exifField);
 		String softWare = "JPEGTweaker 1.0";
-		tiffField = new ASCIIField(TiffTag.SOFTWARE, softWare);
-		imageIFD.addField(tiffField);
+		exifField = new ASCIIField(ExifTag.SOFTWARE, softWare);
+		imageIFD.addField(exifField);
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-		tiffField = new ASCIIField(TiffTag.DATETIME, formatter.format(new Date()));
-		imageIFD.addField(tiffField);
+		exifField = new ASCIIField(pixy.image.exifFields.ExifTag.DATETIME, formatter.format(new Date()));
+		imageIFD.addField(exifField);
 
 		return setImageIFD(imageIFD);
 	}
@@ -91,14 +88,14 @@ public class JpegExif extends ExifMetaSegment {
 		// Attach EXIIF and/or GPS SubIFD to main image IFD
 		IFD exifSubIFD = getIfd(ID_exifSubIFD);
 		if(exifSubIFD != null) {
-			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD, new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exifSubIFD);			
+			imageIFD.addField(new LongField(ExifTag.EXIF_SUB_IFD, new int[]{0})); // Place holder
+			imageIFD.addChild(ExifTag.EXIF_SUB_IFD, exifSubIFD);
 		}
 
 		IFD gpsSubIFD = getIfd(ID_gpsSubIFD);
 		if(gpsSubIFD != null) {
-			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD, new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.GPS_SUB_IFD, gpsSubIFD);
+			imageIFD.addField(new LongField(ExifTag.GPS_SUB_IFD, new int[]{0})); // Place holder
+			imageIFD.addChild(ExifTag.GPS_SUB_IFD, gpsSubIFD);
 		}
 		int offset = imageIFD.write(randOS, FIRST_IFD_OFFSET);
 		if(thumbnail != null && thumbnail.containsImage()) {

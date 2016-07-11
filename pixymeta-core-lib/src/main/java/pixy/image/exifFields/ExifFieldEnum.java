@@ -18,14 +18,14 @@ import pixy.api.IDataType;
 import pixy.api.IFieldDefinition;
 
 /**
- * TiffFieldEnum.java
+ * ExifFieldEnum.java
  * <p>
- * This class provides a central place for all the TIFF fields related enumerations
+ * This class provides a central place for all the Exif fields related enumerations
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 06/26/2014
  */
-public class TiffFieldEnum {
+public class ExifFieldEnum {
 	
 	public enum PhotoMetric implements IFieldDefinition {
 		// Baseline
@@ -208,5 +208,5 @@ public class TiffFieldEnum {
 
 	}
 	
-	private TiffFieldEnum() {}
+	private ExifFieldEnum() {}
 }

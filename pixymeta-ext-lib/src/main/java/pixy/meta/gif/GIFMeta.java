@@ -266,7 +266,7 @@ public class GIFMeta {
 					// Comment block
 					byte[] comment = new byte[len];
 					IOUtils.readFully(is, comment);
-					if(DTO.comments == null) DTO.comments = new Comments();
+					if(DTO.comments == null) DTO.comments = new Comments(null);
 					DTO.comments.addComment(comment);
 					// Comment: new String(comment)
 					len = is.read();
