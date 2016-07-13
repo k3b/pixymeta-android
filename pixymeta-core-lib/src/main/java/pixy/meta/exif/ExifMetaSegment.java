@@ -36,14 +36,12 @@ import pixy.api.IDataType;
 import pixy.api.IDirectory;
 import pixy.api.IFieldDefinition;
 import pixy.image.IBitmap;
-import pixy.image.exifFields.Tag;
 import pixy.meta.MetadataBase;
 import pixy.meta.MetadataType;
 import pixy.meta.Thumbnail;
 import pixy.image.exifFields.FieldType;
 import pixy.image.exifFields.IFD;
 import pixy.image.exifFields.ExifField;
-import pixy.image.exifFields.ExifTag;
 import pixy.io.FileCacheRandomAccessInputStream;
 import pixy.io.FileCacheRandomAccessOutputStream;
 import pixy.io.IOUtils;
@@ -103,8 +101,8 @@ public abstract class ExifMetaSegment extends MetadataBase {
 	}
 
 	protected static final String ID_gpsSubIFD = GPSTag.class.getSimpleName();
-	protected static final String ID_exifSubIFD = pixy.meta.exif.ExifTag.class.getSimpleName();
-	protected static final String ID_imageIFD = pixy.image.exifFields.ExifTag.class.getSimpleName();
+	protected static final String ID_exifSubIFD = ExifSubTag.class.getSimpleName();
+	protected static final String ID_exifImageIFD = ExifImageTag.class.getSimpleName();
 
 	HashMap<String, IFD> ifds = new HashMap<String, IFD>();
 	private IFD getOrCreateIfd(String typName) {
@@ -149,7 +147,7 @@ public abstract class ExifMetaSegment extends MetadataBase {
 	}
 
 	public IFD getImageIFD() {
-		IFD imageIFD = getIfd(ID_imageIFD);
+		IFD imageIFD = getIfd(ID_exifImageIFD);
 		if (imageIFD != null) {
 			return new IFD(imageIFD);
 		}
@@ -181,16 +179,16 @@ public abstract class ExifMetaSegment extends MetadataBase {
 				IFD thumbnailIFD = ifds.get(1);
 				int width = -1;
 				int height = -1;
-				ExifField<?> field = thumbnailIFD.getField(ExifTag.IMAGE_WIDTH);
+				ExifField<?> field = thumbnailIFD.getField(ExifImageTag.IMAGE_WIDTH);
 				if (field != null)
 					width = field.getDataAsLong()[0];
-				field = thumbnailIFD.getField(ExifTag.IMAGE_LENGTH);
+				field = thumbnailIFD.getField(ExifImageTag.IMAGE_LENGTH);
 				if (field != null)
 					height = field.getDataAsLong()[0];
-				field = thumbnailIFD.getField(ExifTag.JPEG_INTERCHANGE_FORMAT);
+				field = thumbnailIFD.getField(ExifImageTag.JPEG_INTERCHANGE_FORMAT);
 				if (field != null) { // JPEG format, save as JPEG
 					int thumbnailOffset = field.getDataAsLong()[0];
-					field = thumbnailIFD.getField(ExifTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
+					field = thumbnailIFD.getField(ExifImageTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
 					int thumbnailLen = field.getDataAsLong()[0];
 					exifIn.seek(thumbnailOffset);
 					byte[] thumbnailData = new byte[thumbnailLen];
@@ -198,9 +196,9 @@ public abstract class ExifMetaSegment extends MetadataBase {
 					thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
 					containsThumbnail = true;
 				} else { // Uncompressed TIFF
-					field = thumbnailIFD.getField(ExifTag.STRIP_OFFSETS);
+					field = thumbnailIFD.getField(ExifImageTag.STRIP_OFFSETS);
 					if (field == null)
-						field = thumbnailIFD.getField(pixy.image.exifFields.ExifTag.TILE_OFFSETS);
+						field = thumbnailIFD.getField(ExifImageTag.TILE_OFFSETS);
 					if (field != null) {
 						exifIn.seek(0);
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -228,10 +226,10 @@ public abstract class ExifMetaSegment extends MetadataBase {
 	public IFD setImageIFD(IFD imageIFD) {
 		if (imageIFD == null)
 			throw new IllegalArgumentException("Input image IFD is null");
-		ifds.put(ID_imageIFD, imageIFD);
+		ifds.put(ID_exifImageIFD, imageIFD);
 
-		setGPSIFD(imageIFD.getChild(ExifTag.GPS_SUB_IFD));
-		setExifIFD(imageIFD.getChild(ExifTag.EXIF_SUB_IFD));
+		setGPSIFD(imageIFD.getChild(ExifImageTag.GPS_SUB_IFD));
+		setExifIFD(imageIFD.getChild(ExifImageTag.EXIF_SUB_IFD));
 		return imageIFD;
 	}
 
@@ -257,11 +255,11 @@ public abstract class ExifMetaSegment extends MetadataBase {
 	public void showMetadata() {
 		ensureDataRead();
 		LOGGER.info("ExifMetaSegment output starts =>");
-		IFD imageIFD = getIfd(ID_imageIFD);
+		IFD imageIFD = getIfd(ID_exifImageIFD);
 
 		if (imageIFD != null) {
 			LOGGER.info("<<Image IFD starts>>");
-			IfdMetaUtils.printIFD(imageIFD, ExifTag.class, "");
+			IfdMetaUtils.printIFD(imageIFD, ExifImageTag.class, "");
 			LOGGER.info("<<Image IFD ends>>");
 		}
 		if (containsThumbnail) {
@@ -278,7 +276,7 @@ public abstract class ExifMetaSegment extends MetadataBase {
 	 * */
 	@Override
 	public List<IDirectory> getMetaData() {
-		return getDirectories(new String[]{"", "-sub", "-gps", "-thumb"}, getIfd(ID_imageIFD), getIfd(ID_exifSubIFD), getIfd(ID_gpsSubIFD),
+		return getDirectories(new String[]{"", "-sub", "-gps", "-thumb"}, getIfd(ID_exifImageIFD), getIfd(ID_exifSubIFD), getIfd(ID_gpsSubIFD),
 				(thumbnail != null) ? thumbnail.getMetaData() : null);
 	}
 

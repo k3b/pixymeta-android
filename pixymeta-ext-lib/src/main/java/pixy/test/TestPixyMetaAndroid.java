@@ -18,12 +18,13 @@ import org.w3c.dom.Document;
 
 import pixy.image.IBitmap;
 import pixy.api.IMetadata;
-import pixy.image.exifFields.ExifTag;
+import pixy.meta.exif.ExifImageTag;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.IPTC_NAA;
 import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.meta.exif.ExifMetaSegment;
+import pixy.meta.exif.ExifSubTag;
 import pixy.meta.exif.JpegExif;
 import pixy.meta.exif.TiffExif;
 import pixy.meta.iptc.IPTCApplicationTag;
@@ -190,17 +191,17 @@ public class TestPixyMetaAndroid {
 	private static ExifMetaSegment populateExif(Class<?> exifClass) throws IOException {
 		// Create an EXIF wrapper
 		ExifMetaSegment exif = exifClass == (TiffExif.class)?new TiffExif() : new JpegExif();
-		exif.addField(ExifTag.WINDOWS_XP_AUTHOR, FieldType.WINDOWSXP, "Author");
-		exif.addField(ExifTag.WINDOWS_XP_KEYWORDS, FieldType.WINDOWSXP, "Copyright;Author");
+		exif.addField(ExifImageTag.WINDOWS_XP_AUTHOR, FieldType.WINDOWSXP, "Author");
+		exif.addField(ExifImageTag.WINDOWS_XP_KEYWORDS, FieldType.WINDOWSXP, "Copyright;Author");
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-		exif.addField(pixy.meta.exif.ExifTag.EXPOSURE_TIME, FieldType.RATIONAL, new int[] {10, 600});
-		exif.addField(pixy.meta.exif.ExifTag.FNUMBER, FieldType.RATIONAL, new int[] {49, 10});
-		exif.addField(pixy.meta.exif.ExifTag.ISO_SPEED_RATINGS, FieldType.SHORT, new short[]{273});
+		exif.addField(ExifSubTag.EXPOSURE_TIME, FieldType.RATIONAL, new int[] {10, 600});
+		exif.addField(ExifSubTag.FNUMBER, FieldType.RATIONAL, new int[] {49, 10});
+		exif.addField(ExifSubTag.ISO_SPEED_RATINGS, FieldType.SHORT, new short[]{273});
 		//All four bytes should be interpreted as ASCII values - represents [0220] - new byte[]{48, 50, 50, 48}
-		exif.addField(pixy.meta.exif.ExifTag.EXIF_VERSION, FieldType.UNDEFINED, "0220".getBytes());
-		exif.addField(pixy.meta.exif.ExifTag.DATE_TIME_ORIGINAL, FieldType.ASCII, formatter.format(new Date()));
-		exif.addField(pixy.meta.exif.ExifTag.DATE_TIME_DIGITIZED, FieldType.ASCII, formatter.format(new Date()));
-		exif.addField(pixy.meta.exif.ExifTag.FOCAL_LENGTH, FieldType.RATIONAL, new int[] {240, 10});
+		exif.addField(ExifSubTag.EXIF_VERSION, FieldType.UNDEFINED, "0220".getBytes());
+		exif.addField(ExifSubTag.DATE_TIME_ORIGINAL, FieldType.ASCII, formatter.format(new Date()));
+		exif.addField(ExifSubTag.DATE_TIME_DIGITIZED, FieldType.ASCII, formatter.format(new Date()));
+		exif.addField(ExifSubTag.FOCAL_LENGTH, FieldType.RATIONAL, new int[] {240, 10});
 		// Insert ThumbNailIFD
 		// Since we don't provide thumbnail image, it will be created later from the input stream
 		exif.setThumbnailRequired(true);

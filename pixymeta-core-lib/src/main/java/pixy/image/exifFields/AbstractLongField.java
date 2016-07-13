@@ -18,7 +18,7 @@ import pixy.string.StringUtils;
 
 public abstract class AbstractLongField extends ExifField<int[]> implements IIntableField {
 
-	public AbstractLongField(pixy.image.exifFields.Tag tag, pixy.image.exifFields.FieldType fieldType, int[] data) {
+	public AbstractLongField(pixy.meta.exif.Tag tag, pixy.image.exifFields.FieldType fieldType, int[] data) {
 		super(tag, fieldType, data.length);
 		this.data = data;
 	}

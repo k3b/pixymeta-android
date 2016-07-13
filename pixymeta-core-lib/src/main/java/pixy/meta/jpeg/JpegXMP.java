@@ -2,6 +2,7 @@ package pixy.meta.jpeg;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -10,6 +11,7 @@ import org.w3c.dom.NodeList;
 import pixy.fileprocessor.jpg.JpegMetaDef;
 import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.io.IOUtils;
+import pixy.meta.MetadataType;
 import pixy.meta.xmp.XMP;
 import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
@@ -37,6 +39,40 @@ public class JpegXMP extends XMP {
 	public JpegXMP(String xmp, String extendedXmp) {
 		super(xmp, extendedXmp);
 	}
+
+	/* !!! todo must implement merge
+	@Override
+	public void merge(byte[] data) {
+		// this.data = ArrayUtils.concat(this.data, data);
+		// if ((data != null) && isDebugEnabled()) debug("merge(" + data.length + ") => " + this.data.length);
+
+		// 32 byte ASCII hex string
+		// Retrieve and remove XMP GUID if available
+		String xmpGUID = XMLUtils.getAttribute(this.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
+
+		// We found ExtendedXMP, add the data to ExtendedXMP memory buffer
+		int i = 0;
+		// 128-bit MD5 digest of the full ExtendedXMP serialization
+		byte[] guid = ArrayUtils.subArray(data, i, 32);
+		if(Arrays.equals(guid, xmpGUID.getBytes())) { // We have matched the GUID, copy it
+			i += 32;
+			long extendedXMPLength = IOUtils.readUnsignedIntMM(data, i);
+			i += 4;
+			if(extendedXMP == null)
+				extendedXMP = new byte[(int)extendedXMPLength];
+			// Offset for the current jpegSegment
+			long offset = IOUtils.readUnsignedIntMM(data, i);
+			i += 4;
+			byte[] xmpBytes = ArrayUtils.subArray(data, i, length - XMP_EXT_ID.length() - 42);
+			System.arraycopy(xmpBytes, 0, extendedXMP, (int)offset, xmpBytes.length);
+		}
+
+		this.data = ArrayUtils.concat(this.data, data);
+		this.isDataRead = false;
+
+		if ((data != null) && isDebugEnabled()) debug("merge(" + data.length + ") => " + this.data.length);
+	}
+*/
 
 	@Override
 	public void write(OutputStream os) throws IOException {

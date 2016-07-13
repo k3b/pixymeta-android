@@ -4,6 +4,7 @@ import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.meta.MetadataType;
 import pixy.meta.adobe.AdobeIRBSegment;
 import pixy.fileprocessor.jpg.JpegMetaDef;
+import pixy.meta.iptc.IPTCApplicationTag;
 
 /**
  * A jpg-file specific {@link AdobeIRBSegment} plugin for {@link JpgFileProcessor}
@@ -12,7 +13,7 @@ import pixy.fileprocessor.jpg.JpegMetaDef;
 public class JpegAdobeIRBSegmentPlugin extends AdobeIRBSegment {
     static {
         JpgSegmentPluginFactory.register(MetadataType.PHOTOSHOP_IRB, JpegSegmentMarker.JPG_SEGMENT_IPTC_APP13,
-                JpegMetaDef.PHOTOSHOP_IRB_ID, JpegAdobeIRBSegmentPlugin.class)
+                JpegMetaDef.PHOTOSHOP_IRB_ID, JpegAdobeIRBSegmentPlugin.class, IPTCApplicationTag.class)
                 // .setDebug(true)
         ;
     }

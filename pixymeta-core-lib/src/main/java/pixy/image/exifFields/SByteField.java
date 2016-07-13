@@ -18,7 +18,7 @@ package pixy.image.exifFields;
  */
 public final class SByteField extends AbstractByteField {
 
-	public SByteField(Tag tag, byte[] data) {
+	public SByteField(pixy.meta.exif.Tag tag, byte[] data) {
 		super(tag, pixy.image.exifFields.FieldType.SBYTE, data);
 	}	
 }

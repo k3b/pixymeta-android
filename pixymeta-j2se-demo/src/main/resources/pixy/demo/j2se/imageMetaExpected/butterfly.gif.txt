@@ -1,0 +1,9 @@
+
+
+############
+butterfly.gif
+COMMENT
+	Comment.Comment[StringLines]=G44
+
+
+----------------------

@@ -29,7 +29,6 @@ import java.util.List;
 import pixy.api.IDirectory;
 import pixy.image.IBitmap;
 import pixy.image.exifFields.*;
-import pixy.image.exifFields.ExifTag;
 import pixy.meta.Thumbnail;
 import pixy.io.FileCacheRandomAccessInputStream;
 import pixy.io.MemoryCacheRandomAccessOutputStream;
@@ -79,26 +78,26 @@ public class ExifThumbnail extends Thumbnail {
 		if(getDataType() == Thumbnail.DATA_TYPE_KJpegRGB) { // Compressed old-style JPEG format
 			byte[] compressedImage = getCompressedImage();
 			if(compressedImage == null) throw new IllegalArgumentException("Expected compressed thumbnail data does not exist!");
-			thumbnailIFD.addField(new LongField(ExifTag.JPEG_INTERCHANGE_FORMAT, new int[] {0})); // Placeholder
-			thumbnailIFD.addField(new LongField(ExifTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[] {compressedImage.length}));
+			thumbnailIFD.addField(new LongField(ExifImageTag.JPEG_INTERCHANGE_FORMAT, new int[] {0})); // Placeholder
+			thumbnailIFD.addField(new LongField(ExifImageTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[] {compressedImage.length}));
 			offset = thumbnailIFD.write(randOS, offset);
 			// This line is very important!!!
 			randOS.seek(offset);
 			randOS.write(getCompressedImage());
 			// Update fields
-			randOS.seek(thumbnailIFD.getField(ExifTag.JPEG_INTERCHANGE_FORMAT).getDataOffset());
+			randOS.seek(thumbnailIFD.getField(ExifImageTag.JPEG_INTERCHANGE_FORMAT).getDataOffset());
 			randOS.writeInt(offset);
 		} else if(getDataType() == Thumbnail.DATA_TYPE_TIFF) { // Uncompressed TIFF format
 			// Read the IFDs into a list first
 			List<IFD> list = new ArrayList<IFD>();			   
 			RandomAccessInputStream tiffIn = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(getCompressedImage()));
 			IfdMetaUtils.readIFDs(list, tiffIn);
-			ExifField<?> stripOffset = list.get(0).getField(ExifTag.STRIP_OFFSETS);
+			ExifField<?> stripOffset = list.get(0).getField(ExifImageTag.STRIP_OFFSETS);
     		if(stripOffset == null) 
-    			stripOffset = list.get(0).getField(ExifTag.TILE_OFFSETS);
-    		ExifField<?> stripByteCounts = list.get(0).getField(ExifTag.STRIP_BYTE_COUNTS);
+    			stripOffset = list.get(0).getField(ExifImageTag.TILE_OFFSETS);
+    		ExifField<?> stripByteCounts = list.get(0).getField(ExifImageTag.STRIP_BYTE_COUNTS);
     		if(stripByteCounts == null) 
-    			stripByteCounts = list.get(0).getField(ExifTag.TILE_BYTE_COUNTS);
+    			stripByteCounts = list.get(0).getField(ExifImageTag.TILE_BYTE_COUNTS);
     		offset = list.get(0).write(randOS, offset); // Write out the thumbnail IFD
     		int[] off = new int[0];;
     		if(stripOffset != null) { // Write out image data and update offset array
@@ -125,21 +124,21 @@ public class ExifThumbnail extends Thumbnail {
 			// We are going to write the IFD and associated thumbnail
 			int thumbnailWidth = thumbnail.getWidth();
 			int thumbnailHeight = thumbnail.getHeight();
-			thumbnailIFD.addField(new ShortField(ExifTag.IMAGE_WIDTH, new short[]{(short)thumbnailWidth}));
-			thumbnailIFD.addField(new ShortField(ExifTag.IMAGE_LENGTH, new short[]{(short)thumbnailHeight}));
-			thumbnailIFD.addField(new LongField(ExifTag.JPEG_INTERCHANGE_FORMAT, new int[]{0})); // Place holder
-			thumbnailIFD.addField(new LongField(ExifTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[]{0})); // Place holder
+			thumbnailIFD.addField(new ShortField(ExifImageTag.IMAGE_WIDTH, new short[]{(short)thumbnailWidth}));
+			thumbnailIFD.addField(new ShortField(ExifImageTag.IMAGE_LENGTH, new short[]{(short)thumbnailHeight}));
+			thumbnailIFD.addField(new LongField(ExifImageTag.JPEG_INTERCHANGE_FORMAT, new int[]{0})); // Place holder
+			thumbnailIFD.addField(new LongField(ExifImageTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[]{0})); // Place holder
 			// Other related tags
-			thumbnailIFD.addField(new RationalField(pixy.image.exifFields.ExifTag.X_RESOLUTION, new int[] {thumbnailWidth, 1}));
-			thumbnailIFD.addField(new RationalField(ExifTag.Y_RESOLUTION, new int[] {thumbnailHeight, 1}));
-			thumbnailIFD.addField(new ShortField(ExifTag.RESOLUTION_UNIT, new short[]{1})); //No absolute unit of measurement
-			thumbnailIFD.addField(new ShortField(ExifTag.PHOTOMETRIC_INTERPRETATION, new short[]{(short) ExifFieldEnum.PhotoMetric.YCbCr.getValue()}));
-			thumbnailIFD.addField(new ShortField(ExifTag.SAMPLES_PER_PIXEL, new short[]{3}));
-			thumbnailIFD.addField(new ShortField(ExifTag.BITS_PER_SAMPLE, new short[]{8, 8, 8}));
-			thumbnailIFD.addField(new ShortField(ExifTag.YCbCr_SUB_SAMPLING, new short[]{1, 1}));
-			thumbnailIFD.addField(new ShortField(ExifTag.PLANAR_CONFIGURATTION, new short[]{(short) ExifFieldEnum.PlanarConfiguration.CONTIGUOUS.getValue()}));
-			thumbnailIFD.addField(new ShortField(ExifTag.COMPRESSION, new short[]{(short) ExifFieldEnum.Compression.OLD_JPG.getValue()}));
-			thumbnailIFD.addField(new ShortField(ExifTag.ROWS_PER_STRIP, new short[]{(short)thumbnailHeight}));
+			thumbnailIFD.addField(new RationalField(ExifImageTag.X_RESOLUTION, new int[] {thumbnailWidth, 1}));
+			thumbnailIFD.addField(new RationalField(ExifImageTag.Y_RESOLUTION, new int[] {thumbnailHeight, 1}));
+			thumbnailIFD.addField(new ShortField(ExifImageTag.RESOLUTION_UNIT, new short[]{1})); //No absolute unit of measurement
+			thumbnailIFD.addField(new ShortField(ExifImageTag.PHOTOMETRIC_INTERPRETATION, new short[]{(short) ExifFieldEnum.PhotoMetric.YCbCr.getValue()}));
+			thumbnailIFD.addField(new ShortField(ExifImageTag.SAMPLES_PER_PIXEL, new short[]{3}));
+			thumbnailIFD.addField(new ShortField(ExifImageTag.BITS_PER_SAMPLE, new short[]{8, 8, 8}));
+			thumbnailIFD.addField(new ShortField(ExifImageTag.YCbCr_SUB_SAMPLING, new short[]{1, 1}));
+			thumbnailIFD.addField(new ShortField(ExifImageTag.PLANAR_CONFIGURATTION, new short[]{(short) ExifFieldEnum.PlanarConfiguration.CONTIGUOUS.getValue()}));
+			thumbnailIFD.addField(new ShortField(ExifImageTag.COMPRESSION, new short[]{(short) ExifFieldEnum.Compression.OLD_JPG.getValue()}));
+			thumbnailIFD.addField(new ShortField(ExifImageTag.ROWS_PER_STRIP, new short[]{(short)thumbnailHeight}));
 			// Write the thumbnail IFD
 			// This line is very important!!!
 			randOS.seek(thumbnailIFD.write(randOS, offset));
@@ -154,9 +153,9 @@ public class ExifThumbnail extends Thumbnail {
 			long finishOffset = randOS.getStreamPointer();			
 			int totalOut = (int)(finishOffset - startOffset);
 			// Update fields
-			randOS.seek(thumbnailIFD.getField(ExifTag.JPEG_INTERCHANGE_FORMAT).getDataOffset());
+			randOS.seek(thumbnailIFD.getField(ExifImageTag.JPEG_INTERCHANGE_FORMAT).getDataOffset());
 			randOS.writeInt((int)startOffset);
-			randOS.seek(thumbnailIFD.getField(ExifTag.JPEG_INTERCHANGE_FORMAT_LENGTH).getDataOffset());
+			randOS.seek(thumbnailIFD.getField(ExifImageTag.JPEG_INTERCHANGE_FORMAT_LENGTH).getDataOffset());
 			randOS.writeInt(totalOut);
 		}
 		// Close the RandomAccessOutputStream instance if we created it locally

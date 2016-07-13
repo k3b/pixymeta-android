@@ -22,7 +22,7 @@ import pixy.io.RandomAccessOutputStream;
  */
 public final class ASCIIField extends ExifField<String> {
 
-	public ASCIIField(Tag tag, String data) { // ASCII field is NUL- terminated ASCII string
+	public ASCIIField(pixy.meta.exif.Tag tag, String data) { // ASCII field is NUL- terminated ASCII string
 		super(tag, FieldType.ASCII, data.trim().length() + 1); // Remove white spaces
 		this.data = data.trim() + '\0'; // Add NULL to the end of the string
 	}

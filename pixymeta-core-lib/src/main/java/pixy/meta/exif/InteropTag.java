@@ -66,7 +66,7 @@ public enum InteropTag implements Tag {
     public static Tag fromShort(short value) {
        	InteropTag tag = tagMap.get(value);
     	if (tag == null)
-    	   return pixy.image.exifFields.ExifTag.UNKNOWN;
+    	   return ExifImageTag.UNKNOWN;
    		return tag;
     }
     

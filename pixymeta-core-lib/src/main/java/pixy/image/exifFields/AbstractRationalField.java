@@ -17,7 +17,7 @@ import pixy.io.RandomAccessOutputStream;
 
 public abstract class AbstractRationalField extends ExifField<int[]> implements IIntableField {
 
-	public AbstractRationalField(Tag tag, FieldType fieldType, int[] data) {
+	public AbstractRationalField(pixy.meta.exif.Tag tag, FieldType fieldType, int[] data) {
 		super(tag, fieldType, data.length>>1);
 		this.data = data;
 	}

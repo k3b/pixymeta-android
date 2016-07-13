@@ -17,7 +17,7 @@ import pixy.string.StringUtils;
 
 public abstract class AbstractByteField extends ExifField<byte[]> {
 
-	public AbstractByteField(pixy.image.exifFields.Tag tag, pixy.image.exifFields.FieldType fieldType, byte[] data) {
+	public AbstractByteField(pixy.meta.exif.Tag tag, pixy.image.exifFields.FieldType fieldType, byte[] data) {
 		super(tag, fieldType, data.length);
 		this.data = data;
 	}

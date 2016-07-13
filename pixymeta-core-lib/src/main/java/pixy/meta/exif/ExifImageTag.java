@@ -8,7 +8,7 @@
  * Any modifications to this file must keep this entire header intact.
  */
 
-package pixy.image.exifFields;
+package pixy.meta.exif;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pixy.api.IDataType;
+import pixy.image.exifFields.ExifFieldEnum;
+import pixy.image.exifFields.FieldType;
 import pixy.string.StringUtils;
 
 /**
@@ -24,7 +26,7 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
  */
-public enum ExifTag implements Tag {
+public enum ExifImageTag implements Tag {
 	// Definition includes all baseline and extended tags.	
 	NEW_SUBFILE_TYPE("NewSubfileType", (short)0x00FE, Attribute.BASELINE, FieldType.LONG) {
 		public String getFieldAsString(Object value) {
@@ -605,17 +607,17 @@ public enum ExifTag implements Tag {
 		}
 	} 
 	
-	private static final Map<Short, ExifTag> tagMap = new HashMap<Short, ExifTag>();
+	private static final Map<Short, ExifImageTag> tagMap = new HashMap<Short, ExifImageTag>();
 	
 	static
     {
-      for(ExifTag exifTag : values()) {
+      for(ExifImageTag exifTag : values()) {
            tagMap.put(exifTag.getValue(), exifTag);
       }
     }	
 	
 	public static Tag fromShort(short value) {
-       	ExifTag exifTag = tagMap.get(value);
+       	ExifImageTag exifTag = tagMap.get(value);
     	if (exifTag == null)
     	   return UNKNOWN;
        	return exifTag;
@@ -629,11 +631,11 @@ public enum ExifTag implements Tag {
 
 	private FieldType fieldType = FieldType.UNKNOWN;;
 
-	private ExifTag(String name, short value, Attribute attribute) {
+	private ExifImageTag(String name, short value, Attribute attribute) {
 		this(name, value, attribute, null);
 	}
 
-	private ExifTag(String name, short value, Attribute attribute, FieldType fieldType) {
+	private ExifImageTag(String name, short value, Attribute attribute, FieldType fieldType) {
 
 		this.name = name;
 		this.value = value;

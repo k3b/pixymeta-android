@@ -24,7 +24,7 @@ import pixy.string.StringUtils;
  */
 public class DoubleField extends ExifField<double[]> {
 
-	public DoubleField(Tag tag, double[] data) {
+	public DoubleField(pixy.meta.exif.Tag tag, double[] data) {
 		super(tag, pixy.image.exifFields.FieldType.DOUBLE, data.length);
 		this.data = data;
 	}

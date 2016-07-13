@@ -1,0 +1,85 @@
+
+
+############
+iptc.tif
+XMP
+EXIF
+	TiffExif.RichTiffIPTC[Long]=[540,470024194,100669698,1702453570,35417714,1141571609,1701536613,1702130540,35417705,1191641113 ...]
+	TiffExif.Software[ASCII]=LIBFORMAT (c) Pierre-e Gougelet
+	TiffExif.Orientation[Short]=[1]
+	TiffExif.StripOffsets[Long]=[32188,34438,39236,46710,54426,62244,69998,77338,84928,93084 ...]
+	TiffExif.DateTime[ASCII]=2008:10:19 15:55:53
+	TiffExif.Model[ASCII]=Canon EOS 30D
+	TiffExif.StripByteCounts[Long]=[2249,4797,7473,7715,7818,7754,7339,7590,8156,8391 ...]
+	TiffExif.RowsPerStrip[Long]=[6]
+	TiffExif.SamplesPerPixel[Short]=[3]
+	TiffExif.YResolution[Rational]=[72/1]
+	TiffExif.XResolution[Rational]=[72/1]
+	TiffExif.Predictor[Short]=[1]
+	TiffExif.PlanarConfiguration[Short]=[1]
+	TiffExif.GPSSubIFD[Long]=[31950]
+	TiffExif.BitsPerSample[Short]=[8,8,8]
+	TiffExif.Compression[Short]=[5]
+	TiffExif.XMP[Byte]=[0x3C,0x3F,0x78,0x70,0x61,0x63,0x6B,0x65,0x74,0x20 ...]
+	TiffExif.ImageWidth[Long]=[400]
+	TiffExif.ImageLength[Long]=[85]
+	TiffExif.PhotometricInterpretation[Short]=[2]
+	TiffExif.ExifSubIFD[Long]=[5350]
+	TiffExif.ResolutionUnit[Short]=[2]
+	TiffExif.Make[ASCII]=Canon
+	TiffExif-sub.DateTimeDigitized[ASCII]=2008:10:19 15:55:53
+	TiffExif-sub.DateTimeOriginal[ASCII]=2008:10:19 15:55:53
+	TiffExif-sub.ExifVersion[Undefined]=[0x30,0x32,0x32,0x31]
+	TiffExif-sub.FocalPlanYResolution[Rational]=[233600/59]
+	TiffExif-sub.FocalPlanXResolution[Rational]=[233600/59]
+	TiffExif-sub.FocalPlanResolutionUnit[Short]=[2]
+	TiffExif-sub.ExposureTime[Rational]=[1/100]
+	TiffExif-sub.ISOSpeedRatings[Short]=[100]
+	TiffExif-sub.ComponentConfiguration[Undefined]=[0x01,0x02,0x03,0x00]
+	TiffExif-sub.FNumber[Rational]=[8/1]
+	TiffExif-sub.ExposureProgram[Short]=[3]
+	TiffExif-sub.MakerNote[Undefined]=[0x1E,0x00,0x01,0x00,0x03,0x00,0x2E,0x00,0x00,0x00 ...]
+	TiffExif-sub.ApertureValue[Rational]=[6/1]
+	TiffExif-sub.ShutterSpeedValue[SRational]=[13301/2002]
+	TiffExif-sub.Saturation[Short]=[0]
+	TiffExif-sub.ColorSpace[Short]=[1]
+	TiffExif-sub.Contrast[Short]=[0]
+	TiffExif-sub.MeteringMode[Short]=[5]
+	TiffExif-sub.FlashPixVersion[Undefined]=[0x30,0x31,0x30,0x30]
+	TiffExif-sub.ExposureBiasValue[SRational]=[0/1]
+	TiffExif-sub.ExifImageHeight[Short]=[2336]
+	TiffExif-sub.Sharpness[Short]=[2]
+	TiffExif-sub.ExifImageWidth[Short]=[3504]
+	TiffExif-sub.FocalLength[Rational]=[23/1]
+	TiffExif-sub.SceneCaptureType[Short]=[0]
+	TiffExif-sub.Flash[Short]=[16]
+	TiffExif-sub.CustomRendered[Short]=[0]
+	TiffExif-sub.UserComment[Undefined]=[0x41,0x53,0x43,0x49,0x49,0x00,0x00,0x00]
+	TiffExif-sub.WhileBalence[Short]=[0]
+	TiffExif-sub.ExposureMode[Short]=[0]
+	TiffExif-gps.GPSVersionID[Byte]=[0x02,0x02,0x00,0x00]
+	TiffExif-gps.GPSLatitudeRef[ASCII]=N
+	TiffExif-gps.GPSLatitude[Rational]=[49/1,2/1,85623/2500]
+	TiffExif-gps.GPSMapDatum[ASCII]=WGS-84
+	TiffExif-gps.GPSLongitudeRef[ASCII]=E
+	TiffExif-gps.GPSLongitude[Rational]=[11/1,59/1,28752/625]
+	TiffExif-gps.GPSAltitudeRef[Byte]=[0x00]
+	TiffExif-gps.GPSAltitude[Rational]=[456/1]
+	TiffExif-gps.GPSTimeStamp[Rational]=[15/1,55/1,53/1]
+	TiffExif-gps.GPSSatellites[ASCII]=0
+	TiffExif-gps.GPSDateStamp[ASCII]=2008:10:19
+
+----------------------
+IPTC
+	CountryName.CountryName=Germany
+	ProvinceState.ProvinceState=Bayern
+	CountryCode.CountryCode=DEU
+	SubLocation.SubLocation=Deckelstein
+	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x04]
+	City.City=Nittendorf
+	Keywords.Keywords=Nittendorf
+	Keywords.Keywords=Deckelstein
+	Keywords.Keywords=Germany
+	Keywords.Keywords=Bayern
+
+----------------------

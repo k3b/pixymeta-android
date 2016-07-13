@@ -15,6 +15,8 @@ public class JpegXMPSegmentPlugin extends JpegXMP {
                 JpegMetaDef.XMP_ID, JpegXMPSegmentPlugin.class);
         JpgSegmentPluginFactory.register(MetadataType.XMP, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1,
                 JpegMetaDef.NON_STANDARD_XMP_ID, JpegXMPSegmentPlugin.class);
+        JpgSegmentPluginFactory.register(MetadataType.XMP, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1,
+                JpegMetaDef.XMP_EXT_ID, JpegXMPSegmentPlugin.class);
     }
 
     /** make shure that static constructor was called */

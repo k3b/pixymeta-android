@@ -21,7 +21,7 @@ import pixy.string.StringUtils;
  */
 public final class ShortField extends AbstractShortField  implements IIntableField {
 
-	public ShortField(Tag tag, short[] data) {
+	public ShortField(pixy.meta.exif.Tag tag, short[] data) {
 		super(tag, FieldType.SHORT, data);
 	}
 

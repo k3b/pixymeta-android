@@ -34,28 +34,33 @@ import pixy.string.XMLUtils;
 
 public abstract class XMP extends MetadataBase {
 	// Fields
+	// data translated to xml
 	private Document xmpDocument;
-	private Document extendedXmpDocument;
-	//document contains the complete XML as a Tree.
-	private Document mergedXmpDocument;
-	private boolean hasExtendedXmp;
+
+	// additional xml as bytes
 	private byte[] extendedXmpData;
-	
-	private String xmp;
+	private Document extendedXmpDocument;
+	private boolean hasExtendedXmp;
+
+	// document contains the complete XML as a Tree: xmpDocument+extendedXmpDocument
+	private Document mergedXmpDocument;
+
+	// data as string
+	private String xmpDataAsXmlString;
 		
 	public XMP(byte[] data) {
 		super(MetadataType.XMP, data);
 	}
 	
-	public XMP(String xmp) {
+	public XMP(String xmpDataAsXmlString) {
 		super(MetadataType.XMP, null);
-		this.xmp = xmp;
+		this.xmpDataAsXmlString = xmpDataAsXmlString;
 	}
 	
-	public XMP(String xmp, String extendedXmp) {
+	public XMP(String xmpDataAsXmlString, String extendedXmp) {
 		super(MetadataType.XMP, null);
-		if(xmp == null) throw new IllegalArgumentException("Input XMP string is null");
-		this.xmp = xmp;
+		if(xmpDataAsXmlString == null) throw new IllegalArgumentException("Input XMP string is null");
+		this.xmpDataAsXmlString = xmpDataAsXmlString;
 		if(extendedXmp != null) { // We have ExtendedXMP
 			try {
 				setExtendedXMPData(XMLUtils.serializeToByteArray(XMLUtils.createXML(extendedXmp)));
@@ -106,7 +111,8 @@ public abstract class XMP extends MetadataBase {
 				mergedXmpDocument.appendChild(importedNode);
 			}
 			// Remove GUID from the standard XMP
-			XMLUtils.removeAttribute(mergedXmpDocument, "rdf:Description", "xmpNote:HasExtendedXMP");
+			XmpTag.Note_HasExtendedXMP.remove(mergedXmpDocument);
+			// XMLUtils.removeAttribute(mergedXmpDocument, "rdf:Description", "xmpNote:HasExtendedXMP");
 			// Copy all the children of rdf:RDF element
 			NodeList list = extendedXmpDocument.getElementsByTagName("rdf:RDF").item(0).getChildNodes();
 			Element rdf = (Element)(mergedXmpDocument.getElementsByTagName("rdf:RDF").item(0));
@@ -131,8 +137,8 @@ public abstract class XMP extends MetadataBase {
 	
 	public void read() throws IOException {
 		if(!isDataRead) {
-			if(xmp != null)
-				xmpDocument = XMLUtils.createXML(xmp);
+			if(xmpDataAsXmlString != null)
+				xmpDocument = XMLUtils.createXML(xmpDataAsXmlString);
 			else if(data != null)
 				xmpDocument = XMLUtils.createXML(data);
 			

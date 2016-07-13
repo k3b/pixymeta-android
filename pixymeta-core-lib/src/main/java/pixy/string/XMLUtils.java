@@ -415,7 +415,8 @@ public class XMLUtils {
 	    
         return writer.toString();
 	}
-	
+
+
 	public static void showXML(Document document) {
 		printNode(document,"");
 	}

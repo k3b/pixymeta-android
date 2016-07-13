@@ -20,7 +20,7 @@ import pixy.string.StringUtils;
  */
 public final class RationalField extends AbstractRationalField {
 
-	public RationalField(pixy.image.exifFields.Tag tag, int[] dat) {
+	public RationalField(pixy.meta.exif.Tag tag, int[] dat) {
 		super(tag, pixy.image.exifFields.FieldType.RATIONAL, dat);
 	}
 

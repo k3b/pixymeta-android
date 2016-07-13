@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import pixy.api.IFieldDefinition;
 import pixy.api.IMetadata;
 import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.meta.MetadataType;
@@ -27,29 +28,49 @@ public class JpgSegmentPluginFactory {
     private final JpegSegmentMarker marker;
     private final String subMarker;
     private final Class<? extends IMetadata> jpegExifClass;
+    private final Class<? extends IFieldDefinition>[] fieldDefs;
     private boolean debug = false;
 
-    private JpgSegmentPluginFactory(MetadataType type, JpegSegmentMarker marker, String subMarker, Class<? extends IMetadata> jpegExifClass) {
+    private JpgSegmentPluginFactory(MetadataType type, JpegSegmentMarker marker, String subMarker, Class<? extends IMetadata> jpegExifClass
+            , Class<? extends IFieldDefinition>... fieldDefs) {
         this.type = type;
         this.marker = marker;
         this.subMarker = subMarker;
         this.jpegExifClass = jpegExifClass;
+        this.fieldDefs = fieldDefs;
     }
 
     /** each plugin implementation registeres here in it-s static constructor */
-    public static JpgSegmentPluginFactory register(MetadataType type, JpegSegmentMarker marker, String subMarker, Class<? extends IMetadata> jpegExifClass) {
+    public static JpgSegmentPluginFactory register(MetadataType type, JpegSegmentMarker marker, String subMarker,
+                                                   Class<? extends IMetadata> jpegExifClass, Class<? extends IFieldDefinition>... fieldDefs) {
         LOGGER.info("JpgSegmentPluginFactory.register " + jpegExifClass.getSimpleName());
-        final JpgSegmentPluginFactory factory = new JpgSegmentPluginFactory(type, marker, subMarker, jpegExifClass);
+        final JpgSegmentPluginFactory factory = new JpgSegmentPluginFactory(type, marker, subMarker, jpegExifClass, fieldDefs);
         factories.add(factory);
         return factory;
     }
 
     public static JpgSegmentPluginFactory find(JpegSegmentMarker marker, byte[] data) {
         for (JpgSegmentPluginFactory processor : factories) {
-            if (marker == processor.marker) {
+            if ((processor.marker != null) && (marker == processor.marker)) {
                 String subMarker = processor.subMarker;
                 if ((subMarker == null) || (new String(data, 0, subMarker.length()).equals(subMarker))) {
                     return processor;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static JpgSegmentPluginFactory find(Class<? extends IFieldDefinition> tagClass) {
+        if (tagClass != null) {
+            for (JpgSegmentPluginFactory processor : factories) {
+                if (processor != null) {
+                    for (Class<? extends IFieldDefinition> candidate : processor.fieldDefs) {
+                        if (candidate.isAssignableFrom(tagClass))
+                        {
+                            return processor;
+                        }
+                    }
                 }
             }
         }

@@ -20,8 +20,8 @@ import pixy.io.RandomAccessOutputStream;
 /**
  * One meta data item of basetype T living in a IFD (Image File Directory).
  * <p>
- * We could have used a ExifTag enum as the first parameter of the constructor, but this
- * will not work with unknown tags of tag type ExifTag.JPG_SEGMENT_UNKNOWN. In that case, we cannot
+ * We could have used a ExifImageTag enum as the first parameter of the constructor, but this
+ * will not work with unknown tags of tag type ExifImageTag.JPG_SEGMENT_UNKNOWN. In that case, we cannot
  * use the tag values to sort the fields or as keys for a hash map as used by {@link IFD}.
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
@@ -30,12 +30,12 @@ import pixy.io.RandomAccessOutputStream;
 public abstract class ExifField<T> implements Comparable<ExifField<?>>, IFieldValue{
 	private final pixy.image.exifFields.FieldType fieldType;
 	private final int length;
-	private final pixy.image.exifFields.Tag tag;
+	private final pixy.meta.exif.Tag tag;
 	protected T data;
 
 	protected int dataOffset;
 	
-	public ExifField(pixy.image.exifFields.Tag tag, pixy.image.exifFields.FieldType fieldType, int length) {
+	public ExifField(pixy.meta.exif.Tag tag, pixy.image.exifFields.FieldType fieldType, int length) {
 		this.fieldType = fieldType;
 		this.length = length;
 		this.tag = tag;

@@ -47,7 +47,7 @@ public class IFD implements IDirectory {
 	 * Create a children map for sub IFDs. A sub IFD is associated with a tag of the current IFD
 	 * which serves as pointer to the sub IFD.
 	 */	 
-	private Map<Tag, IFD> children = new HashMap<Tag, IFD>();
+	private Map<pixy.meta.exif.Tag, IFD> children = new HashMap<pixy.meta.exif.Tag, IFD>();
 	
 	/** Create a fields map to hold all of the fields for this IFD */
 	private Map<Short, ExifField<?>> tiffFields = new HashMap<Short, ExifField<?>>();
@@ -67,7 +67,7 @@ public class IFD implements IDirectory {
 		this.endOffset = other.endOffset;
 	}
 	
-	public IFD addChild(Tag tag, IFD child) {
+	public IFD addChild(pixy.meta.exif.Tag tag, IFD child) {
 		children.put(tag, child);
 		return this;
 	}
@@ -82,12 +82,12 @@ public class IFD implements IDirectory {
 		}
 	}
 	
-	public IFD getChild(Tag tag) {
+	public IFD getChild(pixy.meta.exif.Tag tag) {
 		final IFD result = children.get(tag);
 		return result;
 	}
 	
-	public Map<Tag, IFD> getChildren() {
+	public Map<pixy.meta.exif.Tag, IFD> getChildren() {
 		return Collections.unmodifiableMap(children);
 	}
 	
@@ -95,7 +95,7 @@ public class IFD implements IDirectory {
 		return endOffset;
 	}
 	
-	public ExifField<?> getField(Tag tag) {
+	public ExifField<?> getField(pixy.meta.exif.Tag tag) {
 		return tiffFields.get(tag.getValue());
 	}
 	
@@ -104,7 +104,7 @@ public class IFD implements IDirectory {
 	 * @param tag Tag for the field
 	 * @return a String representation of the field
 	 */
-	public String getFieldAsString(Tag tag) {
+	public String getFieldAsString(pixy.meta.exif.Tag tag) {
 		ExifField<?> field = tiffFields.get(tag.getValue());
 		if(field != null) {
 			FieldType ftype = field.getType();
@@ -137,12 +137,12 @@ public class IFD implements IDirectory {
 		tiffFields.clear();
 	}
 	
-	public IFD removeChild(Tag tag) {
+	public IFD removeChild(pixy.meta.exif.Tag tag) {
 		return children.remove(tag);
 	}
 	
 	/** Remove a specific field associated with the given tag */
-	public ExifField<?> removeField(Tag tag) {
+	public ExifField<?> removeField(pixy.meta.exif.Tag tag) {
 		return tiffFields.remove(tag.getValue());
 	}
 	
@@ -197,8 +197,8 @@ public class IFD implements IDirectory {
 		
 		// Write sub IFDs if any (we assume bare-bone sub IFDs pointed by long field type with no image data associated)
 		if(children.size() > 0) {
-			for (Map.Entry<Tag, IFD> entry : children.entrySet()) {
-			    Tag key = entry.getKey();
+			for (Map.Entry<pixy.meta.exif.Tag, IFD> entry : children.entrySet()) {
+			    pixy.meta.exif.Tag key = entry.getKey();
 			    IFD value = entry.getValue();
 			    // Update parent field if present, otherwise skip
 			    ExifField<?> exifField = this.getField(key);

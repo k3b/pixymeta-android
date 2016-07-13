@@ -1,4 +1,4 @@
-package pixy.image.exifFields;
+package pixy.meta.exif;
 
 import pixy.api.IDataType;
 

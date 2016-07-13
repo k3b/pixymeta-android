@@ -2,7 +2,10 @@ package pixy.fileprocessor.jpg;
 
 import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.meta.MetadataType;
+import pixy.meta.exif.ExifImageTag;
 import pixy.meta.exif.ExifMetaSegment;
+import pixy.meta.exif.ExifSubTag;
+import pixy.meta.exif.GPSTag;
 import pixy.meta.exif.JpegExif;
 import pixy.fileprocessor.jpg.JpegMetaDef;
 
@@ -13,7 +16,7 @@ import pixy.fileprocessor.jpg.JpegMetaDef;
 public class JpegExifSegmentPlugin extends JpegExif {
     static {
         JpgSegmentPluginFactory.register(MetadataType.EXIF, JpegSegmentMarker.JPG_SEGMENT_EXIF_XMP_APP1,
-                JpegMetaDef.EXIF_ID, JpegExifSegmentPlugin.class);
+                JpegMetaDef.EXIF_ID, JpegExifSegmentPlugin.class, ExifSubTag.class, GPSTag.class, ExifImageTag.class);
     }
 
     /** make shure that static constructor was called */

@@ -11,9 +11,9 @@ import pixy.meta.image.Comments;
 public class JpegCommentSegmentPlugin extends Comments {
     static {
         JpgSegmentPluginFactory.register(MetadataType.COMMENT, JpegSegmentMarker.JPG_SEGMENT_COMMNENTS_COM,
-                null, JpegCommentSegmentPlugin.class);
+                null, JpegCommentSegmentPlugin.class, CommentTag.getClass());
         JpgSegmentPluginFactory.register(MetadataType.COMMENT, JpegSegmentMarker.JPG_SEGMENT_COMMENT_APP10,
-                null, JpegCommentSegmentPlugin.class);
+                null, JpegCommentSegmentPlugin.class, CommentTag.getClass());
     }
 
     /** make shure that static constructor was called */

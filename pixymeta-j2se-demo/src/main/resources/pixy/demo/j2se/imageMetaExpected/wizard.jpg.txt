@@ -1,0 +1,29 @@
+
+
+############
+wizard.jpg
+IMAGE
+JPG_JFIF
+JPG_ADOBE
+IPTC
+	CountryName.CountryName=Country
+	Credit.Credit=Credits
+	OriginalTransmissionRef.OriginalTransmissionRef=Transmission
+	DateCreated.DateCreated=20000101
+	WriterEditor.WriterEditor=CaptionWriter
+	City.City=City
+	Source.Source=Source
+	CopyrightNotice.CopyrightNotice=Copyright
+	Category.Category=Supl. Category1
+	Category.Category=Supl. Category2
+	Category.Category=Cat
+	SpecialInstructions.SpecialInstructions=Special Instr.
+	CaptionAbstract.CaptionAbstract=Caption
+	ByLine.ByLine=Byline
+	Headline.Headline=Headline
+	ProvinceState.ProvinceState=State
+	ObjectName.ObjectName=ObjectName
+	ByLineTitle.ByLineTitle=BylineTitle
+
+----------------------
+PHOTOSHOP_IRB

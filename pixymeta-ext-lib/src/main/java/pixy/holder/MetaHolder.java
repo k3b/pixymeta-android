@@ -1,8 +1,5 @@
 package pixy.holder;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +9,7 @@ import pixy.api.IDirectory;
 import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
-import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
-import pixy.meta.exif.ExifTag;
-import pixy.meta.exif.JpegExif;
-import pixy.meta.jpeg.JPEGMeta;
 
 /**
  * Contain all known metadata in a uniform format.

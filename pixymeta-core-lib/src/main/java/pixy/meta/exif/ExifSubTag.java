@@ -16,7 +16,6 @@ import java.util.Map;
 
 import pixy.api.IDataType;
 import pixy.image.exifFields.FieldType;
-import pixy.image.exifFields.Tag;
 import pixy.string.StringUtils;
 
 /**
@@ -25,7 +24,7 @@ import pixy.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/13/2015
  */
-public enum ExifTag implements Tag {
+public enum ExifSubTag implements Tag {
 	EXPOSURE_TIME("ExposureTime", (short)0x829a,FieldType.RATIONAL),
 	FNUMBER("FNumber", (short)0x829d,FieldType.RATIONAL) {
 		public String getFieldAsString(Object value) {
@@ -167,7 +166,7 @@ public enum ExifTag implements Tag {
 	
 	UNKNOWN("Unknown",  (short)0xffff);
 
-	private ExifTag(String name, short value, FieldType fieldType) {
+	private ExifSubTag(String name, short value, FieldType fieldType) {
 		this.name = name;
 		this.value = value;
 
@@ -176,7 +175,7 @@ public enum ExifTag implements Tag {
 		}
 	}
 
-	private ExifTag(String name, short value)
+	private ExifSubTag(String name, short value)
 	{
 		this(name, value, null);
 	}
@@ -199,18 +198,18 @@ public enum ExifTag implements Tag {
 	}
 	
     public static Tag fromShort(short value) {
-       	ExifTag exifTag = tagMap.get(value);
-    	if (exifTag == null)
-    	   return pixy.image.exifFields.ExifTag.UNKNOWN;
-   		return exifTag;
+       	ExifSubTag exifSubTag = tagMap.get(value);
+    	if (exifSubTag == null)
+    	   return ExifImageTag.UNKNOWN;
+   		return exifSubTag;
     }
     
-    private static final Map<Short, ExifTag> tagMap = new HashMap<Short, ExifTag>();
+    private static final Map<Short, ExifSubTag> tagMap = new HashMap<Short, ExifSubTag>();
        
     static
     {
-      for(ExifTag exifTag : values()) {
-           tagMap.put(exifTag.getValue(), exifTag);
+      for(ExifSubTag exifSubTag : values()) {
+           tagMap.put(exifSubTag.getValue(), exifSubTag);
       }
     } 
 	

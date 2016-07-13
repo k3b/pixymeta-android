@@ -90,6 +90,6 @@ Go to the [wiki] page to see this library in action or grab the "pixymeta-androi
 [Open]:https://github.com/dragon66/pixymeta-android/issues/new
 Tested on Android Nexus4 virtual device only!!!
 
-[Project using pixymeta-android](https://github.com/CreativeCommons-Seneca/cc-xmp-tag)
+[Project using pixymeta-android](https://github.com/CreativeCommons-Seneca/cc-xmpDataAsXmlString-tag)
 
 Suggestions? custom requirements? [Open] an issue or send email to me directly: yuwen_66@yahoo.com

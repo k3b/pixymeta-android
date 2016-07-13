@@ -23,7 +23,7 @@ import pixy.string.StringUtils;
  */
 public final class UndefinedField extends ExifField<byte[]> {
 
-	public UndefinedField(pixy.image.exifFields.Tag tag, byte[] data) {
+	public UndefinedField(pixy.meta.exif.Tag tag, byte[] data) {
 		super(tag, pixy.image.exifFields.FieldType.UNDEFINED, data.length);
 		this.data = data;
 	}

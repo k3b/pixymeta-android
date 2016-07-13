@@ -20,7 +20,7 @@ import pixy.string.StringUtils;
  */
 public final class LongField extends AbstractLongField {
 
-	public LongField(Tag context, int[] data) {
+	public LongField(pixy.meta.exif.Tag context, int[] data) {
 		super(context, pixy.image.exifFields.FieldType.LONG, data);
 	}
 	

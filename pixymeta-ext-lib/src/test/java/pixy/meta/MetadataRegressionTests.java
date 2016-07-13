@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -31,18 +33,11 @@ import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.demo.j2se.TestPixyMetaJ2se;
-import pixy.fileprocessor.jpg.JpegAdobeDctSegmentPlugin;
-import pixy.fileprocessor.jpg.JpegCommentSegmentPlugin;
-import pixy.fileprocessor.jpg.JpegDuckySegmentPlugin;
-import pixy.fileprocessor.jpg.JpegExifSegmentPlugin;
-import pixy.fileprocessor.jpg.JpegAdobeIRBSegmentPlugin;
-import pixy.fileprocessor.jpg.JpegICCSegmentPlugin;
-import pixy.fileprocessor.jpg.JpegJFIFSegmentPlugin;
-import pixy.fileprocessor.jpg.JpegXMPSegmentPlugin;
 import pixy.image.exifFields.FieldType;
-import pixy.image.exifFields.Tag;
+import pixy.meta.exif.Tag;
 import pixy.io.IOUtils;
 import pixy.fileprocessor.jpg.JpgFileProcessor;
+import pixy.meta.jpeg.JPEGMeta;
 import pixy.string.StringUtils;
 import pixy.util.FileUtils;
 
@@ -135,14 +130,7 @@ public class MetadataRegressionTests {
 	public static void initDirectories() {
 		FileUtils.delete(OUTDIR, null);
 		OUTDIR.mkdirs();
-		JpegAdobeDctSegmentPlugin.register();
-		JpegAdobeIRBSegmentPlugin.register();
-		JpegDuckySegmentPlugin.register();
-		JpegExifSegmentPlugin.register();
-		JpegICCSegmentPlugin.register();
-		JpegJFIFSegmentPlugin.register();
-		JpegXMPSegmentPlugin.register();
-		JpegCommentSegmentPlugin.register();
+		JPEGMeta.register();
 	}
 
 	@Test
@@ -204,15 +192,15 @@ public class MetadataRegressionTests {
 		} finally {
 		}
 
-		result = showMeta(fileName, metadataMap, outdir, true);
+		result = showMetaAndVerify(fileName, metadataMap, outdir, true, null);
 		stream.close();
 
 		LOGGER.info(result.toString());
 
 	}
 
-	protected StringBuffer showMeta(String fileName, Map<MetadataType, IMetadata> metadataMap, File outdir,
-									boolean showDetailed) throws FileNotFoundException {
+	protected StringBuffer showMetaAndVerify(String fileName, Map<MetadataType, IMetadata> metadataMap, File outdir,
+											 boolean showDetailed, InputStream resultComparePath) throws FileNotFoundException {
 		StringBuffer result = new StringBuffer();
 		result.append("\n\n############\n").append(fileName).append("\n");
 
@@ -248,6 +236,11 @@ public class MetadataRegressionTests {
 		if (showDetailed) {
 			saveResultToFile(new File(outdir,fileName + ".txt"), result.toString());
 		}
+
+		if (resultComparePath != null) {
+			String expected = readAll(resultComparePath);
+			Assert.assertEquals(fileName, expected, result.toString());
+		}
 		return result;
 	}
 
@@ -259,6 +252,31 @@ public class MetadataRegressionTests {
 		out.print(result);
 		out.flush();
 		out.close();
+	}
+
+	private String readAll(InputStream inStream) {
+		BufferedReader in = null;
+
+		try {
+			StringBuilder builder = new StringBuilder();
+			in = new BufferedReader(new InputStreamReader(inStream));
+			String str;
+			while ((str = in.readLine()) != null) {
+				builder.append(str).append("\n");
+			}
+			return builder.toString();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {}
+			}
+		}
+		return null;
 	}
 
 	// add "dirName.fieldDefinitionName[dataTypeName]=valueAsString" to result
@@ -307,7 +325,10 @@ public class MetadataRegressionTests {
 				outputStream.close();
 
 				Map<MetadataType, IMetadata> metadataMap = doCopy.getMetadataMap();
-				StringBuffer result = showMeta(fileName, metadataMap, outDir, true);
+
+				InputStream expectedResultInputStream = TestPixyMetaJ2se.class.getResourceAsStream("imageMetaExpected/" + fileName);
+				StringBuffer result = showMetaAndVerify(fileName, metadataMap, outDir, true, expectedResultInputStream);
+				expectedResultInputStream.close();
 
 				LOGGER.info(result.toString());
 			}

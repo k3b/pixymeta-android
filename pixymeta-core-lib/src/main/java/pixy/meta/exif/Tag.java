@@ -8,9 +8,10 @@
  * Any modifications to this file must keep this entire header intact.
  */
 
-package pixy.image.exifFields;
+package pixy.meta.exif;
 
 import pixy.api.IFieldDefinition;
+import pixy.image.exifFields.FieldType;
 
 /**
  * Common interface for all TIFF/EXIF related tag enumerations

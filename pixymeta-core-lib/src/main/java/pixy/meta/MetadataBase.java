@@ -28,10 +28,12 @@ public abstract class MetadataBase  implements IMetadata {
         if ((data != null) && isDebugEnabled()) debug("ctor(" + data.length + ")");
         this.type = type;
         this.data = data;
+        isDataRead = false;
     }
 
     public void merge(byte[] data) {
         this.data = ArrayUtils.concat(this.data, data);
+        isDataRead = false;
         if ((data != null) && isDebugEnabled()) debug("merge(" + data.length + ") => " + this.data.length);
     }
 

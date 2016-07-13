@@ -41,13 +41,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import pixy.fileprocessor.jpg.JpegAdobeDctSegmentPlugin;
+import pixy.fileprocessor.jpg.JpegDuckySegmentPlugin;
+import pixy.fileprocessor.jpg.JpegICCSegmentPlugin;
+import pixy.fileprocessor.jpg.JpegJFIFSegmentPlugin;
 import pixy.fileprocessor.jpg.JpegMetaDef;
 import pixy.image.BitmapFactory;
 import pixy.image.IBitmap;
+import pixy.meta.exif.ExifImageTag;
 import pixy.image.jpeg.JpegSegment;
 import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.image.exifFields.IFD;
-import pixy.image.exifFields.ExifTag;
 import pixy.image.jpeg.COMBuilder;
 import pixy.image.jpeg.Component;
 import pixy.image.jpeg.DHTReader;
@@ -64,6 +68,7 @@ import pixy.api.IMetadata;
 import pixy.meta.adobe.AdobeIRBSegment;
 import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.meta.exif.ExifMetaSegment;
+import pixy.meta.xmp.XmpTag;
 import pixy.string.Base64;
 import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
@@ -119,7 +124,15 @@ public class JPEGMeta extends JpegMetaDef {
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGMeta.class);
-	
+
+	public static void register() {
+		JpegMetaDef.register();
+		JpegAdobeDctSegmentPlugin.register();
+		JpegDuckySegmentPlugin.register();
+		JpegICCSegmentPlugin.register();
+		JpegJFIFSegmentPlugin.register();
+
+	}
 	private static short copySegment(short marker, InputStream is, OutputStream os) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
 		byte[] buf = new byte[length - 2];
@@ -582,9 +595,9 @@ public class JPEGMeta extends JpegMetaDef {
 		    	// If we have ImageIFD, set Image IFD attached with EXIF and GPS
 		     	if(imageIFD != null) {
 		    		if(exifSubIFD != null)
-			    		imageIFD.addChild(ExifTag.EXIF_SUB_IFD, exifSubIFD);
+			    		imageIFD.addChild(ExifImageTag.EXIF_SUB_IFD, exifSubIFD);
 		    		if(gpsSubIFD != null)
-			    		imageIFD.addChild(ExifTag.GPS_SUB_IFD, gpsSubIFD);
+			    		imageIFD.addChild(ExifImageTag.GPS_SUB_IFD, gpsSubIFD);
 		    		exif.setImageIFD(imageIFD);
 		    	} else { // Otherwise, set EXIF and GPS IFD separately
 		    		exif.setExifIFD(exifSubIFD);
@@ -1409,7 +1422,7 @@ public class JPEGMeta extends JpegMetaDef {
 					XMP xmp = new JpegXMP(ArrayUtils.subArray(data, XMP_ID.length(), length - XMP_ID.length() - 2));
 					metadataMap.put(MetadataType.XMP, xmp);
 					// Retrieve and remove XMP GUID if available
-					xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
+					xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), XmpTag.Note_HasExtendedXMP.getXmlElementName(), XmpTag.Note_HasExtendedXMP.getAttribute());
 				} else if(new String(data, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
 					// We found ExtendedXMP, add the data to ExtendedXMP memory buffer				
 					int i = XMP_EXT_ID.length();

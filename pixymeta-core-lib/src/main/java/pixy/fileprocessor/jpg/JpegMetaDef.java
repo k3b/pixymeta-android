@@ -16,4 +16,11 @@ public class JpegMetaDef {
     // Largest size for each extended XMP chunk
     protected static final int MAX_EXTENDED_XMP_CHUNK_SIZE = 65458;
     protected static final int MAX_XMP_CHUNK_SIZE = 65504;
+
+    public static void register() {
+        JpegAdobeIRBSegmentPlugin.register();
+        JpegExifSegmentPlugin.register();
+        JpegXMPSegmentPlugin.register();
+        JpegCommentSegmentPlugin.register();
+    }
 }

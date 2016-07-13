@@ -24,7 +24,7 @@ import pixy.string.StringUtils;
  */
 public class FloatField extends ExifField<float[]> {
 
-	public FloatField(pixy.image.exifFields.Tag tag, float[] data) {
+	public FloatField(pixy.meta.exif.Tag tag, float[] data) {
 		super(tag, pixy.image.exifFields.FieldType.FLOAT, data.length);
 		this.data = data;
 	}
