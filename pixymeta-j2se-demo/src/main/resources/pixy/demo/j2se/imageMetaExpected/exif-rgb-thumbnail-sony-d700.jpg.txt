@@ -2,4 +2,3 @@
 
 ############
 exif-rgb-thumbnail-sony-d700.jpg
-IMAGE

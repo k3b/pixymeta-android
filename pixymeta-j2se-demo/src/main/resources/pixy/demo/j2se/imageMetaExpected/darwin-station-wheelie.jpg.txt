@@ -2,6 +2,12 @@
 
 ############
 darwin-station-wheelie.jpg
+IPTC
+	CopyrightNotice.CopyrightNotice=Copyright 2004 Philip Greenspun
+	ByLine.ByLine=Philip Greenspun, philg@mit.edu
+	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
+
+----------------------
 ICC_PROFILE
 	ICC-Header.ProfileSize=560
 	ICC-Header.CMM Type=ADBE
@@ -32,14 +38,7 @@ ICC_PROFILE
 	ICC-Table.mediaBlackPointTag=[0x58,0x59,0x5A,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]
 
 ----------------------
-IMAGE
-JPG_JFIF
 XMP
-JPG_ADOBE
-IPTC
-	CopyrightNotice.CopyrightNotice=Copyright 2004 Philip Greenspun
-	ByLine.ByLine=Philip Greenspun, philg@mit.edu
-	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
-
-----------------------
 PHOTOSHOP_IRB
+JPG_JFIF
+JPG_ADOBE

@@ -2,6 +2,18 @@
 
 ############
 sea.jpg
+IPTC
+	CopyrightNotice.CopyrightNotice=Copyright (c) 2012  Vanderhaegen Bart
+	OriginatingProgram.OriginatingProgram=BDSizer
+	CaptionAbstract.CaptionAbstract=[0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ...]
+	ProgramVersion.ProgramVersion=3.3.2
+	SpecialInstructions.SpecialInstructions=Lat 47.305064, Lon -3.238512 - Bearing: 0 - Altitude: 72m
+	ByLine.ByLine=[0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ...]
+	TimeCreated.TimeCreated=121639.021+0200
+	DateCreated.DateCreated=20090422
+	ObjectName.ObjectName=demo_large_2
+
+----------------------
 ICC_PROFILE
 	ICC-Header.ProfileSize=492
 	ICC-Header.CMM Type=NKON
@@ -31,19 +43,6 @@ ICC_PROFILE
 	ICC-Table.greenTRCTag=[0x63,0x75,0x72,0x76,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x33]
 
 ----------------------
-IMAGE
-JPG_JFIF
 XMP
-IPTC
-	CopyrightNotice.CopyrightNotice=Copyright (c) 2012  Vanderhaegen Bart
-	OriginatingProgram.OriginatingProgram=BDSizer
-	CaptionAbstract.CaptionAbstract=[0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ...]
-	ProgramVersion.ProgramVersion=3.3.2
-	SpecialInstructions.SpecialInstructions=Lat 47.305064, Lon -3.238512 - Bearing: 0 - Altitude: 72m
-	ByLine.ByLine=[0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ...]
-	TimeCreated.TimeCreated=121639.021+0200
-	DateCreated.DateCreated=20090422
-	ObjectName.ObjectName=demo_large_2
-
-----------------------
 PHOTOSHOP_IRB
+JPG_JFIF

@@ -22,6 +22,9 @@ package pixy.meta.iptc;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,11 @@ import pixy.util.ArrayUtils;
  * @version 1.0 06/10/2013
  */
 public class IPTCDataSet implements IFieldValue {
+
+	public static class IPTCDataSetMap extends HashMap<String, List<IPTCDataSet>> {
+
+	}
+
 	// Fields
 	private int recordNumber; // Corresponds to IPTCRecord enumeration recordNumber 
 	private int tag; // Corresponds to IPTC tag enumeration tag field

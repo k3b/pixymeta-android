@@ -2,9 +2,6 @@
 
 ############
 wizard.jpg
-IMAGE
-JPG_JFIF
-JPG_ADOBE
 IPTC
 	CountryName.CountryName=Country
 	Credit.Credit=Credits
@@ -27,3 +24,5 @@ IPTC
 
 ----------------------
 PHOTOSHOP_IRB
+JPG_JFIF
+JPG_ADOBE

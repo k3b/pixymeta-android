@@ -2,6 +2,11 @@
 
 ############
 bedroom_arithmetic.jpg
+IPTC
+	ApplicationRecordVersion.ApplicationRecordVersion=[0xA5,0x7E]
+	CodedCharacterSet.CodedCharacterSet=%G
+
+----------------------
 ICC_PROFILE
 	ICC-Header.ProfileSize=3144
 	ICC-Header.CMM Type=Lino
@@ -39,12 +44,6 @@ ICC_PROFILE
 	ICC-Table.technologyTag=[0x73,0x69,0x67,0x20,0x00,0x00,0x00,0x00,0x43,0x52,0x54,0x20]
 
 ----------------------
-IMAGE
 XMP
-JPG_ADOBE
-IPTC
-	ApplicationRecordVersion.ApplicationRecordVersion=[0xA5,0x7E]
-	CodedCharacterSet.CodedCharacterSet=%G
-
-----------------------
 PHOTOSHOP_IRB
+JPG_ADOBE

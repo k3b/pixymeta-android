@@ -2,12 +2,11 @@
 
 ############
 10.jpg
-IMAGE
-JPG_JFIF
-JPG_DUCKY
-JPG_ADOBE
 COMMENT
 	Comment.Comment[StringLines]=Adobe ImageReady
 
 
 ----------------------
+JPG_JFIF
+JPG_DUCKY
+JPG_ADOBE

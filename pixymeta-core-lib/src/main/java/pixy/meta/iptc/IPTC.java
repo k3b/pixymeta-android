@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,11 +58,11 @@ public class IPTC extends MetadataBase {
 		}
 	}
 	
-	private Map<String, List<IPTCDataSet>> datasetMap;
+	private IPTCDataSet.IPTCDataSetMap datasetMap;
 	
 	public IPTC() {
 		super(MetadataType.IPTC, null);
-		datasetMap =  new HashMap<String, List<IPTCDataSet>>();
+		datasetMap =  new IPTCDataSet.IPTCDataSetMap();
 		isDataRead = true;
 	}
 	
@@ -136,7 +135,7 @@ public class IPTC extends MetadataBase {
 	 * 
 	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
 	 */
-	public Map<String, List<IPTCDataSet>> getDataSets() {
+	public IPTCDataSet.IPTCDataSetMap getDataSets() {
 		ensureDataRead();
 		return datasetMap;
 	}
@@ -145,7 +144,7 @@ public class IPTC extends MetadataBase {
 		if(!isDataRead) {
 			int i = 0;
 			int tagMarker = data[i];
-			datasetMap = new HashMap<String, List<IPTCDataSet>>();
+			datasetMap = new IPTCDataSet.IPTCDataSetMap();
 			while (tagMarker == 0x1c) {
 				i++;
 				int recordNumber = data[i++]&0xff;

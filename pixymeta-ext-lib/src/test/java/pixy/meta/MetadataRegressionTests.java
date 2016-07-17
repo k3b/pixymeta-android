@@ -21,8 +21,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -204,10 +206,13 @@ public class MetadataRegressionTests {
 		StringBuffer result = new StringBuffer();
 		result.append("\n\n############\n").append(fileName).append("\n");
 
-		for (Map.Entry<MetadataType, IMetadata> entry : metadataMap.entrySet()) {
-			result.append(entry.getKey()).append("\n");
+		final Set<MetadataType> metadataTypeSet = metadataMap.keySet();
+		MetadataType[] keys = metadataTypeSet.toArray(new MetadataType[metadataTypeSet.size()]);
+		Arrays.sort(keys);
+		for (MetadataType key : keys) {
+			result.append(key).append("\n");
 
-			IMetadata metaData = (showDetailed) ? entry.getValue() : null;
+			IMetadata metaData = (showDetailed) ? metadataMap.get(key) : null;
 			 if (metaData != null) {
 				 try {
 					 List<IDirectory> metaDir = metaData.getMetaData();
@@ -304,13 +309,14 @@ public class MetadataRegressionTests {
 	}
 
 	@Test
-	@Parameters({"app13jpg.jpg"})
-	// @Parameters(method = "getAllResourceImageNamesForTest")
+	// @Parameters({"app13.jpg"})
+	@Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldCopyJpgFile(String fileName) throws IOException {
 		if (fileName.toLowerCase().endsWith(".jpg")) {
 			JpgFileProcessor doCopy = new JpgFileProcessor();
 
 			InputStream inputStream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
+			Assert.assertNotNull("open images/" + fileName, inputStream);
 
 			File outDir = new File(OUTDIR ,"shouldCopyJpgFile");
 			outDir.mkdirs();

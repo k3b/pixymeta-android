@@ -2,7 +2,6 @@
 
 ############
 exif-rgb-thumbnail-bad-exif-kodak-dc210.jpg
-IMAGE
 COMMENT
 	Comment.Comment[StringLines]=Lovely smoke effect here, of which I'm secretly very proud.
 

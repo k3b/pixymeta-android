@@ -804,7 +804,8 @@ public class JPEGMeta extends JpegMetaDef {
 					if(iptcBIM != null) { // Keep the original values
 						IPTC iptc = new IPTC(iptcBIM.getData());
 						// Shallow copy the map
-						Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSets());
+						IPTCDataSet.IPTCDataSetMap dataSetMap = new IPTCDataSet.IPTCDataSetMap();
+						dataSetMap.putAll(iptc.getDataSets());
 						for(IPTCDataSet set : iptcs)
 							if(!set.allowMultiple())
 								dataSetMap.remove(set.getName());

@@ -2,6 +2,5 @@
 
 ############
 flower.jpg
-IMAGE
-JPG_JFIF
 XMP
+JPG_JFIF
