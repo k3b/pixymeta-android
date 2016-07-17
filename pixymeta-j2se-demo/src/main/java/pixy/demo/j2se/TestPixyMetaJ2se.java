@@ -47,6 +47,7 @@ public class TestPixyMetaJ2se {
 
     public static void main(String[] args) throws IOException {
         BitmapFactoryNative.init();
+        JPEGMeta.register();
 
         new File("./" + OUTDIR).mkdirs();
         InputStream fin = null;

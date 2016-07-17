@@ -80,8 +80,10 @@ task uploadArchives {
     dependsOn { subprojects.uploadArchives }
 }
 
+/*
 task javadocJar {
     description = "Generates javadoc jar."
     dependsOn { subprojects.javadocJar }
 }
+*/
 

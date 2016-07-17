@@ -34,7 +34,7 @@ public enum XmpTag  implements IFieldDefinition {
 
     @Override
     public XmpFieldType getDataType() {
-        return null;
+        return this.type;
     }
 
     public String getXmlElementName() {
