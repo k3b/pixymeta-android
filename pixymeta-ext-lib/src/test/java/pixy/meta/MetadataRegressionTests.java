@@ -304,8 +304,8 @@ public class MetadataRegressionTests {
 	}
 
 	@Test
-	// @Parameters({"12.jpg"})
-	@Parameters(method = "getAllResourceImageNamesForTest")
+	@Parameters({"app13jpg.jpg"})
+	// @Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldCopyJpgFile(String fileName) throws IOException {
 		if (fileName.toLowerCase().endsWith(".jpg")) {
 			JpgFileProcessor doCopy = new JpgFileProcessor();
@@ -326,8 +326,14 @@ public class MetadataRegressionTests {
 
 				Map<MetadataType, IMetadata> metadataMap = doCopy.getMetadataMap();
 
-				InputStream expectedResultInputStream = TestPixyMetaJ2se.class.getResourceAsStream("imageMetaExpected/" + fileName);
+				final String expectedResultPath = "imageMetaExpected/" + fileName + ".txt";
+				InputStream expectedResultInputStream = TestPixyMetaJ2se.class.getResourceAsStream(expectedResultPath);
 				StringBuffer result = showMetaAndVerify(fileName, metadataMap, outDir, true, expectedResultInputStream);
+
+				if (expectedResultInputStream == null) {
+					Assert.fail("Cannot open compare file " + expectedResultPath);
+				}
+
 				expectedResultInputStream.close();
 
 				LOGGER.info(result.toString());

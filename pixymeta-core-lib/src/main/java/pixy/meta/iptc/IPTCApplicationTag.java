@@ -32,77 +32,27 @@ public enum IPTCApplicationTag implements IPTCTag {
 		 }
 	 },
 	 OBJECT_TYPE_REF(3, "ObjectTypeRef"),
-	 OBJECT_ATTR_REF(4, "ObjectAttribRef") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 OBJECT_ATTR_REF(4, "ObjectAttribRef", true),
 	 OBJECT_NAME(5, "ObjectName"),
 	 EDIT_STATUS(7, "EditStatus"),
 	 EDITORIAL_UPDATE(8, "EditorialUpdate"),
 	 URGENCY(10, "Urgency"),
-	 SUBJECT_REF(12, "SubjectReference") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
-	 CATEGORY(15, "Category"){
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
-	 SUPP_CATEGORY(20, "SupplementalCategories") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 SUBJECT_REF(12, "SubjectReference", true),
+	 CATEGORY(15, "Category", true),
+	 SUPP_CATEGORY(20, "SupplementalCategories", true),
 	 FIXTURE_ID(22, "FixtureID"),
-	 KEY_WORDS(25, "Keywords") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
-	 CONTENT_LOCATION_CODE(26, "ContentLocationCode") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
-	 CONTENT_LOCATION_NAME(27, "ContentLocationName") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 KEY_WORDS(25, "Keywords", true),
+	 CONTENT_LOCATION_CODE(26, "ContentLocationCode", true),
+	 CONTENT_LOCATION_NAME(27, "ContentLocationName", true),
 	 RELEASE_DATE(30, "ReleaseDate"),
 	 RELEASE_TIME(35, "ReleaseTime"),
 	 EXPIRATION_DATE(37, "ExpirationDate"),
 	 EXPIRATION_TIME(38, "ExpirationTime"),
 	 SPECIAL_INSTRUCTIONS(40, "SpecialInstructions"),
 	 ACTION_ADVISED(42, "ActionAdvised"),
-	 REFERENCE_SERVICE(45, "ReferenceService") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
-	 REFERENCE_DATE(47, "ReferenceDate") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
-	 REFERENCE_NUMBER(50, "ReferenceNumber") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 REFERENCE_SERVICE(45, "ReferenceService", true),
+	 REFERENCE_DATE(47, "ReferenceDate", true),
+	 REFERENCE_NUMBER(50, "ReferenceNumber", true),
 	 DATE_CREATED(55, "DateCreated"),
 	 TIME_CREATED(60, "TimeCreated"),
 	 DIGITAL_CREATION_DATE(62, "DigitalCreationDate"),
@@ -110,18 +60,8 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 ORIGINATING_PROGRAM(65, "OriginatingProgram"),
 	 PROGRAM_VERSION(70, "ProgramVersion"),
 	 OBJECT_CYCLE(75, "ObjectCycle"),
-	 BY_LINE(80, "ByLine") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
-	 BY_LINE_TITLE(85, "ByLineTitle") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 BY_LINE(80, "ByLine", true),
+	 BY_LINE_TITLE(85, "ByLineTitle", true),
 	 CITY(90, "City"),
 	 SUB_LOCATION(92, "SubLocation"),
 	 PROVINCE_STATE(95, "ProvinceState"),
@@ -129,32 +69,12 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 COUNTRY_NAME(101, "CountryName"),
 	 ORIGINAL_TRANSMISSION_REF(103, "OriginalTransmissionRef"),
 	 HEADLINE(105, "Headline"),
-	 CREDIT(110, "Credit") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 CREDIT(110, "Credit", true),
 	 SOURCE(115, "Source"),
-	 COPYRIGHT_NOTICE(116, "CopyrightNotice") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
-	 CONTACT(118, "Contact") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 COPYRIGHT_NOTICE(116, "CopyrightNotice", true),
+	 CONTACT(118, "Contact", true),
 	 CAPTION_ABSTRACT(120, "CaptionAbstract"),
-	 WRITER_EDITOR(122, "WriterEditor") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 WRITER_EDITOR(122, "WriterEditor", true),
 	 RASTERIZED_CAPTION(125, "RasterizedCaption"),
 	 IMAGE_TYPE(130, "ImageType"),
 	 IMAGE_ORIENTATION(131, "ImageOrientation"),
@@ -173,22 +93,22 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 DOCUMENT_NOTES(230, "DocumentNotes"),
 	 DOCUMENT_HISTORY(231, "DocumentHistory"),
 	 EXIF_CAMERA_INFO(232, "ExifCameraInfo"),
-	 CATALOG_SETS(255, "CatalogSets") {
-		 @Override
-		 public boolean allowMultiple() {
-			 return true;
-		 }
-	 },
+	 CATALOG_SETS(255, "CatalogSets", true),
 	  
 	 UNKNOWN(999, "Unknown");
 	 
 	 private IPTCApplicationTag(int tag, String name) {
-		 this.tag = tag;
-		 this.name = name;
+		 this(tag, name, false);
 	 }
-	 
-	 public boolean allowMultiple() {
-		 return false;
+
+	private IPTCApplicationTag(int tag, String name, boolean allowMultiple) {
+		this.tag = tag;
+		this.name = name;
+		this.allowMultiple = allowMultiple;
+	}
+
+	public boolean allowMultiple() {
+		 return this.allowMultiple;
 	 }
 	 
 	 // Default implementation. Could be replaced by individual ENUM
@@ -233,6 +153,7 @@ public enum IPTCApplicationTag implements IPTCTag {
  
    private final int tag;
    private final String name;
+   private boolean allowMultiple = false;
 
 
 	public IDataType getDataType() {
