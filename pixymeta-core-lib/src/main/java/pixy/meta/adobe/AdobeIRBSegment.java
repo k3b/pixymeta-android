@@ -21,7 +21,6 @@
 package pixy.meta.adobe;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,21 +91,21 @@ public class AdobeIRBSegment extends MetadataBase {
 		if(!isDataRead) {
 			int i = 0;
 			int unknown = 0; // number of skipped bytes before SUB_SEGMENT_MARKER
-			while((i+4) < data.length) {
+			while((i+4) < getData().length) {
 				int start = i;
-				String _8bim = new String(data, i, SUB_SEGMENT_MARKER.length());
+				String _8bim = new String(getData(), i, SUB_SEGMENT_MARKER.length());
 				i += SUB_SEGMENT_MARKER.length();
 				if(_8bim.equals(SUB_SEGMENT_MARKER)) {
-					short tagCode = IOUtils.readShortMM(data, i);
+					short tagCode = IOUtils.readShortMM(getData(), i);
 					i += 2;
 					// Pascal string for name follows
 					// First byte denotes string length -
-					int nameLen = data[i++]&0xff;
+					int nameLen = getData()[i++]&0xff;
 					if((nameLen%2) == 0) nameLen++;
-					String name = new String(data, i, nameLen).trim();
+					String name = new String(getData(), i, nameLen).trim();
 					i += nameLen;
 					//
-					int size = IOUtils.readIntMM(data, i);
+					int size = IOUtils.readIntMM(getData(), i);
 					i += 4;
 					
 					ImageResourceID tag = ImageResourceID.fromShort(tagCode);
@@ -114,17 +113,17 @@ public class AdobeIRBSegment extends MetadataBase {
 					if (isDebugEnabled()) {
 						debug("AdobeIRBSegment.read " + tag + "[" + name +", skip=" + unknown +
 								"] :" +
-								start +"/" + (i-start) + "+" +size + "/" + data.length);
+								start +"/" + (i-start) + "+" +size + "/" + getData().length);
 					}
 					switch(tag) {
 						case JPEG_QUALITY:
-							_8bims.put(tagCode, new JPEGQuality(name, ArrayUtils.subArray(data, i, size)));
+							_8bims.put(tagCode, new JPEGQuality(name, ArrayUtils.subArray(getData(), i, size)));
 							break;
 						case VERSION_INFO:
-							_8bims.put(tagCode, new VersionInfo(name, ArrayUtils.subArray(data, i, size)));
+							_8bims.put(tagCode, new VersionInfo(name, ArrayUtils.subArray(getData(), i, size)));
 							break;
 						case IPTC_NAA:
-							byte[] newData = ArrayUtils.subArray(data, i, size);
+							byte[] newData = ArrayUtils.subArray(getData(), i, size);
 							AdobyMetadataBase iptcBim = _8bims.get(tagCode);
 							if(iptcBim != null) {
 								byte[] oldData = iptcBim.getData();
@@ -135,11 +134,11 @@ public class AdobeIRBSegment extends MetadataBase {
 						case THUMBNAIL_RESOURCE_PS4:
 						case THUMBNAIL_RESOURCE_PS5:
 							containsThumbnail = true;
-							thumbnail = new ThumbnailResource(tag, ArrayUtils.subArray(data, i, size));
+							thumbnail = new ThumbnailResource(tag, ArrayUtils.subArray(getData(), i, size));
 							_8bims.put(tagCode, thumbnail);
 							break;
 						default:
-							_8bims.put(tagCode, new AdobyMetadataBase(tagCode, name, size, ArrayUtils.subArray(data, i, size)));
+							_8bims.put(tagCode, new AdobyMetadataBase(tagCode, name, size, ArrayUtils.subArray(getData(), i, size)));
 					}
 
 					unknown = 0;

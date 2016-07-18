@@ -20,21 +20,21 @@ public abstract class MetadataBase  implements IMetadata {
 
     // Fields
     protected MetadataType type;
-    protected byte[] data;
+    private byte[] data;
     protected boolean isDataRead;
     private StringBuilder debugMessageBuffer = null;
 
     public MetadataBase(MetadataType type, byte[] data) {
         if ((data != null) && isDebugEnabled()) debug("ctor(" + data.length + ")");
         this.type = type;
-        this.data = data;
+        this.setData(data);
         isDataRead = false;
     }
 
     public void merge(byte[] data) {
-        this.data = ArrayUtils.concat(this.data, data);
+        this.setData(ArrayUtils.concat(this.getData(), data));
         isDataRead = false;
-        if ((data != null) && isDebugEnabled()) debug("merge(" + data.length + ") => " + this.data.length);
+        if ((data != null) && isDebugEnabled()) debug("merge(" + data.length + ") => " + this.getData().length);
     }
 
     protected void ensureDataRead() {
@@ -118,4 +118,7 @@ public abstract class MetadataBase  implements IMetadata {
         }
     }
 
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 }

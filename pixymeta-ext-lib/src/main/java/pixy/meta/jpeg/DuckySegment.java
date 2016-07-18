@@ -73,13 +73,13 @@ public class DuckySegment extends Metadata {
 			datasetMap = new EnumMap<DuckyTag, DuckyDataSet>(DuckyTag.class);
 			
 			for(;;) {
-				if(i + 4 > data.length) break;
-				int tag = IOUtils.readUnsignedShortMM(data, i);
+				if(i + 4 > getData().length) break;
+				int tag = IOUtils.readUnsignedShortMM(getData(), i);
 				i += 2;
-				int size = IOUtils.readUnsignedShortMM(data, i);
+				int size = IOUtils.readUnsignedShortMM(getData(), i);
 				i += 2;
 				DuckyTag etag = DuckyTag.fromTag(tag);
-				datasetMap.put(etag, new DuckyDataSet(tag, size, data, i));
+				datasetMap.put(etag, new DuckyDataSet(tag, size, getData(), i));
 				i += size;
 			}
 			

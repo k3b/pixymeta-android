@@ -129,23 +129,23 @@ public class JFIFSegment extends Metadata {
 			int expectedLen = 9;
 			int offset = 0;
 			
-			if (data.length >= expectedLen) {
-				majorVersion = data[offset++]&0xff;
-				minorVersion = data[offset++]&0xff;
-				densityUnit = data[offset++]&0xff;
-				xDensity = IOUtils.readUnsignedShortMM(data, offset);
+			if (getData().length >= expectedLen) {
+				majorVersion = getData()[offset++]&0xff;
+				minorVersion = getData()[offset++]&0xff;
+				densityUnit = getData()[offset++]&0xff;
+				xDensity = IOUtils.readUnsignedShortMM(getData(), offset);
 				offset += 2;
-				yDensity = IOUtils.readUnsignedShortMM(data, offset);
+				yDensity = IOUtils.readUnsignedShortMM(getData(), offset);
 				offset += 2;
-				thumbnailWidth = data[offset++]&0xff;
-				thumbnailHeight = data[offset]&0xff;
+				thumbnailWidth = getData()[offset++]&0xff;
+				thumbnailHeight = getData()[offset]&0xff;
 				if(thumbnailWidth != 0 && thumbnailHeight != 0) {
 					containsThumbnail = true;
 					// Extract the thumbnail
 		    		//Create a IBitmap
 		    		int totalSize = 3*thumbnailWidth*thumbnailHeight;
-					int[] colors = MetadataUtils.toARGB(ArrayUtils.subArray(data, expectedLen, totalSize));
-					thumbnail = new JFIFThumbnail(BitmapFactory.createBitmap(colors, thumbnailWidth, thumbnailHeight, totalSize, data, -1 , null));
+					int[] colors = MetadataUtils.toARGB(ArrayUtils.subArray(getData(), expectedLen, totalSize));
+					thumbnail = new JFIFThumbnail(BitmapFactory.createBitmap(colors, thumbnailWidth, thumbnailHeight, totalSize, getData(), -1 , null));
 				}
 			}
 			

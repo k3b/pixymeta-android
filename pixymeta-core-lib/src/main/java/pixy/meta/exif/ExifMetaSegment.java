@@ -168,7 +168,7 @@ public abstract class ExifMetaSegment extends MetadataBase {
 
 	public void read() throws IOException {
 		if (!isDataRead) {
-			RandomAccessInputStream exifIn = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(data));
+			RandomAccessInputStream exifIn = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(getData()));
 			List<IFD> ifds = new ArrayList<IFD>(3);
 			IfdMetaUtils.readIFDs(ifds, exifIn);
 			if (ifds.size() > 0) {

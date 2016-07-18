@@ -267,12 +267,12 @@ public class ICCProfile extends Metadata {
 	public void read() throws IOException {
 		if(!isDataRead) {
 			if (isDebugEnabled()) {
-				debug("read " + data.length);
+				debug("read " + getData().length);
 			}
 			this.header = new ICCProfileHeader();
 			this.tagTable = new ProfileTagTable();
-			readHeader(data);
-			readTagTable(data);
+			readHeader(getData());
+			readTagTable(getData());
 			isDataRead = true;
 		}
 	}

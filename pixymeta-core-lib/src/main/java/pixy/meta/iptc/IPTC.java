@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -143,15 +142,15 @@ public class IPTC extends MetadataBase {
 	public void read() throws IOException {
 		if(!isDataRead) {
 			int i = 0;
-			int tagMarker = data[i];
+			int tagMarker = getData()[i];
 			datasetMap = new IPTCDataSet.IPTCDataSetMap();
 			while (tagMarker == 0x1c) {
 				i++;
-				int recordNumber = data[i++]&0xff;
-				int tag = data[i++]&0xff;
-				int recordSize = IOUtils.readUnsignedShortMM(data, i);
+				int recordNumber = getData()[i++]&0xff;
+				int tag = getData()[i++]&0xff;
+				int recordSize = IOUtils.readUnsignedShortMM(getData(), i);
 				i += 2;
-				IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, data, i);
+				IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, getData(), i);
 				String name = dataSet.getName();
 				final IPTCDataSet.IPTCDataSetList existingIptcDataSet = datasetMap.get(name);
 				if(existingIptcDataSet == null) {
@@ -163,8 +162,8 @@ public class IPTC extends MetadataBase {
 				}
 				i += recordSize;
 				// Sanity check
-				if(i >= data.length) break;	
-				tagMarker = data[i];							
+				if(i >= getData().length) break;
+				tagMarker = getData()[i];
 			}
 
 			/*

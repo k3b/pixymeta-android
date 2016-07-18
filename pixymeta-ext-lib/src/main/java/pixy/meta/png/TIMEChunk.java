@@ -89,6 +89,7 @@ public class TIMEChunk extends Metadata {
 		return chunk;
 	}
 
+	@Override
 	public byte[] getData() {
 		return getChunk().getData();
 	}

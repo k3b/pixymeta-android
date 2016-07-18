@@ -139,8 +139,8 @@ public abstract class XMP extends MetadataBase {
 		if(!isDataRead) {
 			if(xmpDataAsXmlString != null)
 				xmpDocument = XMLUtils.createXML(xmpDataAsXmlString);
-			else if(data != null)
-				xmpDocument = XMLUtils.createXML(data);
+			else if(super.getData() != null)
+				xmpDocument = XMLUtils.createXML(super.getData());
 			
 			isDataRead = true;
 		}

@@ -75,31 +75,31 @@ public class DDB extends Metadata {
 	public void read() throws IOException {
 		if(!isDataRead) {
 			int i = 0;
-			if(!new String(data, i, DDB_ID.length()).equals(DDB_ID)) {
+			if(!new String(getData(), i, DDB_ID.length()).equals(DDB_ID)) {
 				throw new RuntimeException("Invalid Photoshop Document Data Block");
 			}
 			i += DDB_ID.length();
-			while((i+4) < data.length) {
-				int signature = readStrategy.readInt(data, i);
+			while((i+4) < getData().length) {
+				int signature = readStrategy.readInt(getData(), i);
 				i += 4;
 				if(signature ==_8BIM) {
-					int type = readStrategy.readInt(data, i);
+					int type = readStrategy.readInt(getData(), i);
 					i += 4;
-					int size = readStrategy.readInt(data, i);
+					int size = readStrategy.readInt(getData(), i);
 					i += 4;
 					DataBlockType etype = DataBlockType.fromInt(type);
 					switch(etype) {
 						case Layr:
-							entries.put(type, new LayerData(size, ArrayUtils.subArray(data, i, size), readStrategy));
+							entries.put(type, new LayerData(size, ArrayUtils.subArray(getData(), i, size), readStrategy));
 							break;
 						case LMsk:
-							entries.put(type, new UserMask(size, ArrayUtils.subArray(data, i, size), readStrategy));
+							entries.put(type, new UserMask(size, ArrayUtils.subArray(getData(), i, size), readStrategy));
 							break;
 						case FMsk:
-							entries.put(type, new FilterMask(size, ArrayUtils.subArray(data, i, size), readStrategy));
+							entries.put(type, new FilterMask(size, ArrayUtils.subArray(getData(), i, size), readStrategy));
 							break;
 						default:
-							entries.put(type, new DDBEntry(type, size, ArrayUtils.subArray(data, i, size), readStrategy));
+							entries.put(type, new DDBEntry(type, size, ArrayUtils.subArray(getData(), i, size), readStrategy));
 					}
 					i += ((size + 3)>>2)<<2;// Skip data with padding bytes (padded to a 4 byte offset)
 				}

@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pixy.image.jpeg.JpegSegmentMarker;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
 import pixy.string.StringUtils;
@@ -74,14 +73,14 @@ public class AdobeSegment extends Metadata {
 			int expectedLen = 7;
 			int offset = 0;
 			
-			if (data.length >= expectedLen) {
-				m_DCTEncodeVersion = IOUtils.readUnsignedShortMM(data, offset);
+			if (getData().length >= expectedLen) {
+				m_DCTEncodeVersion = IOUtils.readUnsignedShortMM(getData(), offset);
 				offset += 2;
-				m_APP14Flags0 = IOUtils.readUnsignedShortMM(data, offset);
+				m_APP14Flags0 = IOUtils.readUnsignedShortMM(getData(), offset);
 				offset += 2;
-				m_APP14Flags1 = IOUtils.readUnsignedShortMM(data, offset);
+				m_APP14Flags1 = IOUtils.readUnsignedShortMM(getData(), offset);
 				offset += 2;
-				m_ColorTransform = data[offset]&0xff;			
+				m_ColorTransform = getData()[offset]&0xff;
 			}
 			
 		    isDataRead = true;
