@@ -21,6 +21,7 @@ package pixy.meta.iptc;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,19 @@ import pixy.util.ArrayUtils;
  */
 public class IPTCDataSet implements IFieldValue {
 
-	public static class IPTCDataSetMap extends HashMap<String, List<IPTCDataSet>> {
+	public static class IPTCDataSetList extends ArrayList<IPTCDataSet> {
+		@Override
+		public String toString() {
+			StringBuilder result = new StringBuilder(getClass().getSimpleName()).append(":");
+			for (IPTCDataSet item : this) {
+				if (result.length() > 0) result.append("\n");
+				result.append(item);
+			}
+			return result.toString();
+		}
+	}
+
+	public static class IPTCDataSetMap extends HashMap<String, IPTCDataSetList> {
 
 	}
 
@@ -177,7 +190,35 @@ public class IPTCDataSet implements IFieldValue {
 		result = prime * result + tag;
 		return result;
 	}
-	
+
+	public String getTypeAsName() {
+		switch (recordNumber) {
+			case 1: //Envelope Record
+				return "Envelope";
+			case 2: //Application Record
+				return "Application";
+			case 3: //NewsPhoto Record
+				return "NewsPhoto";
+			case 7: //PreObjectData Record
+				return "PreObjectData";
+			case 8: //ObjectData Record
+				return "ObjectData";
+			case 9: //PostObjectData Record
+				return "PostObjectData";
+			case 240: //FotoStation Record
+				return "FotoStation";
+			default:
+				return "Unknown";
+		}
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "[" + getTypeAsName()
+				+ "=" + recordNumber + "]: " + name +
+				"[" + StringUtils.toHexStringMM((short)tag) + "] = " + getValueAsString();
+	}
+
 	public void print() {
 		
 		switch (recordNumber) {

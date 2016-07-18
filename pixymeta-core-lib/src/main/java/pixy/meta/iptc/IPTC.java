@@ -84,7 +84,7 @@ public class IPTC extends MetadataBase {
 			for(IPTCDataSet dataSet: dataSets) {
 				String name = dataSet.getName();
 				if(datasetMap.get(name) == null) {
-					List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
+					IPTCDataSet.IPTCDataSetList list = new IPTCDataSet.IPTCDataSetList();
 					list.add(dataSet);
 					datasetMap.put(name, list);
 				} else if(dataSet.allowMultiple()) {
@@ -103,7 +103,7 @@ public class IPTC extends MetadataBase {
 	public String getAsString(String key) {
 		// Retrieve the IPTCDataSet list associated with this key
 		// Most of the time the list will only contain one item
-		List<IPTCDataSet> list = getDataSet(key);
+		IPTCDataSet.IPTCDataSetList list = getDataSet(key);
 		
 		String value = "";
 	
@@ -126,7 +126,7 @@ public class IPTC extends MetadataBase {
 	 * @param key name of the data set
 	 * @return a list of IPTCDataSet associated with the key
 	 */
-	public List<IPTCDataSet> getDataSet(String key) {
+	public IPTCDataSet.IPTCDataSetList getDataSet(String key) {
 		return getDataSets().get(key);
 	}
 	
@@ -153,22 +153,27 @@ public class IPTC extends MetadataBase {
 				i += 2;
 				IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, data, i);
 				String name = dataSet.getName();
-				if(datasetMap.get(name) == null) {
-					List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
+				final IPTCDataSet.IPTCDataSetList existingIptcDataSet = datasetMap.get(name);
+				if(existingIptcDataSet == null) {
+					IPTCDataSet.IPTCDataSetList list = new IPTCDataSet.IPTCDataSetList();
 					list.add(dataSet);
 					datasetMap.put(name, list);
-				} else
-					datasetMap.get(name).add(dataSet);
+				} else {
+					existingIptcDataSet.add(dataSet);
+				}
 				i += recordSize;
 				// Sanity check
 				if(i >= data.length) break;	
 				tagMarker = data[i];							
 			}
+
+			/*
 			// Remove possible duplicates
-			for (Map.Entry<String, List<IPTCDataSet>> entry : datasetMap.entrySet()){
-			    entry.setValue(new ArrayList<IPTCDataSet>(new HashSet<IPTCDataSet>(entry.getValue())));
+			for (Map.Entry<String, IPTCDataSet.IPTCDataSetList> entry : datasetMap.entrySet()){
+			    entry.setValue(new IPTCDataSet.IPTCDataSetList(new HashSet<IPTCDataSet>(entry.getValue())));
 			}
-			
+			*/
+
 			isDataRead = true;
 		}
 	}
@@ -177,7 +182,7 @@ public class IPTC extends MetadataBase {
 		ensureDataRead();
 		if(datasetMap != null){
 			// Print multiple entry IPTCDataSet
-			for(List<IPTCDataSet> iptcs : datasetMap.values()) {
+			for(IPTCDataSet.IPTCDataSetList iptcs : datasetMap.values()) {
 				for(IPTCDataSet iptc : iptcs)
 					iptc.print();
 			}
@@ -191,7 +196,7 @@ public class IPTC extends MetadataBase {
 	public List<IDirectory> getMetaData() {
 		ensureDataRead();
 		ArrayList<IDirectory> result = new ArrayList<IDirectory>();
-		for (Map.Entry<String, List<IPTCDataSet>> entry : getDataSets().entrySet()) {
+		for (Map.Entry<String, IPTCDataSet.IPTCDataSetList> entry : getDataSets().entrySet()) {
 			result.add(new DefaultApiImpl(entry.getKey(), new ArrayList<IFieldValue>(entry.getValue())));
 		}
 		return result;
@@ -199,7 +204,7 @@ public class IPTC extends MetadataBase {
 
 
 	public void write(OutputStream os) throws IOException {
-		for(List<IPTCDataSet> datasets : getDataSets().values())
+		for(IPTCDataSet.IPTCDataSetList datasets : getDataSets().values())
 			for(IPTCDataSet dataset : datasets)
 				dataset.write(os);
 	}

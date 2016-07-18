@@ -66,23 +66,33 @@ public class AdobyMetadataBase {
 	public int getSize() {
 		return size;
 	}
-	
-	public void print() {
+
+	public String getTypeString() {
 		ImageResourceID eId  = ImageResourceID.fromShort(id);
-		
+
 		if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {
-			LOGGER.info("PATH_INFO [Value: {}] - Path Information (saved paths).", StringUtils.toHexStringMM(id));
+			return "PATH_INFO[" + StringUtils.toHexStringMM(id) + "]";
 		}
 		else if((id >= ImageResourceID.PLUGIN_RESOURCE0.getValue()) && (id <= ImageResourceID.PLUGIN_RESOURCE999.getValue())) {
-			LOGGER.info("PLUGIN_RESOURCE [Value: {}] - Plug-In resource.", StringUtils.toHexStringMM(id));
+			return "PLUGIN_RESOURCE[" + StringUtils.toHexStringMM(id) + "]";
 		}
 		else if (eId == ImageResourceID.UNKNOWN) {
-			LOGGER.info("{} [Value: {}]", eId, StringUtils.toHexStringMM(id));
+			return eId +"[" + StringUtils.toHexStringMM(id) + "]";
+		} else {
+			return "" + eId;
 		}
-		else {
-			LOGGER.info("{}", eId);
-		}
-		
+	}
+
+	@Override
+	public String toString() {
+		return getName() + " adoby-8BIM " + getTypeString();
+	}
+
+	public void print() {
+		ImageResourceID eId  = ImageResourceID.fromShort(id);
+
+		LOGGER.info(getTypeString());
+
 		LOGGER.info("Type: 8BIM");
 		LOGGER.info("Name: {}", name);
 		LOGGER.info("Size: {}", size);	

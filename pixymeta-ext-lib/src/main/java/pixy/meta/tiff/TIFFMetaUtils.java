@@ -84,11 +84,11 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 	private static Collection<IPTCDataSet> copyIPTCDataSet(Collection<IPTCDataSet> iptcs, byte[] data) throws IOException {
 		IPTC iptc = new IPTC(data);
 		// Shallow copy the map
-		Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSets());
+		Map<String, IPTCDataSet.IPTCDataSetList> dataSetMap = new HashMap<String, IPTCDataSet.IPTCDataSetList>(iptc.getDataSets());
 		for(IPTCDataSet set : iptcs)
 			if(!set.allowMultiple())
 				dataSetMap.remove(set.getName());
-		for(List<IPTCDataSet> iptcList : dataSetMap.values())
+		for(IPTCDataSet.IPTCDataSetList iptcList : dataSetMap.values())
 			iptcs.addAll(iptcList);
 		
 		return iptcs;
@@ -360,7 +360,8 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 					// Now copy the Photoshop IPTC data
 					copyIPTCDataSet(iptcs, photoshop_iptc.getData());
 					// Remove duplicates
-					iptcs = new ArrayList<IPTCDataSet>(new HashSet<IPTCDataSet>(iptcs));
+					iptcs = new IPTCDataSet.IPTCDataSetList();
+					iptcs.addAll(new HashSet<IPTCDataSet>(iptcs));
 				}
 			}
 			// Create IPTC 8BIM

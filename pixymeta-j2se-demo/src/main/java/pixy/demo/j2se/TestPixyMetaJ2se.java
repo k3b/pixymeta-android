@@ -177,8 +177,8 @@ public class TestPixyMetaJ2se {
         fout.close();
     }
 
-    private static List<IPTCDataSet> createIPTCDataSet() {
-        List<IPTCDataSet> iptcs = new ArrayList<IPTCDataSet>();
+    private static IPTCDataSet.IPTCDataSetList createIPTCDataSet() {
+        IPTCDataSet.IPTCDataSetList iptcs = new IPTCDataSet.IPTCDataSetList();
         iptcs.add(new IPTCDataSet(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2016, yuwen_66@yahoo.com"));
         iptcs.add(new IPTCDataSet(IPTCApplicationTag.CATEGORY, "ICAFE"));
         iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!"));

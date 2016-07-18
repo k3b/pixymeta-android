@@ -105,6 +105,11 @@ public abstract class MetadataBase  implements IMetadata {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() +"[" + type + "]";
+    }
+
     protected void debug(String s) {
         if (this.debugMessageBuffer != null) {
             this.debugMessageBuffer

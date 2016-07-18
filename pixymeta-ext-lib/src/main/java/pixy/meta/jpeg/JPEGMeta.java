@@ -809,7 +809,7 @@ public class JPEGMeta extends JpegMetaDef {
 						for(IPTCDataSet set : iptcs)
 							if(!set.allowMultiple())
 								dataSetMap.remove(set.getName());
-						for(List<IPTCDataSet> iptcList : dataSetMap.values())
+						for(IPTCDataSet.IPTCDataSetList iptcList : dataSetMap.values())
 							iptcs.addAll(iptcList);
 					}
 			  	}				

@@ -63,7 +63,7 @@ public class IPTC_NAA extends AdobyMetadataBase {
 	 * 
 	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
 	 */
-	public Map<String, List<IPTCDataSet>> getDataSets() {
+	public Map<String, IPTCDataSet.IPTCDataSetList> getDataSets() {
 		return iptc.getDataSets();			
 	}
 	
@@ -73,14 +73,14 @@ public class IPTC_NAA extends AdobyMetadataBase {
 	 * @param key name of the data set
 	 * @return a list of IPTCDataSet associated with the key
 	 */
-	public List<IPTCDataSet> getDataSet(String key) {
+	public IPTCDataSet.IPTCDataSetList getDataSet(String key) {
 		return iptc.getDataSet(key);
 	}
 	
 	public void print() {
 		super.print();
 		// Print multiple entry IPTCDataSet
-		for(List<IPTCDataSet> datasets : iptc.getDataSets().values())
+		for(IPTCDataSet.IPTCDataSetList datasets : iptc.getDataSets().values())
 			for(IPTCDataSet dataset : datasets)
 				dataset.print();			
 	}
