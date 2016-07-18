@@ -15,6 +15,9 @@ description = "${mavenUpload_description}"
 version = project_version
 // ^^^ maven upload stuff
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 //create a single Jar with all dependencies
 // from http://www.mkyong.com/gradle/gradle-create-a-jar-file-with-dependencies/
 task fatJar(type: Jar) {

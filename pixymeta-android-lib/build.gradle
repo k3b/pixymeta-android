@@ -45,6 +45,12 @@ android {
 		// ValidFragment : local (dialog-)fragment class for customized direcotry picker is fragile but on rotation code makes shure that dialog is closed. 
         disable 'MissingTranslation','ValidFragment'
     }
+	
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+	
 }
 
 dependencies {
