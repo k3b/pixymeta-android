@@ -1,14 +1,20 @@
+// subproject build file for pixymeta-ext-lib.
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'jacoco'
 
-
 // vvv maven upload stuff
 ext {
-	mavenUpload_archivesBaseName = 'pixymeta-lib'
-	mavenUpload_description = 'Image metadata manipulation lib-common code for android and j2se/awt.'
+	mavenUpload_archivesBaseName = 'pixymeta-ext-lib'
+	mavenUpload_description = 'More metadata handling.'
 }
+
+group = "com.github.${github_userId}"
+description = "${mavenUpload_description}"
+version = project_version
+// ^^^ maven upload stuff
 
 group = "com.github.${github_userId}"
 description = "${mavenUpload_description}"
@@ -28,6 +34,8 @@ dependencies {
     testCompile 'org.slf4j:slf4j-simple:1.7.7@jar'
 
 }
+
+javadoc.failOnError=false;
 
 // workaround because android-studio does not make the test resources available
 // see https://code.google.com/p/android/issues/detail?id=64887#c13

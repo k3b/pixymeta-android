@@ -11,8 +11,8 @@ IPTC
 	City.City=City
 	Source.Source=Source
 	CopyrightNotice.CopyrightNotice=Copyright
-	Category.Category=Supl. Category1
 	Category.Category=Supl. Category2
+	Category.Category=Supl. Category1
 	Category.Category=Cat
 	SpecialInstructions.SpecialInstructions=Special Instr.
 	CaptionAbstract.CaptionAbstract=Caption

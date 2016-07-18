@@ -2,6 +2,52 @@
 
 ############
 app13.jpg
+IPTC
+	CopyrightNotice.CopyrightNotice=(C) 2006 Trevor Lush
+	Source.Source=Photos.com
+	SpecialInstructions.SpecialInstructions=RF Image, Model Released, Not Property Released
+	Credit.Credit=www.jupiterimages.com
+	Headline.Headline=23995211
+	ByLine.ByLine=Jupiterimages
+	ObjectName.ObjectName=050217_5365_0541_
+	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
+	Keywords.Keywords=jun
+	Keywords.Keywords=person
+	Keywords.Keywords=caucasian
+	Keywords.Keywords=adult
+	Keywords.Keywords=woman
+	Keywords.Keywords=female
+	Keywords.Keywords=businesswoman
+	Keywords.Keywords=blonde
+	Keywords.Keywords=executive
+	Keywords.Keywords=professional
+	Keywords.Keywords=business
+	Keywords.Keywords=corporate
+	Keywords.Keywords=workplace
+	Keywords.Keywords=manager
+	Keywords.Keywords=management
+	Keywords.Keywords=head shot
+	Keywords.Keywords=decision maker
+	Keywords.Keywords=decisive
+	Keywords.Keywords=leader
+	Keywords.Keywords=leadership
+	Keywords.Keywords=portrait
+	Keywords.Keywords=smiling
+	Keywords.Keywords=smile
+	Keywords.Keywords=blurry
+	Keywords.Keywords=blurred
+	Keywords.Keywords=focus
+	Keywords.Keywords=people
+	Keywords.Keywords=meeting
+	Keywords.Keywords=interview
+	Keywords.Keywords=close-up
+	Keywords.Keywords=happy
+	Keywords.Keywords=inside
+	Keywords.Keywords=indoors
+	Keywords.Keywords=office
+	Keywords.Keywords=23995211
+
+----------------------
 ICC_PROFILE
 	ICC-Header.ProfileSize=560
 	ICC-Header.CMM Type=ADBE
@@ -32,57 +78,5 @@ ICC_PROFILE
 	ICC-Table.mediaBlackPointTag=[0x58,0x59,0x5A,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]
 
 ----------------------
-IMAGE
-JPG_JFIF
-IPTC
-	CopyrightNotice.CopyrightNotice=(C) 2006 Trevor Lush
-	CopyrightNotice.CopyrightNotice=(c) Jupiterimages
-	Source.Source=Photos.com
-	CaptionAbstract.CaptionAbstract=Smiling businesswoman
-	SpecialInstructions.SpecialInstructions=RF Image, Model Released, Not Property Released
-	SpecialInstructions.SpecialInstructions=MR
-	Credit.Credit=www.jupiterimages.com
-	Credit.Credit=Getty Images
-	Headline.Headline=23995211
-	ByLine.ByLine=Jupiterimages
-	ObjectName.ObjectName=050217_5365_0541_
-	ObjectName.ObjectName=89676934
-	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
-	Keywords.Keywords=blonde
-	Keywords.Keywords=smiling
-	Keywords.Keywords=office
-	Keywords.Keywords=focus
-	Keywords.Keywords=management
-	Keywords.Keywords=leadership
-	Keywords.Keywords=manager
-	Keywords.Keywords=head shot
-	Keywords.Keywords=executive
-	Keywords.Keywords=adult
-	Keywords.Keywords=corporate
-	Keywords.Keywords=meeting
-	Keywords.Keywords=interview
-	Keywords.Keywords=people
-	Keywords.Keywords=inside
-	Keywords.Keywords=close-up
-	Keywords.Keywords=woman
-	Keywords.Keywords=workplace
-	Keywords.Keywords=caucasian
-	Keywords.Keywords=decision maker
-	Keywords.Keywords=businesswoman
-	Keywords.Keywords=indoors
-	Keywords.Keywords=happy
-	Keywords.Keywords=person
-	Keywords.Keywords=23995211
-	Keywords.Keywords=professional
-	Keywords.Keywords=blurred
-	Keywords.Keywords=decisive
-	Keywords.Keywords=business
-	Keywords.Keywords=female
-	Keywords.Keywords=smile
-	Keywords.Keywords=portrait
-	Keywords.Keywords=jun
-	Keywords.Keywords=leader
-	Keywords.Keywords=blurry
-
-----------------------
 PHOTOSHOP_IRB
+JPG_JFIF

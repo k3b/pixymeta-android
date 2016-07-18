@@ -1,4 +1,19 @@
+// subproject build file for pixymeta-core-lib.
+
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+// vvv maven upload stuff
+ext {
+	mavenUpload_archivesBaseName = 'pixymeta-core-lib'
+	mavenUpload_description = 'Core meta data handling exif/iptc/xmp/comment for jpeg.'
+}
+
+group = "com.github.${github_userId}"
+description = "${mavenUpload_description}"
+version = project_version
+// ^^^ maven upload stuff
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -9,3 +24,7 @@ dependencies {
     testCompile 'pl.pragmatists:JUnitParams:1.0.5'
     testCompile 'org.slf4j:slf4j-simple:1.7.7@jar'
 }
+
+javadoc.failOnError=false;
+
+apply from: '../uploadArchives.gradle'

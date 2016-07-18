@@ -1,3 +1,5 @@
+// subproject build file for pixymeta-j2se-demo.
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -5,7 +7,7 @@ apply plugin: 'signing'
 // vvv maven upload stuff
 ext {
 	mavenUpload_archivesBaseName = 'pixymeta-j2se-demo'
-	mavenUpload_description = 'Java commandline programm to demonstrate image meta functions.'
+	mavenUpload_description = 'j2se demo app to read and modify image meta data.'
 }
 
 group = "com.github.${github_userId}"
@@ -38,6 +40,8 @@ task runFatJar(type: JavaExec, dependsOn: fatJar) {
 	main='-jar'
 	args fatJarPath
 }
+
+javadoc.failOnError=false;
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

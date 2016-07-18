@@ -235,8 +235,8 @@ public class MetadataRegressionTests {
 	}
 
 	@Test
-	@Parameters({"app13.jpg"})
-	// @Parameters(method = "getAllResourceImageNamesForTest")
+	// @Parameters({"app13.jpg"})
+	@Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldCopyJpgFile(String fileName) throws IOException {
 		if (fileName.toLowerCase().endsWith(".jpg")) {
 			JpgFileProcessor doCopy = new JpgFileProcessor();

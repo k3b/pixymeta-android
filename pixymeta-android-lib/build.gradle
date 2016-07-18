@@ -1,3 +1,5 @@
+// subproject build file for pixymeta-android-lib.
+
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'com.android.library'

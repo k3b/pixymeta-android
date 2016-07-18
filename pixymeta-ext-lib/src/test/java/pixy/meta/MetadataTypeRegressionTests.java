@@ -2,6 +2,7 @@ package pixy.meta;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import pixy.api.DefaultApiImpl;
 import pixy.api.IDataType;
@@ -27,6 +29,7 @@ import pixy.string.StringUtils;
  *
  * Created by k3b on 18.07.2016.
  */
+@RunWith(JUnitParamsRunner.class)
 public class MetadataTypeRegressionTests {
     // used by JUnitParamsRunner fileName, dir, value
     private Object getAllFieldValuesForTest() throws IOException {

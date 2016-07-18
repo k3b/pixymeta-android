@@ -1,3 +1,5 @@
+// subproject build file for pixymeta-j2se-lib.
+
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -5,7 +7,7 @@ apply plugin: 'signing'
 // vvv maven upload stuff
 ext {
 	mavenUpload_archivesBaseName = 'pixymeta-j2se-lib'
-	mavenUpload_description = 'java/awt specific implementation to handle (preview-)Bitmaps.'
+	mavenUpload_description = 'j2se/awt specific implementation to handle (preview-)Bitmaps.'
 }
 
 group = "com.github.${github_userId}"
@@ -18,5 +20,7 @@ dependencies {
     compile project(':pixymeta-core-lib')
     compile 'org.slf4j:slf4j-api:1.7.7@jar'
 }
+
+javadoc.failOnError=false;
 
 apply from: '../uploadArchives.gradle'
