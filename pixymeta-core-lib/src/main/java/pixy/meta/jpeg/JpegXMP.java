@@ -81,7 +81,9 @@ public class JpegXMP extends XMP {
 		Document xmpDoc = getXmpDocument();
 		XMLUtils.insertLeadingPI(xmpDoc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
 		XMLUtils.insertTrailingPI(xmpDoc, "xpacket", "end='r'");
-		byte[] extendedXmp = getExtendedXmpData();
+
+		// TODO generate extended if size to big
+		byte[] extendedXmp = null;
 		String guid = null;
 		if(extendedXmp != null) { // We have ExtendedXMP
 			guid = StringUtils.generateMD5(extendedXmp);

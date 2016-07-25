@@ -22,6 +22,14 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
         // this.value = value;
     }
 
+    /** create IDirectory with values of type IFieldDefinition */
+    public DefaultApiImpl(String name, IFieldDefinition fieldDefinition, String... values) {
+        this.name = name;
+        for (String item: values) {
+            getValues().add(new DefaultApiImpl(fieldDefinition, item));
+        }
+    }
+
     /** simualte IFieldValue */
     public DefaultApiImpl(IFieldDefinition fieldDefinition, String value) {
         this.fieldDefinition = fieldDefinition;

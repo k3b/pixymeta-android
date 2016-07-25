@@ -61,14 +61,7 @@ public class TestPixyMetaAndroid {
 			XMP xmp = (XMP)metadataMap.get(MetadataType.XMP);
 			fin = new FileInputStream("images/1.jpg");
 			fout = new FileOutputStream("1-xmp-inserted.jpg");
-			JpegXMP jpegXmp = null;
-			if(!xmp.hasExtendedXmp())
-				jpegXmp = new JpegXMP(xmp.getData());
-			else {
-				Document xmpDoc = xmp.getXmpDocument();
-				Document extendedXmpDoc = xmp.getExtendedXmpDocument();
-				jpegXmp = new JpegXMP(XMLUtils.serializeToString(xmpDoc.getDocumentElement(), "UTF-8"), XMLUtils.serializeToString(extendedXmpDoc));
-			}
+			JpegXMP jpegXmp = new JpegXMP(xmp.getData());
 			Metadata.insertXMP(fin, fout, jpegXmp);
 			fin.close();
 			fout.close();
@@ -139,11 +132,6 @@ public class TestPixyMetaAndroid {
 		
 		fin.close();
 		fout.close();
-		
-		fin = new FileInputStream("images/table.jpg");
-		JPEGMeta.extractDepthMap(fin, "table");
-		
-		fin.close();
 		
 		fin = new FileInputStream("images/butterfly.png");
 		fout = new FileOutputStream("comment-inserted.png");

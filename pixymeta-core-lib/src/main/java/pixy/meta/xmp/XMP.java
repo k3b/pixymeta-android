@@ -22,138 +22,158 @@ package pixy.meta.xmp;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import pixy.api.DefaultApiImpl;
+import pixy.api.IDirectory;
+import pixy.api.IFieldValue;
 import pixy.meta.MetadataBase;
 import pixy.meta.MetadataType;
+import pixy.meta.iptc.IPTCDataSet;
+import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
 
 public abstract class XMP extends MetadataBase {
+	// Obtain a logger instance
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(XMP.class);
+
 	// Fields
 	// data translated to xml
 	private Document xmpDocument;
 
-	// additional xml as bytes
-	private byte[] extendedXmpData;
-	private Document extendedXmpDocument;
-	private boolean hasExtendedXmp;
+	// used while development to find errors
+	protected final static boolean extendedXmpLogging = false;
 
-	// document contains the complete XML as a Tree: xmpDocument+extendedXmpDocument
-	private Document mergedXmpDocument;
-
-	// data as string
-	private String xmpDataAsXmlString;
-		
 	public XMP(byte[] data) {
 		super(MetadataType.XMP, data);
 	}
 	
 	public XMP(String xmpDataAsXmlString) {
 		super(MetadataType.XMP, null);
-		this.xmpDataAsXmlString = xmpDataAsXmlString;
+		set(xmpDataAsXmlString);
 	}
 	
 	public XMP(String xmpDataAsXmlString, String extendedXmp) {
-		super(MetadataType.XMP, null);
-		if(xmpDataAsXmlString == null) throw new IllegalArgumentException("Input XMP string is null");
-		this.xmpDataAsXmlString = xmpDataAsXmlString;
+		this(xmpDataAsXmlString);
 		if(extendedXmp != null) { // We have ExtendedXMP
 			try {
-				setExtendedXMPData(XMLUtils.serializeToByteArray(XMLUtils.createXML(extendedXmp)));
+				merge(XMLUtils.serializeToByteArray(XMLUtils.createXML(extendedXmp)));
 			} catch (IOException e) {				
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public byte[] getData() {
-		byte[] data = super.getData();
-		if(data != null && !hasExtendedXmp)
-			return data;
-		try {
-			return XMLUtils.serializeToByteArray(getMergedDocument());
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	
-	public byte[] getExtendedXmpData() {
-		return extendedXmpData;
-	}
-	
-	public Document getExtendedXmpDocument() {
-		if(hasExtendedXmp && extendedXmpDocument == null)
-			extendedXmpDocument = XMLUtils.createXML(extendedXmpData);
-
-		return extendedXmpDocument;
-	}
-	
-	/**
-	 * Merge the standard XMP and the extended XMP DOM
-	 * <p>
-	 * This is a very expensive operation, avoid if possible
-	 * 
-	 * @return a merged Document for the entire XMP data with the GUID from the standard XMP document removed
-	 */
-	public Document getMergedDocument() {
-		if(mergedXmpDocument != null)
-			return mergedXmpDocument;
-		else if(getExtendedXmpDocument() != null) { // Merge document
-			mergedXmpDocument = XMLUtils.createDocumentNode();
-			Document rootDoc = getXmpDocument();
-			NodeList children = rootDoc.getChildNodes();
-			for(int i = 0; i< children.getLength(); i++) {
-				Node importedNode = mergedXmpDocument.importNode(children.item(i), true);
-				mergedXmpDocument.appendChild(importedNode);
-			}
-			// Remove GUID from the standard XMP
-			XmpTag.Note_HasExtendedXMP.remove(mergedXmpDocument);
-			// XMLUtils.removeAttribute(mergedXmpDocument, "rdf:Description", "xmpNote:HasExtendedXMP");
-			// Copy all the children of rdf:RDF element
-			NodeList list = extendedXmpDocument.getElementsByTagName("rdf:RDF").item(0).getChildNodes();
-			Element rdf = (Element)(mergedXmpDocument.getElementsByTagName("rdf:RDF").item(0));
-		  	for(int i = 0; i < list.getLength(); i++) {
-	    		Node curr = list.item(i);
-	    		Node newNode = mergedXmpDocument.importNode(curr, true);
-    			rdf.appendChild(newNode);
-	    	}
-	    	return mergedXmpDocument;
-		} else
-			return getXmpDocument();
-	}
-	
-	public Document getXmpDocument() {
-		ensureDataRead();		
-		return xmpDocument;
-	}
-	
-	public boolean hasExtendedXmp() {
-		return hasExtendedXmp;
-	}
-	
-	public void read() throws IOException {
-		if(!isDataRead) {
-			if(xmpDataAsXmlString != null)
-				xmpDocument = XMLUtils.createXML(xmpDataAsXmlString);
-			else if(super.getData() != null)
-				xmpDocument = XMLUtils.createXML(super.getData());
-			
+	@Override
+	public void setData(byte[] data) {
+		if (data != null) {
+			this.xmpDocument = XMLUtils.createXML(data);
 			isDataRead = true;
 		}
+		super.setData(null);
 	}
-	
-	public void setExtendedXMPData(byte[] extendedXmpData) {
-		this.extendedXmpData = extendedXmpData;
-		hasExtendedXmp = true;
+
+	@Override
+	public byte[] getData() {
+		if (this.xmpDocument != null) {
+			try {
+				return XMLUtils.serializeToByteArray(this.xmpDocument);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
-	
+
+	/**
+	 * @return directories that belong to this MetaData.
+	 * */
+	@Override
+	public List<IDirectory> getMetaData() {
+		ArrayList<IDirectory> result = new ArrayList<IDirectory>();
+		try {
+			if (xmpDocument != null) {
+				String xml = XMLUtils.serializeToStringLS(xmpDocument);
+				IDirectory dir = new DefaultApiImpl("xml", XmpTag.XmlRaw, xml);
+				result.add(dir);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public Document getXmpDocument() {
+		return xmpDocument;
+	}
+
+
+	public void set(String xmpDataAsXmlString) {
+		if(xmpDataAsXmlString == null) throw new IllegalArgumentException("Input XMP string is null");
+		this.xmpDocument = XMLUtils.createXML(xmpDataAsXmlString);
+		isDataRead = true;
+	}
+
+	@Override
+	public void read() throws IOException {
+		// xml is internal format. no processing is neccessary
+	}
+
+	@Override
+	public void merge(byte[] data) {
+		if (data != null) {
+			if (extendedXmpLogging) {
+				String dbg = new String(data);
+				LOGGER.debug(this.getClass().getSimpleName() + ".merge: " + dbg);
+			}
+			try {
+				Document rootDoc = getXmpDocument();
+				Document extendedXmpDocument = XMLUtils.createXML(data);
+				if (extendedXmpDocument == null) {
+					String dbg = new String(data);
+					LOGGER.error(this.getClass().getSimpleName() + ".merge cannot parse xml: " + dbg);
+					return;
+				}
+
+				// Remove GUID from the standard XMP
+				XmpTag.Note_HasExtendedXMP.remove(rootDoc);
+				// XMLUtils.removeAttribute(mergedXmpDocument, "rdf:Description", "xmpNote:HasExtendedXMP");
+				// Copy all the children of rdf:RDF element
+				final Node rdfSource = getRdfRootNode(extendedXmpDocument);
+
+
+				NodeList itemsSource = (rdfSource == null) ? null : rdfSource.getChildNodes();
+				Element rdfDest = (Element) getRdfRootNode(rootDoc);
+				for (int i = 0; i < itemsSource.getLength(); i++) {
+					Node curr = itemsSource.item(i);
+					Node newNode = rootDoc.importNode(curr, true);
+					rdfDest.appendChild(newNode);
+				}
+			} catch (Exception ex) {
+				String dbg = new String(data);
+				LOGGER.error(this.getClass().getSimpleName() + ".merge cannot parse xml " + ex.getMessage() + dbg, ex);
+			}
+		}
+	}
+
+	protected Node getRdfRootNode(Document doc) {
+		// x:xmpmeta/rdf:RDF/rdf:Description
+		final NodeList rdfs = (doc == null) ? null : doc.getElementsByTagName("rdf:RDF");
+		return (rdfs == null) ? null : rdfs.item(0);
+	}
+
 	public void showMetadata() {
 		ensureDataRead();
-		XMLUtils.showXML(getMergedDocument());
+		XMLUtils.showXML(getXmpDocument());
 	}
 	
 	public abstract void write(OutputStream os) throws IOException;

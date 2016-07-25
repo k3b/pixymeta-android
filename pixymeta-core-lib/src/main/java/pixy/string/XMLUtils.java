@@ -80,7 +80,7 @@ public class XMLUtils {
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			onError("createDocumentNode ", e);
 		}
 		
 		return builder.newDocument();
@@ -98,7 +98,7 @@ public class XMLUtils {
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			onError("createXML-newDocumentBuilder ", e);
 		}
 		//Load and Parse the XML document
 		//document contains the complete XML as a Tree.
@@ -106,9 +106,9 @@ public class XMLUtils {
 		try {
 			document = builder.parse(new ByteArrayInputStream(xml));			
 		} catch (SAXException e) {
-			e.printStackTrace();
+			onError("createXML-parse ", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			onError("createXML-parse ", e);
 		}
 		
 		return document;
@@ -122,7 +122,7 @@ public class XMLUtils {
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			onError("createXML-newDocumentBuilder ", e);
 		}
 		//Load and Parse the XML document
 		//document contains the complete XML as a Tree.
@@ -131,14 +131,18 @@ public class XMLUtils {
 		try {
 			document = builder.parse(source);			
 		} catch (SAXException e) {
-			e.printStackTrace();
+			onError("createXML-parse ", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			onError("createXML-parse ", e);
 		}
 		
 		return document;		 
 	}
-	
+
+	public static void onError(String dbgContext, Exception e) {
+		LOGGER.error("XMLUtils." + dbgContext + e.getMessage(),e);
+	}
+
 	public static String escapeXML(String input) 
 	{
 		Iterator<Character> itr = StringUtils.stringIterator(input);
@@ -307,6 +311,8 @@ public class XMLUtils {
 		try {
 			transformer = tFactory.newTransformer();
 		} catch (TransformerConfigurationException e) {
+			onError("serializeToByteArray-newTransformer ", e);
+
 			throw new IOException("Unable to serialize XML document");
 		}
 		transformer.setOutputProperty(OutputKeys.INDENT, "no");
@@ -320,6 +326,7 @@ public class XMLUtils {
 		try {
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
+			onError("serializeToByteArray-transform ", e);
 			throw new IOException("Unable to serialize XML document");
 		}
 		
@@ -398,6 +405,8 @@ public class XMLUtils {
 		try {
 			transformer = tFactory.newTransformer();
 		} catch (TransformerConfigurationException e) {
+			onError("serializeToString-newTransformer ", e);
+
 			throw new IOException("Unable to serialize XML document");
 		}
 		transformer.setOutputProperty(OutputKeys.INDENT, "no");
@@ -409,6 +418,8 @@ public class XMLUtils {
 		try {
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
+			onError("serializeToString-transform", e);
+
 			throw new IOException("Unable to serialize XML document");
 		}		
 	    writer.flush();

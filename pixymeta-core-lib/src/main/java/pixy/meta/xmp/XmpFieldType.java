@@ -11,7 +11,8 @@ import pixy.string.XMLUtils;
  * Created by k3b on 12.07.2016.
  */
 public enum XmpFieldType implements IDataType {
-    GuidStringAttribute();
+    GuidStringAttribute(),
+    XmlRaw;
 
     @Override
     public String getName() {

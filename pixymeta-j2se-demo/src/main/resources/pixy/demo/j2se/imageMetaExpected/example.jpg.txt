@@ -3,3 +3,14 @@
 ############
 example.jpg
 XMP
+	xml.XmlRaw[XmlRaw]=<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta x:xmptk="Image::ExifTool 8.09" xmlns:x="adobe:ns:meta/">
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+ <rdf:Description rdf:about="" xmlns:aux="http://ns.adobe.com/exif/1.0/aux/">
+  <aux:OwnerName>Rich Durant - PDX</aux:OwnerName>
+ </rdf:Description>
+</rdf:RDF>
+</x:xmpmeta><?xpacket begin='﻿' id='W5M0MpCehiHzreSzNTczkc9d'?><?xpacket end='w'?>
+
+----------------------

@@ -267,39 +267,6 @@ public class JPEGMeta extends JpegMetaDef {
 		}	
 	}
 	
-	// Extract depth map from google phones
-	public static void extractDepthMap(InputStream is, String pathToDepthMap) throws IOException {
-		Map<MetadataType, IMetadata> meta = readMetadata(is);
-		XMP xmp = (XMP)meta.get(MetadataType.XMP);
-		if(xmp != null && xmp.hasExtendedXmp()) {
-			Document xmpDocument = xmp.getMergedDocument();
-			String depthMapMime = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GDepth:Mime");
-			if(!StringUtils.isNullOrEmpty(depthMapMime)) {
-				String data = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GDepth:Data");
-				if(!StringUtils.isNullOrEmpty(data)) {
-					String outpath = "";
-					if(pathToDepthMap.endsWith("\\") || pathToDepthMap.endsWith("/"))
-						outpath = pathToDepthMap + "google_depthmap";
-					else
-						outpath = pathToDepthMap.replaceFirst("[.][^.]+$", "") + "_depthmap";
-					if(depthMapMime.equalsIgnoreCase("image/png")) {
-						outpath += ".png";
-					} else if(depthMapMime.equalsIgnoreCase("image/jpeg")) {
-						outpath += ".jpg";
-					}
-					try {
-						byte[] image = Base64.decodeToByteArray(data);							
-						FileOutputStream fout = new FileOutputStream(new File(outpath));
-						fout.write(image);
-						fout.close();
-					} catch (Exception e) {							
-						e.printStackTrace();
-					}
-				}		
-			}
-		}	
-	}
-	
 	/**
 	 * Extracts thumbnail images from JFIF/JPG_SEGMENT_JFIF_APP0, ExifMetaSegment JPG_SEGMENT_EXIF_XMP_APP1 and/or Adobe JPG_SEGMENT_IPTC_APP13 segment if any.
 	 * 
@@ -1486,7 +1453,7 @@ public class JPEGMeta extends JpegMetaDef {
 		if(extendedXMP != null) {
 			XMP xmp = ((XMP)metadataMap.get(MetadataType.XMP));
 			if(xmp != null)
-				xmp.setExtendedXMPData(extendedXMP);
+				xmp.merge(extendedXMP);
 		}
 		
 		if(comments != null)

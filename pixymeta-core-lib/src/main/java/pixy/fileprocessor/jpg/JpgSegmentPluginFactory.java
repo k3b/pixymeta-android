@@ -79,8 +79,7 @@ public class JpgSegmentPluginFactory {
 
     public IMetadata create(byte[] data) {
         try {
-            final int subMarkerLen = (subMarker == null) ? 0 : subMarker.length();
-            data = ArrayUtils.subArray(data, subMarkerLen, data.length - subMarkerLen);
+            data = getBytesWithoutHeader(data);
             Constructor<? extends IMetadata> constructor = jpegExifClass.getConstructor(byte[].class);
             final IMetadata metadata = constructor.newInstance(data);
             if (debug) {
@@ -91,6 +90,12 @@ public class JpgSegmentPluginFactory {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public byte[] getBytesWithoutHeader(byte[] data) {
+        final int subMarkerLen = (subMarker == null) ? 0 : subMarker.length();
+        data = ArrayUtils.subArray(data, subMarkerLen, data.length - subMarkerLen);
+        return data;
     }
 
     @Override public String toString() {

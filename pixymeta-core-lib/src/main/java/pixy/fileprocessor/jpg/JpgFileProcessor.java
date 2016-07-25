@@ -164,21 +164,27 @@ public class JpgFileProcessor {
                 metadataMap.put(MetadataType.IPTC, new IPTC(iptc.getData()));
             }
         }
+
+        IMetadata xmp = metadataMap.get(MetadataType.XMP);
+        if ((xmp != null)) {
+            xmp.merge(null); // non-null: collect extendedXMP without processing. null: start processing extended xmp if available
+        }
     }
 
     protected void onProcessSegment(JpegSegment jpegSegment) {
 
-        JpgSegmentPluginFactory definition = JpgSegmentPluginFactory.find(jpegSegment.getJpegSegmentMarker(), jpegSegment.getData());
+        final byte[] jpegSegmentData = jpegSegment.getData();
+        JpgSegmentPluginFactory definition = JpgSegmentPluginFactory.find(jpegSegment.getJpegSegmentMarker(), jpegSegmentData);
         if (definition != null) {
             IMetadata meta = metadataMap.get(definition.type);
 
             if (meta == null) {
-                meta = definition.create(jpegSegment.getData());
+                meta = definition.create(jpegSegmentData);
                 if (meta != null) {
                     metadataMap.put(definition.type, meta);
                 }
             } else {
-                meta.merge(jpegSegment.getData());
+                meta.merge(definition.getBytesWithoutHeader(jpegSegmentData));
             }
         }
     }

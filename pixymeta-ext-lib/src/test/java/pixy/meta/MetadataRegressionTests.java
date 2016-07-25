@@ -235,6 +235,8 @@ public class MetadataRegressionTests {
 	}
 
 	@Test
+	// @Parameters({"flower.jpg"})
+	// @Parameters({"12.jpg"})
 	// @Parameters({"app13.jpg"})
 	@Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldCopyJpgFile(String fileName) throws IOException {

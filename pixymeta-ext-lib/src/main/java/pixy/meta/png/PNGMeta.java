@@ -119,7 +119,7 @@ public class PNGMeta {
   	}
   	
 	public static void insertXMP(InputStream is, OutputStream os, XMP xmp) throws IOException {
-  		insert(is, os, XMLUtils.serializeToString(xmp.getMergedDocument()));
+  		insert(is, os, XMLUtils.serializeToString(xmp.getXmpDocument()));
   	}
   	
   	// Add leading and trailing PI

@@ -39,6 +39,112 @@ ICC_PROFILE
 
 ----------------------
 XMP
+	xml.XmlRaw[XmlRaw]=<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta x:xmptk="XMP toolkit 3.0-28, framework 1.6" xmlns:x="adobe:ns:meta/">
+<rdf:RDF xmlns:iX="http://ns.adobe.com/iX/1.0/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/">
+  <crs:Version>2.0</crs:Version>
+  <crs:RawFileName>darwin-station-wheelie.ORF</crs:RawFileName>
+  <crs:WhiteBalance>As Shot</crs:WhiteBalance>
+  <crs:Exposure>0.00</crs:Exposure>
+  <crs:Shadows>0</crs:Shadows>
+  <crs:Brightness>50</crs:Brightness>
+  <crs:Contrast>+25</crs:Contrast>
+  <crs:Saturation>0</crs:Saturation>
+  <crs:Sharpness>25</crs:Sharpness>
+  <crs:LuminanceSmoothing>0</crs:LuminanceSmoothing>
+  <crs:ColorNoiseReduction>25</crs:ColorNoiseReduction>
+  <crs:ChromaticAberrationR>0</crs:ChromaticAberrationR>
+  <crs:ChromaticAberrationB>0</crs:ChromaticAberrationB>
+  <crs:VignetteAmount>0</crs:VignetteAmount>
+  <crs:ShadowTint>0</crs:ShadowTint>
+  <crs:RedHue>0</crs:RedHue>
+  <crs:RedSaturation>0</crs:RedSaturation>
+  <crs:GreenHue>0</crs:GreenHue>
+  <crs:GreenSaturation>0</crs:GreenSaturation>
+  <crs:BlueHue>0</crs:BlueHue>
+  <crs:BlueSaturation>0</crs:BlueSaturation>
+ </rdf:Description>
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:exif="http://ns.adobe.com/exif/1.0/">
+  <exif:ExposureTime>1/200</exif:ExposureTime>
+  <exif:ShutterSpeedValue>7643856/1000000</exif:ShutterSpeedValue>
+  <exif:FNumber>63/10</exif:FNumber>
+  <exif:ApertureValue>5310704/1000000</exif:ApertureValue>
+  <exif:ExposureProgram>2</exif:ExposureProgram>
+  <exif:ISOSpeedRatings>
+   <rdf:Seq>
+    <rdf:li>100</rdf:li>
+   </rdf:Seq>
+  </exif:ISOSpeedRatings>
+  <exif:DateTimeOriginal>2004-04-30T10:33:56Z</exif:DateTimeOriginal>
+  <exif:ExposureBiasValue>0/1</exif:ExposureBiasValue>
+  <exif:MaxApertureValue>2972656/1000000</exif:MaxApertureValue>
+  <exif:MeteringMode>5</exif:MeteringMode>
+  <exif:Flash rdf:parseType="Resource">
+   <exif:Fired>False</exif:Fired>
+   <exif:Return>0</exif:Return>
+  </exif:Flash>
+  <exif:FocalLength>23/1</exif:FocalLength>
+  <exif:ColorSpace>4294967295</exif:ColorSpace>
+  <exif:PixelXDimension>500</exif:PixelXDimension>
+  <exif:PixelYDimension>665</exif:PixelYDimension>
+ </rdf:Description>
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
+ </rdf:Description>
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/">
+  <photoshop:History/>
+ </rdf:Description>
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:tiff="http://ns.adobe.com/tiff/1.0/">
+  <tiff:Make>OLYMPUS CORPORATION</tiff:Make>
+  <tiff:Model>E-1</tiff:Model>
+  <tiff:Orientation>1</tiff:Orientation>
+  <tiff:XResolution>240/1</tiff:XResolution>
+  <tiff:YResolution>240/1</tiff:YResolution>
+  <tiff:ResolutionUnit>2</tiff:ResolutionUnit>
+ </rdf:Description>
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:xap="http://ns.adobe.com/xap/1.0/">
+  <xap:ModifyDate>2004-11-09T18:03:23-05:00</xap:ModifyDate>
+  <xap:CreateDate>2004-11-09T18:03:23-05:00</xap:CreateDate>
+  <xap:MetadataDate>2004-11-09T18:03:23-05:00</xap:MetadataDate>
+  <xap:CreatorTool>Adobe Photoshop CS Windows</xap:CreatorTool>
+ </rdf:Description>
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:stRef="http://ns.adobe.com/xap/1.0/sType/ResourceRef#" xmlns:xapMM="http://ns.adobe.com/xap/1.0/mm/">
+  <xapMM:DerivedFrom rdf:parseType="Resource">
+   <stRef:documentID>adobe:docid:photoshop:84bc3da2-32a3-11d9-9b08-f36cb846bc8b</stRef:documentID>
+  </xapMM:DerivedFrom>
+  <xapMM:DocumentID>adobe:docid:photoshop:84bc3da7-32a3-11d9-9b08-f36cb846bc8b</xapMM:DocumentID>
+ </rdf:Description>
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:xapRights="http://ns.adobe.com/xap/1.0/rights/">
+  <xapRights:Marked>True</xapRights:Marked>
+  <xapRights:WebStatement>http://philip.greenspun.com</xapRights:WebStatement>
+ </rdf:Description>
+
+ <rdf:Description rdf:about="uuid:84bc3da8-32a3-11d9-9b08-f36cb846bc8b" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <dc:format>image/jpeg</dc:format>
+  <dc:rights>
+   <rdf:Alt>
+    <rdf:li xml:lang="x-default">Copyright 2004 Philip Greenspun</rdf:li>
+   </rdf:Alt>
+  </dc:rights>
+  <dc:creator>
+   <rdf:Seq>
+    <rdf:li>Philip Greenspun, philg@mit.edu</rdf:li>
+   </rdf:Seq>
+  </dc:creator>
+ </rdf:Description>
+
+</rdf:RDF>
+</x:xmpmeta><?xpacket begin='﻿' id='W5M0MpCehiHzreSzNTczkc9d'?><?xpacket end='w'?>
+
+----------------------
 PHOTOSHOP_IRB
 JPG_JFIF
 JPG_ADOBE

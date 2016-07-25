@@ -4,12 +4,20 @@
 app13.jpg
 IPTC
 	CopyrightNotice.CopyrightNotice=(C) 2006 Trevor Lush
+	CopyrightNotice.CopyrightNotice=(c) Jupiterimages
 	Source.Source=Photos.com
+	Source.Source=Photos.com
+	CaptionAbstract.CaptionAbstract=Smiling businesswoman
 	SpecialInstructions.SpecialInstructions=RF Image, Model Released, Not Property Released
+	SpecialInstructions.SpecialInstructions=MR
 	Credit.Credit=www.jupiterimages.com
+	Credit.Credit=Getty Images
 	Headline.Headline=23995211
 	ByLine.ByLine=Jupiterimages
+	ByLine.ByLine=Jupiterimages
 	ObjectName.ObjectName=050217_5365_0541_
+	ObjectName.ObjectName=89676934
+	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
 	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
 	Keywords.Keywords=jun
 	Keywords.Keywords=person

@@ -14,7 +14,8 @@ import pixy.api.IFieldDefinition;
  */
 public enum XmpTag  implements IFieldDefinition {
     /** md5 checksum of extended xml. null if there is no extended xml  */
-    Note_HasExtendedXMP(XmpFieldType.GuidStringAttribute, "rdf:Description", "xmpNote:HasExtendedXMP");
+    Note_HasExtendedXMP(XmpFieldType.GuidStringAttribute, "rdf:Description", "xmpNote:HasExtendedXMP"),
+    XmlRaw(XmpFieldType.XmlRaw,null, null);
 
     private final XmpFieldType type;
     private final String element;
