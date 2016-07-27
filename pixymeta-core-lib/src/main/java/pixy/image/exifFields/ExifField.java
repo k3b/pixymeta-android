@@ -16,9 +16,16 @@ import pixy.api.IDataType;
 import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.io.RandomAccessOutputStream;
+import pixy.meta.exif.Tag;
 
 /**
  * One meta data item of basetype T living in a IFD (Image File Directory).
+ *
+ * Exif file Segments (or Image File Directories {@link pixy.image.exifFields.IFD}s)
+ * for exif-tags {@link pixy.meta.exif.Tag}
+ * contain {@link pixy.image.exifFields.ExifField}s
+ * with exif {@link pixy.image.exifFields.FieldType}s (i.e. {@link pixy.image.exifFields.FieldType#RATIONAL})
+ *
  * <p>
  * We could have used a ExifImageTag enum as the first parameter of the constructor, but this
  * will not work with unknown tags of tag type ExifImageTag.JPG_SEGMENT_UNKNOWN. In that case, we cannot

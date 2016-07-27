@@ -2,6 +2,27 @@
 
 ############
 bedroom_arithmetic.jpg
+EXIF
+	JpegExifSegmentPlugin.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin.ExifSubIFD[Long]=[164]
+	JpegExifSegmentPlugin.Orientation[Short]=[1]
+	JpegExifSegmentPlugin.DateTime[ASCII]=2011:06:17 11:34:09
+	JpegExifSegmentPlugin.YResolution[Rational]=[720000/10000]
+	JpegExifSegmentPlugin.XResolution[Rational]=[720000/10000]
+	JpegExifSegmentPlugin.Software[ASCII]=Adobe Photoshop CS5.1 Windows
+	JpegExifSegmentPlugin-sub.ExifImageHeight[Long]=[857]
+	JpegExifSegmentPlugin-sub.ExifImageWidth[Long]=[1280]
+	JpegExifSegmentPlugin-sub.ColorSpace[Short]=[1]
+	JpegExifSegmentPlugin-thumb.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin-thumb.Compression[Short]=[6]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormatLength/JpegIFByteCount[Long]=[5363]
+	JpegExifSegmentPlugin-thumb.YResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormat/JpegIFOffset[Long]=[302]
+	JpegExifSegmentPlugin-thumb.XResolution[Rational]=[72/1]
+
+----------------------
+
+----------------------
 IPTC
 	ApplicationRecordVersion.ApplicationRecordVersion=[0xA5,0x7E]
 	CodedCharacterSet.CodedCharacterSet=%G
@@ -44,10 +65,42 @@ ICC_PROFILE
 	ICC-Table.technologyTag=[0x73,0x69,0x67,0x20,0x00,0x00,0x00,0x00,0x43,0x52,0x54,0x20]
 
 ----------------------
+JpegICCSegmentPlugin:ensureDataRead->read
+JpegICCSegmentPlugin:read 3144
+
+----------------------
 XMP
 	xml.XmlRaw[XmlRaw]=<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta x:xmptk="Adobe XMP Core 5.0-c061 64.140949, 2010/12/07-10:57:01        " xmlns:x="adobe:ns:meta/"> <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"> <rdf:Description dc:format="image/jpeg" photoshop:ColorMode="3" photoshop:ICCProfile="sRGB IEC61966-2.1" rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/" xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#" xmlns:stRef="http://ns.adobe.com/xap/1.0/sType/ResourceRef#" xmlns:xmp="http://ns.adobe.com/xap/1.0/" xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/" xmlns:xmpRights="http://ns.adobe.com/xap/1.0/rights/" xmp:CreateDate="2009-03-29T22:10:32-07:00" xmp:CreatorTool="Adobe Photoshop CS5.1 Windows" xmp:MetadataDate="2011-06-17T11:34:09-07:00" xmp:ModifyDate="2011-06-17T11:34:09-07:00" xmpMM:DocumentID="uuid:D0732718E91CDE1190FDE40116511F9F" xmpMM:InstanceID="xmp.iid:2B9E8E759498E011ACF1CF653333CEA5" xmpMM:OriginalDocumentID="uuid:D0732718E91CDE1190FDE40116511F9F" xmpRights:Marked="False"> <xmpMM:DerivedFrom stRef:documentID="uuid:D0732718E91CDE1190FDE40116511F9F" stRef:instanceID="xmp.iid:2A9E8E759498E011ACF1CF653333CEA5" stRef:originalDocumentID="uuid:D0732718E91CDE1190FDE40116511F9F"/> <xmpMM:History> <rdf:Seq> <rdf:li stEvt:action="saved" stEvt:changed="/" stEvt:instanceID="xmp.iid:289E8E759498E011ACF1CF653333CEA5" stEvt:softwareAgent="Adobe Photoshop CS5.1 Windows" stEvt:when="2011-06-17T11:33:48-07:00"/> <rdf:li stEvt:action="converted" stEvt:parameters="from application/vnd.adobe.photoshop to image/png"/> <rdf:li stEvt:action="derived" stEvt:parameters="converted from application/vnd.adobe.photoshop to image/png"/> <rdf:li stEvt:action="saved" stEvt:changed="/" stEvt:instanceID="xmp.iid:299E8E759498E011ACF1CF653333CEA5" stEvt:softwareAgent="Adobe Photoshop CS5.1 Windows" stEvt:when="2011-06-17T11:33:48-07:00"/> <rdf:li stEvt:action="saved" stEvt:changed="/" stEvt:instanceID="xmp.iid:2A9E8E759498E011ACF1CF653333CEA5" stEvt:softwareAgent="Adobe Photoshop CS5.1 Windows" stEvt:when="2011-06-17T11:34:09-07:00"/> <rdf:li stEvt:action="converted" stEvt:parameters="from image/png to image/jpeg"/> <rdf:li stEvt:action="derived" stEvt:parameters="converted from image/png to image/jpeg"/> <rdf:li stEvt:action="saved" stEvt:changed="/" stEvt:instanceID="xmp.iid:2B9E8E759498E011ACF1CF653333CEA5" stEvt:softwareAgent="Adobe Photoshop CS5.1 Windows" stEvt:when="2011-06-17T11:34:09-07:00"/> </rdf:Seq> </xmpMM:History> </rdf:Description> </rdf:RDF> </x:xmpmeta><?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?><?xpacket end="w"?>
 
 ----------------------
+
+----------------------
 PHOTOSHOP_IRB
+JpegAdobeIRBSegmentPlugin:ensureDataRead->read
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read IPTC_NAA [Value: 0x0404] - IPTC-NAA record.[, skip=0] :0/12+15/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read CAPTION_DIGEST [Value: 0x0425] - (Photoshop 7.0) Caption digest. 16 bytes: RSA Data Security, MD5 message-digest algorithm.[, skip=0] :28/12+16/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PRINT_INFO_CS5 [Value: 0x043A] - (Photoshop CS5) Print Information. 4 bytes (descriptor version = 16).[, skip=0] :56/12+147/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PRINT_STYLE [Value: 0x043B] - (Photoshop CS5) Print Style. 4 bytes (descriptor version = 16).[, skip=0] :216/12+434/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read RESOLUTION_INFO [Value: 0x03ED] - ResolutionInfo structure.[, skip=0] :662/12+16/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PRINT_SCALE [Value: 0x0426] - (Photoshop 7.0) Print scale. 2 bytes style (0 = centered, 1 = size to fit, 2 = user defined). 4 bytes x location (floating point). 4 bytes y location (floating point). 4 bytes scale (floating point).[, skip=0] :690/12+14/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read GLOBLE_ANGLE [Value: 0x040D] - Global Angle. 4 bytes that contain an integer between 0..359 which is the global lighting angle for effects layer. If not present assumes 30.[, skip=0] :716/12+4/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read GLOBLE_ALTITUDE [Value: 0x0419] - Global Altitude. 4 byte entry for altitude.[, skip=0] :732/12+4/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PRINT_FLAGS [Value: 0x03F3] - Print flags. A series of one byte boolean values: labels, crop marks, color bars, registration marks, negative, flip, interpolate, caption.[, skip=0] :748/12+9/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read COPYRIGHT_FLAG [Value: 0x040A] - Copyright flag. Boolean indicating whether image is copyrighted. Can be set via Property suite or by user in File Info...[, skip=0] :770/12+1/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PRINT_FLAGS_INFO [Value: 0x2710] - Print flags information. 2 bytes version (=1), 1 byte center crop marks, 1 byte (=0), 4 bytes bleed width value, 2 bytes bleed width scale.[, skip=0] :784/12+10/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read COLOR_HALFTONING_INFO [Value: 0x03F5] - Color halftoning information.[, skip=0] :806/12+72/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read COLOR_FUNCTION [Value: 0x03F8] - Color transfer functions.[, skip=0] :890/12+112/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read GRID_INFO [Value: 0x0408] - Grid and guides information.[, skip=0] :1014/12+16/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read URL_LIST [Value: 0x041E] - URL List. 4 byte count of URLs, followed by 4 byte long, 4 byte ID, and unicode string for each count.[, skip=0] :1042/12+4/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read SLICES [Value: 0x041A] - Slices.[, skip=0] :1058/12+845/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PIXEL_ASPECT_RATIO [Value: 0x0428] - (Photoshop CS) Pixel Aspect Ratio. 4 bytes (version = 1 or 2), 8 bytes double, x / y of a pixel. Version 2, attempting to correct values for NTSC and PAL, previously off by a factor of approx. 5%.[, skip=0] :1916/12+12/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read DOC_SPECIFIC_ID [Value: 0x0414] - Document specific IDs, layer IDs will be generated starting at this base value or a greater value if we find existing IDs to already exceed it. 4 bytes.[, skip=0] :1940/12+4/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read THUMBNAIL_RESOURCE_PS5 [Value: 0x040C] - Photoshop 5.0 thumbnail resource.[, skip=0] :1956/12+5391/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read VERSION_INFO [Value: 0x0421] - (Photoshop 6.0) Version Info. 4 byte version, 1 byte HasRealMergedData, unicode string of writer name, unicode string of reader name, 4 bytes of file version.[, skip=0] :7360/12+89/7482
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read JPEG_QUALITY [Value: 0x0406] - JPEG quality. Private.[, skip=0] :7462/12+7/7482
+
+----------------------
 JPG_ADOBE
+
+----------------------

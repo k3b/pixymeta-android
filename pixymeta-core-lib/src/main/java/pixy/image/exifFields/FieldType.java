@@ -15,10 +15,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pixy.api.IDataType;
+import pixy.meta.exif.Tag;
 
 /**
- * TIFF field type.
- * 
+ * TIFF and exif field type.
+ *
+ * Exif file Segments (or Image File Directories {@link pixy.image.exifFields.IFD}s)
+ * for exif-tags {@link pixy.meta.exif.Tag}
+ * contain {@link pixy.image.exifFields.ExifField}s
+ * with exif {@link pixy.image.exifFields.FieldType}s (i.e. {@link pixy.image.exifFields.FieldType#RATIONAL})
+ *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/06/2013
  */
@@ -39,8 +45,10 @@ public enum FieldType implements IDataType {
 	// This is actually not a TIFF field type, internally it is a BYTE field
 	WINDOWSXP("WindowsXP", (short)0x000e),
 	
-	UNKNOWN("Unknown", (short)0x0000);
-	
+	UNKNOWN("Unknown", (short)0x0000),
+	GPSCoordinate("GPSCoordinate", Tag.DONOT_WRITE) // virtual rational3 plus sign
+	;
+
 	private FieldType(String name, short value) {
 		this.name = name;
 		this.value = value;

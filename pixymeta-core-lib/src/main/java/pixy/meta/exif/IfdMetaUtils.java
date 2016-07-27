@@ -312,14 +312,14 @@ public class IfdMetaUtils {
     static Tag getTagFromId(Method fromShortMethod, short tag, FieldType ftype) {
         Tag ftag = ExifImageTag.UNKNOWN;
         try {
-ftag = (Tag) fromShortMethod.invoke(null, tag);
-} catch (IllegalAccessException e) {
-e.printStackTrace();
-} catch (IllegalArgumentException e) {
-e.printStackTrace();
-} catch (InvocationTargetException e) {
-e.printStackTrace();
-}
+            ftag = (Tag) fromShortMethod.invoke(null, tag);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
 
         if (ftag == ExifImageTag.UNKNOWN) {
             ftag = new UnknownTag(tag, "(?? " + Integer.toHexString(tag&0xffff) +" ??)", ftype);

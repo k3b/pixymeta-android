@@ -148,6 +148,17 @@ public class Comments extends MetadataBase implements IDirectory, IFieldValue {
 		return StringUtils.toStringLines(this.comments);
 	}
 
+	/**
+	 * return values for fieldDefinition or null if it does not exist.
+	 *
+	 * @param fieldDefinition
+	 */
+	@Override
+	public IFieldValue getValue(IFieldDefinition fieldDefinition) {
+		if (CommentTag.equals(fieldDefinition)) return this;
+		return null;
+	}
+
 	@Override
 	public void setValue(String value) {
 		this.comments = StringUtils.fromLines(value);

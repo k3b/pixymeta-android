@@ -2,6 +2,59 @@
 
 ############
 flower.jpg
+EXIF
+	JpegExifSegmentPlugin.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin.ImageLength[Long]=[2048]
+	JpegExifSegmentPlugin.ImageWidth[Long]=[1536]
+	JpegExifSegmentPlugin.ExifSubIFD[Long]=[209]
+	JpegExifSegmentPlugin.YCbCrPositioning[Short]=[1]
+	JpegExifSegmentPlugin.GPSSubIFD[Long]=[803]
+	JpegExifSegmentPlugin.Orientation[Short]=[1]
+	JpegExifSegmentPlugin.YResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin.DateTime[ASCII]=2014:06:21 08:04:10
+	JpegExifSegmentPlugin.XResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin.Make[ASCII]=Motorola
+	JpegExifSegmentPlugin.Model[ASCII]=XT912
+	JpegExifSegmentPlugin-sub.ExifImageHeight[Long]=[2048]
+	JpegExifSegmentPlugin-sub.ExifImageWidth[Long]=[1536]
+	JpegExifSegmentPlugin-sub.SceneType[Undefined]=[0x01]
+	JpegExifSegmentPlugin-sub.ISOSpeedRatings[Short]=[114]
+	JpegExifSegmentPlugin-sub.ComponentConfiguration[Undefined]=[0x01,0x02,0x03,0x00]
+	JpegExifSegmentPlugin-sub.Contrast[Short]=[0]
+	JpegExifSegmentPlugin-sub.CompressedBitsPerPixel[Rational]=[0/1]
+	JpegExifSegmentPlugin-sub.FocalLengthIn35mmFormat[Short]=[34]
+	JpegExifSegmentPlugin-sub.ShutterSpeedValue[SRational]=[7/1]
+	JpegExifSegmentPlugin-sub.SubjectDistance[Rational]=[0/1]
+	JpegExifSegmentPlugin-sub.Sharpness[Short]=[0]
+	JpegExifSegmentPlugin-sub.FlashEnergy[Rational]=[1800/1]
+	JpegExifSegmentPlugin-sub.DigitalZoomRatio[Rational]=[65536/65535]
+	JpegExifSegmentPlugin-sub.ExposureProgram[Short]=[0]
+	JpegExifSegmentPlugin-sub.FNumber[Rational]=[24/10]
+	JpegExifSegmentPlugin-sub.ExposureIndex[Rational]=[0/0]
+	JpegExifSegmentPlugin-sub.FlashPixVersion[Undefined]=[0x30,0x30,0x30,0x30]
+	JpegExifSegmentPlugin-sub.SubjectDistanceRange[Short]=[0]
+	JpegExifSegmentPlugin-sub.MeteringMode[Short]=[1]
+	JpegExifSegmentPlugin-sub.ExposureBiasValue[SRational]=[0/10]
+	JpegExifSegmentPlugin-sub.Flash[Short]=[16]
+	JpegExifSegmentPlugin-sub.ExifVersion[Undefined]=[0x30,0x32,0x32,0x30]
+	JpegExifSegmentPlugin-sub.ColorSpace[Short]=[1]
+	JpegExifSegmentPlugin-sub.ApertureValue[Rational]=[3/1]
+	JpegExifSegmentPlugin-sub.MakerNote[Undefined]=[0x63,0x6F,0x6D,0x2E,0x67,0x6F,0x6F,0x67,0x6C,0x65 ...]
+	JpegExifSegmentPlugin-sub.WhileBalence[Short]=[0]
+	JpegExifSegmentPlugin-sub.MaxApertureValue[Rational]=[3/1]
+	JpegExifSegmentPlugin-sub.SceneCaptureType[Short]=[0]
+	JpegExifSegmentPlugin-sub.CustomRendered[Short]=[1]
+	JpegExifSegmentPlugin-sub.GainControl[Short]=[256]
+	JpegExifSegmentPlugin-sub.LightSource[Short]=[2]
+	JpegExifSegmentPlugin-sub.Saturation[Short]=[0]
+	JpegExifSegmentPlugin-sub.ExposureMode[Short]=[0]
+	JpegExifSegmentPlugin-sub.ExposureTime[Rational]=[9974/1000000]
+	JpegExifSegmentPlugin-sub.BrightValue[SRational]=[0/1]
+	JpegExifSegmentPlugin-sub.FocalLength[Rational]=[460/100]
+
+----------------------
+
+----------------------
 XMP
 	xml.XmlRaw[XmlRaw]=<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta x:xmptk="Adobe XMP Core 5.1.0-jc003" xmlns:x="adobe:ns:meta/">
@@ -13,4 +66,8 @@ XMP
 </x:xmpmeta>
 
 ----------------------
+
+----------------------
 JPG_JFIF
+
+----------------------

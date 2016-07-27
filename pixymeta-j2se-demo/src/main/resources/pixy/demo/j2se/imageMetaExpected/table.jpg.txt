@@ -2,6 +2,13 @@
 
 ############
 table.jpg
+EXIF
+	JpegExifSegmentPlugin.ExifSubIFD[Long]=[58]
+	JpegExifSegmentPlugin.DateTime[ASCII]=2014:04:17 14:34:05
+
+----------------------
+
+----------------------
 XMP
 	xml.XmlRaw[XmlRaw]=<?xml version="1.0" encoding="UTF-8"?>
 <x:xmpmeta x:xmptk="Adobe XMP Core 5.1.0-jc003" xmlns:x="adobe:ns:meta/">
@@ -13,4 +20,8 @@ XMP
 </x:xmpmeta>
 
 ----------------------
+
+----------------------
 JPG_JFIF
+
+----------------------

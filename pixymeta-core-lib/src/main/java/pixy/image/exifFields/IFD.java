@@ -26,16 +26,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import pixy.api.DefaultApiImpl;
 import pixy.api.IDirectory;
+import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.io.RandomAccessOutputStream;
+import pixy.meta.exif.ExifCompositeTag;
+import pixy.meta.exif.Tag;
 import pixy.string.StringUtils;
 
 /**
  * Image File Directory containing meta-data-fields and sub-IFDs
+ *
+ * Exif file Segments (or Image File Directories {@link pixy.image.exifFields.IFD}s)
+ * for exif-tags {@link pixy.meta.exif.Tag}
+ * contain {@link pixy.image.exifFields.ExifField}s
+ * with exif {@link pixy.image.exifFields.FieldType}s (i.e. {@link pixy.image.exifFields.FieldType#RATIONAL})
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
@@ -48,9 +59,9 @@ public class IFD implements IDirectory {
 	 * which serves as pointer to the sub IFD.
 	 */	 
 	private Map<pixy.meta.exif.Tag, IFD> children = new HashMap<pixy.meta.exif.Tag, IFD>();
-	
+
 	/** Create a fields map to hold all of the fields for this IFD */
-	private Map<Short, ExifField<?>> tiffFields = new HashMap<Short, ExifField<?>>();
+	private Map<IFieldDefinition, ExifField<?>> tiffFields = new HashMap<IFieldDefinition, ExifField<?>>();
 
 	private int endOffset;
 	
@@ -71,9 +82,14 @@ public class IFD implements IDirectory {
 		children.put(tag, child);
 		return this;
 	}
-	
+
 	public void addField(ExifField<?> exifField) {
-		tiffFields.put(exifField.getTag(), exifField);
+		tiffFields.put(exifField.getDefinition(), exifField);
+		ExifCompositeTag replacement = ExifCompositeTag.getReplacement(exifField.getDefinition());
+		if ((replacement != null) && (tiffFields.get(replacement) == null)) {
+			ExifField virtualValue = replacement.createVirtualField(this);
+			tiffFields.put(virtualValue.getDefinition(), virtualValue);
+		}
 	}
 	
 	public void addFields(Collection<ExifField<?>> exifFields) {
@@ -96,16 +112,28 @@ public class IFD implements IDirectory {
 	}
 	
 	public ExifField<?> getField(pixy.meta.exif.Tag tag) {
-		return tiffFields.get(tag.getValue());
+		return tiffFields.get(tag);
 	}
-	
+
+	/**
+	 * return values for fieldDefinition or null if it does not exist.
+	 *
+	 * @param fieldDefinition
+	 */
+	@Override
+	public IFieldValue getValue(IFieldDefinition fieldDefinition) {
+		if (fieldDefinition instanceof ExifCompositeTag) {
+			return ((ExifCompositeTag) fieldDefinition).createVirtualField(this);
+		}
+		return tiffFields.get(fieldDefinition);
+	}
 	/**
 	 * Return a String representation of the field 
 	 * @param tag Tag for the field
 	 * @return a String representation of the field
 	 */
 	public String getFieldAsString(pixy.meta.exif.Tag tag) {
-		ExifField<?> field = tiffFields.get(tag.getValue());
+		ExifField<?> field = tiffFields.get(tag);
 		if(field != null) {
 			FieldType ftype = field.getType();
 			String suffix = null;
@@ -143,7 +171,7 @@ public class IFD implements IDirectory {
 	
 	/** Remove a specific field associated with the given tag */
 	public ExifField<?> removeField(pixy.meta.exif.Tag tag) {
-		return tiffFields.remove(tag.getValue());
+		return tiffFields.remove(tag);
 	}
 	
 	/**
@@ -184,9 +212,11 @@ public class IFD implements IDirectory {
 				
 		for (ExifField<?> exifField : list)
 		{
-			toOffset = exifField.write(os, toOffset);
-			offset += 12; // Move to next field. Each field is of fixed length 12.
-			os.seek(offset); // Reset position to next directory field.
+			if (exifField.getType().getValue() != Tag.DONOT_WRITE) {
+				toOffset = exifField.write(os, toOffset);
+				offset += 12; // Move to next field. Each field is of fixed length 12.
+				os.seek(offset); // Reset position to next directory field.
+			}
 		}
 		
 		/* Set the stream position at the end of the IFD to update
@@ -234,7 +264,9 @@ public class IFD implements IDirectory {
 	@Override
 	public List<IFieldValue> getValues() {
 		if ((tiffFields != null) && (tiffFields.size() > 0)) {
-			return new ArrayList<IFieldValue>(tiffFields.values());
+			final ArrayList<IFieldValue> fieldValues = new ArrayList<IFieldValue>(tiffFields.values());
+			// ExifCompositeTag.replace(this, fieldValues);
+			return fieldValues;
 		}
 		return null;
 	}

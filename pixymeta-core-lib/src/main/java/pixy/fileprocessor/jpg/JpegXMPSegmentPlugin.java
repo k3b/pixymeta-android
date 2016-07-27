@@ -53,7 +53,7 @@ public class JpegXMPSegmentPlugin extends JpegXMP {
     public void merge(byte[] data) {
         if (data != null) {
             // We found ExtendedXMP, add the data to ExtendedXMP memory buffer
-            
+
             String xmpGUID = XMLUtils.getAttribute(getXmpDocument(), XmpTag.Note_HasExtendedXMP.getXmlElementName(), XmpTag.Note_HasExtendedXMP.getAttribute());
 
             int i = 0;

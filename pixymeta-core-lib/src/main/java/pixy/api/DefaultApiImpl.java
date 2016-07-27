@@ -64,6 +64,25 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
         return values;
     }
 
+    /**
+     * return values for fieldDefinition or null if it does not exist.
+     *
+     * @param fieldDefinition
+     */
+    @Override
+    public IFieldValue getValue(IFieldDefinition fieldDefinition) {
+        return getValue(getValues(), fieldDefinition);
+    }
+
+    public static IFieldValue getValue(List<IFieldValue> values, IFieldDefinition fieldDefinition) {
+        if ((values != null) && (fieldDefinition != null)) {
+            for (IFieldValue value : values) {
+                if ((value != null) && fieldDefinition.equals(value.getDefinition())) return value;
+            }
+        }
+        return null;
+    }
+
     @Override
     public IFieldDefinition getDefinition() {
         return fieldDefinition;

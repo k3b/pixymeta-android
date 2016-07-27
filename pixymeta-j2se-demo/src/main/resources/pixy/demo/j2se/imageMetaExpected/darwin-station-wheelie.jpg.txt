@@ -2,6 +2,29 @@
 
 ############
 darwin-station-wheelie.jpg
+EXIF
+	JpegExifSegmentPlugin.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin.ExifSubIFD[Long]=[252]
+	JpegExifSegmentPlugin.Orientation[Short]=[1]
+	JpegExifSegmentPlugin.DateTime[ASCII]=2004:11:09 18:03:23
+	JpegExifSegmentPlugin.YResolution[Rational]=[240/1]
+	JpegExifSegmentPlugin.Copyright[ASCII]=Copyright 2004 Philip Greenspun
+	JpegExifSegmentPlugin.XResolution[Rational]=[240/1]
+	JpegExifSegmentPlugin.Artist[ASCII]=Philip Greenspun, philg@mit.edu
+	JpegExifSegmentPlugin.Software[ASCII]=Adobe Photoshop CS Windows
+	JpegExifSegmentPlugin-sub.ExifImageHeight[Long]=[665]
+	JpegExifSegmentPlugin-sub.ExifImageWidth[Long]=[500]
+	JpegExifSegmentPlugin-sub.ColorSpace[Short]=[65535]
+	JpegExifSegmentPlugin-thumb.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin-thumb.Compression[Short]=[6]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormatLength/JpegIFByteCount[Long]=[8779]
+	JpegExifSegmentPlugin-thumb.YResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormat/JpegIFOffset[Long]=[390]
+	JpegExifSegmentPlugin-thumb.XResolution[Rational]=[72/1]
+
+----------------------
+
+----------------------
 IPTC
 	CopyrightNotice.CopyrightNotice=Copyright 2004 Philip Greenspun
 	ByLine.ByLine=Philip Greenspun, philg@mit.edu
@@ -36,6 +59,10 @@ ICC_PROFILE
 	ICC-Table.greenTRCTag=[0x63,0x75,0x72,0x76,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x33]
 	ICC-Table.copyrightTag=[0x74,0x65,0x78,0x74,0x00,0x00,0x00,0x00,0x43,0x6F,0x70,0x79,0x72,0x69,0x67,0x68,0x74,0x20,0x31,0x39,0x39,0x39,0x20,0x41,0x64,0x6F,0x62,0x65,0x20,0x53,0x79,0x73,0x74,0x65,0x6D,0x73,0x20,0x49,0x6E,0x63,0x6F,0x72,0x70,0x6F,0x72,0x61,0x74,0x65,0x64,0x00]
 	ICC-Table.mediaBlackPointTag=[0x58,0x59,0x5A,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]
+
+----------------------
+JpegICCSegmentPlugin:ensureDataRead->read
+JpegICCSegmentPlugin:read 560
 
 ----------------------
 XMP
@@ -145,6 +172,37 @@ XMP
 </x:xmpmeta><?xpacket begin='﻿' id='W5M0MpCehiHzreSzNTczkc9d'?><?xpacket end='w'?>
 
 ----------------------
+
+----------------------
 PHOTOSHOP_IRB
+JpegAdobeIRBSegmentPlugin:ensureDataRead->read
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read IPTC_NAA [Value: 0x0404] - IPTC-NAA record.[, skip=0] :0/12+79/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read CAPTION_DIGEST [Value: 0x0425] - (Photoshop 7.0) Caption digest. 16 bytes: RSA Data Security, MD5 message-digest algorithm.[, skip=0] :92/12+16/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read RESOLUTION_INFO [Value: 0x03ED] - ResolutionInfo structure.[, skip=0] :120/12+16/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PRINT_SCALE [Value: 0x0426] - (Photoshop 7.0) Print scale. 2 bytes style (0 = centered, 1 = size to fit, 2 = user defined). 4 bytes x location (floating point). 4 bytes y location (floating point). 4 bytes scale (floating point).[, skip=0] :148/12+14/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read GLOBLE_ANGLE [Value: 0x040D] - Global Angle. 4 bytes that contain an integer between 0..359 which is the global lighting angle for effects layer. If not present assumes 30.[, skip=0] :174/12+4/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read GLOBLE_ALTITUDE [Value: 0x0419] - Global Altitude. 4 byte entry for altitude.[, skip=0] :190/12+4/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PRINT_FLAGS [Value: 0x03F3] - Print flags. A series of one byte boolean values: labels, crop marks, color bars, registration marks, negative, flip, interpolate, caption.[, skip=0] :206/12+9/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read COPYRIGHT_FLAG [Value: 0x040A] - Copyright flag. Boolean indicating whether image is copyrighted. Can be set via Property suite or by user in File Info...[, skip=0] :228/12+1/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read URL [Value: 0x040B] - URL. Handle of a text string with uniform resource locator. Can be set via Property suite or by user in File Info...[, skip=0] :242/12+27/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PRINT_FLAGS_INFO [Value: 0x2710] - Print flags information. 2 bytes version (=1), 1 byte center crop marks, 1 byte (=0), 4 bytes bleed width value, 2 bytes bleed width scale.[, skip=0] :282/12+10/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read COLOR_HALFTONING_INFO [Value: 0x03F5] - Color halftoning information.[, skip=0] :304/12+72/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read COLOR_FUNCTION [Value: 0x03F8] - Color transfer functions.[, skip=0] :388/12+112/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read LAYER_STATE_INFO [Value: 0x0400] - Layer state information. 2 bytes containing the index of target layer. 0=bottom layer.[, skip=0] :512/12+2/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read LAYERS_GROUP_INFO [Value: 0x0402] - Layers group information. 2 bytes per layer containing a group ID for the dragging groups. Layers in a group have the same group ID.[, skip=0] :526/12+4/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read GRID_INFO [Value: 0x0408] - Grid and guides information.[, skip=0] :542/12+16/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read URL_LIST [Value: 0x041E] - URL List. 4 byte count of URLs, followed by 4 byte long, 4 byte ID, and unicode string for each count.[, skip=0] :570/12+4/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read SLICES [Value: 0x041A] - Slices.[, skip=0] :586/12+865/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read PIXEL_ASPECT_RATIO [Value: 0x0428] - (Photoshop CS) Pixel Aspect Ratio. 4 bytes (version = 1 or 2), 8 bytes double, x / y of a pixel. Version 2, attempting to correct values for NTSC and PAL, previously off by a factor of approx. 5%.[, skip=0] :1464/12+12/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read DOC_SPECIFIC_ID [Value: 0x0414] - Document specific IDs, layer IDs will be generated starting at this base value or a greater value if we find existing IDs to already exceed it. 4 bytes.[, skip=0] :1488/12+4/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read THUMBNAIL_RESOURCE_PS5 [Value: 0x040C] - Photoshop 5.0 thumbnail resource.[, skip=0] :1504/12+8807/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read VERSION_INFO [Value: 0x0421] - (Photoshop 6.0) Version Info. 4 byte version, 1 byte HasRealMergedData, unicode string of writer name, unicode string of reader name, 4 bytes of file version.[, skip=0] :10324/12+83/10440
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read JPEG_QUALITY [Value: 0x0406] - JPEG quality. Private.[, skip=0] :10420/12+7/10440
+
+----------------------
 JPG_JFIF
+
+----------------------
 JPG_ADOBE
+
+----------------------

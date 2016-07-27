@@ -1,7 +1,5 @@
-package pixy.api;
-
 /**
- * The base of all exif and iptc-tags
+ * This Package defines the structure of meta data as a set of interfaces.<br/>
  *
  * <ul>
  * <li>A {@link pixy.api.IDirectory} (i.e. exif directory {@link pixy.image.exifFields.IFD})
@@ -11,9 +9,5 @@ package pixy.api;
  *    and a {@link pixy.api.IDataType} (i.e. exif type {@link pixy.image.exifFields.FieldType#RATIONAL})</li>
  * </ul>
  *
- * Created by k3b on 17.06.2016.
- */
-public interface IFieldDefinition {
-    String getName();
-    IDataType getDataType();
-}
+ **/
+package pixy.api;

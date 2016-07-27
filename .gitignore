@@ -9,3 +9,4 @@ bin
 gradle-app.setting
 /todo.txt
 *.iml
+/download

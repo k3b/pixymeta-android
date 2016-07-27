@@ -7,7 +7,10 @@ import pixy.fileprocessor.jpg.JpegMetaDef;
 import pixy.meta.iptc.IPTCApplicationTag;
 
 /**
- * A jpg-file specific {@link AdobeIRBSegment} plugin for {@link JpgFileProcessor}
+ * A jpg-file specific {@link pixy.meta.adobe.AdobeIRBSegment} plugin for {@link pixy.fileprocessor.jpg.JpegMetaDef}.
+ * The most important {@link pixy.meta.adobe.AdobeIRBSegment} payload are the
+ *    {@link pixy.meta.iptc.IPTCTag}-s in {@link pixy.meta.iptc.IPTC} containers.
+ *
  * Created by k3b on 09.07.2016.
  */
 public class JpegAdobeIRBSegmentPlugin extends AdobeIRBSegment {

@@ -2,3 +2,46 @@
 
 ############
 exif-rgb-thumbnail-sony-d700.jpg
+EXIF
+	JpegExifSegmentPlugin.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin.ExifSubIFD[Long]=[206]
+	JpegExifSegmentPlugin.YCbCrPositioning[Short]=[1]
+	JpegExifSegmentPlugin.ImageDescription[ASCII]=
+	JpegExifSegmentPlugin.Orientation[Short]=[1]
+	JpegExifSegmentPlugin.DateTime[ASCII]=1998:12:01 14:22:36
+	JpegExifSegmentPlugin.YResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin.XResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin.Make[ASCII]=SONY
+	JpegExifSegmentPlugin.Model[ASCII]=DSC-D700
+	JpegExifSegmentPlugin-sub.ExifImageHeight[Long]=[1024]
+	JpegExifSegmentPlugin-sub.MeteringMode[Short]=[2]
+	JpegExifSegmentPlugin-sub.ExifImageWidth[Long]=[1344]
+	JpegExifSegmentPlugin-sub.ExposureBiasValue[SRational]=[0/100]
+	JpegExifSegmentPlugin-sub.ISOSpeedRatings[Short]=[200]
+	JpegExifSegmentPlugin-sub.ExifVersion[Undefined]=[0x30,0x32,0x30,0x30]
+	JpegExifSegmentPlugin-sub.Flash[Short]=[0]
+	JpegExifSegmentPlugin-sub.ColorSpace[Short]=[1]
+	JpegExifSegmentPlugin-sub.ComponentConfiguration[Undefined]=[0x01,0x02,0x03,0x00]
+	JpegExifSegmentPlugin-sub.ApertureValue[Rational]=[250/100]
+	JpegExifSegmentPlugin-sub.CompressedBitsPerPixel[Rational]=[6/1]
+	JpegExifSegmentPlugin-sub.ShutterSpeedValue[SRational]=[500/100]
+	JpegExifSegmentPlugin-sub.DateTimeOriginal[ASCII]=1998:12:01 14:22:36
+	JpegExifSegmentPlugin-sub.ExposureProgram[Short]=[3]
+	JpegExifSegmentPlugin-sub.DateTimeDigitized[ASCII]=1998:12:01 14:22:36
+	JpegExifSegmentPlugin-sub.FlashPixVersion[Undefined]=[0x30,0x31,0x30,0x30]
+	JpegExifSegmentPlugin-thumb.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin-thumb.RowsPerStrip[Long]=[60]
+	JpegExifSegmentPlugin-thumb.ImageLength[Long]=[60]
+	JpegExifSegmentPlugin-thumb.ImageWidth[Long]=[80]
+	JpegExifSegmentPlugin-thumb.StripOffsets[Long]=[648]
+	JpegExifSegmentPlugin-thumb.Compression[Short]=[1]
+	JpegExifSegmentPlugin-thumb.StripByteCounts[Long]=[14400]
+	JpegExifSegmentPlugin-thumb.PhotometricInterpretation[Short]=[2]
+	JpegExifSegmentPlugin-thumb.YResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin-thumb.XResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin-thumb.BitsPerSample[Short]=[8,8,8]
+	JpegExifSegmentPlugin-thumb.SamplesPerPixel[Short]=[3]
+
+----------------------
+
+----------------------

@@ -2,8 +2,56 @@
 
 ############
 exif-rgb-thumbnail-bad-exif-kodak-dc210.jpg
+EXIF
+	JpegExifSegmentPlugin.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin.ExifSubIFD[Long]=[374]
+	JpegExifSegmentPlugin.YCbCrPositioning[Short]=[1]
+	JpegExifSegmentPlugin.ImageDescription[ASCII]=
+	JpegExifSegmentPlugin.Orientation[Short]=[1]
+	JpegExifSegmentPlugin.YResolution[Rational]=[216/1]
+	JpegExifSegmentPlugin.Copyright[ASCII]=
+	JpegExifSegmentPlugin.XResolution[Rational]=[216/1]
+	JpegExifSegmentPlugin.Make[ASCII]=Eastman Kodak Company
+	JpegExifSegmentPlugin.Model[ASCII]=DC210 Zoom (V05.00)
+	JpegExifSegmentPlugin-sub.MeteringMode[Short]=[2]
+	JpegExifSegmentPlugin-sub.ExposureBiasValue[SRational]=[0/10]
+	JpegExifSegmentPlugin-sub.Flash[Short]=[1]
+	JpegExifSegmentPlugin-sub.ExifVersion[Undefined]=[0x30,0x31,0x31,0x30]
+	JpegExifSegmentPlugin-sub.ComponentConfiguration[Undefined]=[0x01,0x02,0x03,0x00]
+	JpegExifSegmentPlugin-sub.ApertureValue[Rational]=[40/10]
+	JpegExifSegmentPlugin-sub.MakerNote[Undefined]=[0x01,0x04,0x03,0x00,0x02,0x01,0xFF,0xFF,0x00,0x01 ...]
+	JpegExifSegmentPlugin-sub.CompressedBitsPerPixel[Rational]=[0/0]
+	JpegExifSegmentPlugin-sub.MaxApertureValue[Rational]=[400/100]
+	JpegExifSegmentPlugin-sub.ShutterSpeedValue[SRational]=[50/10]
+	JpegExifSegmentPlugin-sub.SubjectDistance[Rational]=[0/0]
+	JpegExifSegmentPlugin-sub.DateTimeOriginal[ASCII]=2000:10:26 16:46:51
+	JpegExifSegmentPlugin-sub.FNumber[Rational]=[40/10]
+	JpegExifSegmentPlugin-sub.LightSource[Short]=[0]
+	JpegExifSegmentPlugin-sub.ExposureTime[Rational]=[1/30]
+	JpegExifSegmentPlugin-sub.BrightValue[SRational]=[15/10]
+	JpegExifSegmentPlugin-sub.FocalLength[Rational]=[44/10]
+	JpegExifSegmentPlugin-thumb.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin-thumb.RowsPerStrip[Short]=[72]
+	JpegExifSegmentPlugin-thumb.ImageLength[Short]=[72]
+	JpegExifSegmentPlugin-thumb.ImageWidth[Short]=[96]
+	JpegExifSegmentPlugin-thumb.StripOffsets[Short]=[928]
+	JpegExifSegmentPlugin-thumb.Compression[Short]=[1]
+	JpegExifSegmentPlugin-thumb.StripByteCounts[Short]=[20736]
+	JpegExifSegmentPlugin-thumb.PhotometricInterpretation[Short]=[2]
+	JpegExifSegmentPlugin-thumb.YResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin-thumb.XResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin-thumb.BitsPerSample[Short]=[8,8,8]
+	JpegExifSegmentPlugin-thumb.SamplesPerPixel[Short]=[3]
+
+----------------------
+
+----------------------
 COMMENT
 	Comment.Comment[StringLines]=Lovely smoke effect here, of which I'm secretly very proud.
 
+
+----------------------
+JpegCommentSegmentPlugin:ensureDataRead->read
+JpegCommentSegmentPlugin:ensureDataRead->read
 
 ----------------------

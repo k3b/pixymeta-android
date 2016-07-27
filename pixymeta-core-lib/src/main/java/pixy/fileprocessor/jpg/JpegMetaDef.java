@@ -12,7 +12,7 @@ public class JpegMetaDef {
     // Photoshop AdobeIRBSegment identification with trailing byte [0x00].
     public static final String PHOTOSHOP_IRB_ID = "Photoshop 3.0\0";
     // EXIF identifier with trailing bytes [0x00, 0x00].
-    public static final String EXIF_ID = "ExifMetaSegment\0\0";
+    public static final String EXIF_ID = "Exif\0\0";
     // Largest size for each extended XMP chunk
     protected static final int MAX_EXTENDED_XMP_CHUNK_SIZE = 65458;
     protected static final int MAX_XMP_CHUNK_SIZE = 65504;

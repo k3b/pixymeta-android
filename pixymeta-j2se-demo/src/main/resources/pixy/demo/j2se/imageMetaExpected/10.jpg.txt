@@ -7,6 +7,16 @@ COMMENT
 
 
 ----------------------
+JpegCommentSegmentPlugin:ensureDataRead->read
+JpegCommentSegmentPlugin:ensureDataRead->read
+
+----------------------
 JPG_JFIF
+
+----------------------
 JPG_DUCKY
+
+----------------------
 JPG_ADOBE
+
+----------------------

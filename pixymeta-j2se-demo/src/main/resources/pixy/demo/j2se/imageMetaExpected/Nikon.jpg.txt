@@ -2,6 +2,38 @@
 
 ############
 Nikon.jpg
+EXIF
+	JpegExifSegmentPlugin.ExifSubIFD[Long]=[182]
+	JpegExifSegmentPlugin.ImageDescription[ASCII]=Door to the Soul
+	JpegExifSegmentPlugin.Copyright[ASCII]=Kenneth Garrett
+	JpegExifSegmentPlugin.Make[ASCII]=Nikon
+	JpegExifSegmentPlugin.Artist[ASCII]=Kenneth Garrett
+	JpegExifSegmentPlugin.Software[ASCII]=Opanda PowerExif
+	JpegExifSegmentPlugin.Model[ASCII]=Nikon F5
+	JpegExifSegmentPlugin-sub.MeteringMode[Short]=[1]
+	JpegExifSegmentPlugin-sub.DateTimeOriginal[ASCII]=2005:04:07 11:46:28
+	JpegExifSegmentPlugin-sub.ExpandFilm[ASCII]=Kodak E100SW
+	JpegExifSegmentPlugin-sub.ExifVersion[Undefined]=[0x30,0x32,0x32,0x31]
+	JpegExifSegmentPlugin-sub.FNumber[Rational]=[8/1]
+	JpegExifSegmentPlugin-sub.LightSource[Short]=[1]
+	JpegExifSegmentPlugin-sub.ExpandLens[ASCII]=Nikkor 20-35mm f/2.8 zoom
+	JpegExifSegmentPlugin-sub.DateTimeDigitized[ASCII]=2005:04:07 11:46:28
+	JpegExifSegmentPlugin-sub.UserComment[Undefined]=[0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x54,0x6F ...]
+	JpegExifSegmentPlugin-sub.ExposureTime[Rational]=[1/30]
+	JpegExifSegmentPlugin-sub.FocalLengthIn35mmFormat[Short]=[20]
+	JpegExifSegmentPlugin-thumb.Compression[Short]=[6]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormatLength/JpegIFByteCount[Long]=[4769]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormat/JpegIFOffset[Long]=[1114]
+
+----------------------
+
+----------------------
 JPG_JFIF
+
+----------------------
 JPG_DUCKY
+
+----------------------
 JPG_ADOBE
+
+----------------------

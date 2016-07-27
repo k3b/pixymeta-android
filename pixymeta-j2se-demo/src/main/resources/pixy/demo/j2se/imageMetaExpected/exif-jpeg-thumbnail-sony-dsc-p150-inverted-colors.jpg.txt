@@ -2,6 +2,58 @@
 
 ############
 exif-jpeg-thumbnail-sony-dsc-p150-inverted-colors.jpg
+EXIF
+	JpegExifSegmentPlugin.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin.ExifSubIFD[Long]=[274]
+	JpegExifSegmentPlugin.YCbCrPositioning[Short]=[2]
+	JpegExifSegmentPlugin.ImageDescription[ASCII]=
+	JpegExifSegmentPlugin.Orientation[Short]=[1]
+	JpegExifSegmentPlugin.DateTime[ASCII]=2012:04:10 09:53:08
+	JpegExifSegmentPlugin.YResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin.XResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin.Make[ASCII]=SONY
+	JpegExifSegmentPlugin.Software[ASCII]=Paint Shop Pro Photo 11,20
+	JpegExifSegmentPlugin.Model[ASCII]=DSC-P150
+	JpegExifSegmentPlugin-sub.ExifImageHeight[Long]=[1662]
+	JpegExifSegmentPlugin-sub.ExifImageWidth[Long]=[2437]
+	JpegExifSegmentPlugin-sub.SceneType[Undefined]=[0x01]
+	JpegExifSegmentPlugin-sub.ISOSpeedRatings[Short]=[100]
+	JpegExifSegmentPlugin-sub.ComponentConfiguration[Undefined]=[0x01,0x02,0x03,0x00]
+	JpegExifSegmentPlugin-sub.Contrast[Short]=[0]
+	JpegExifSegmentPlugin-sub.CompressedBitsPerPixel[Rational]=[8/1]
+	JpegExifSegmentPlugin-sub.Sharpness[Short]=[0]
+	JpegExifSegmentPlugin-sub.DateTimeOriginal[ASCII]=2012:04:04 13:52:12
+	JpegExifSegmentPlugin-sub.ExposureProgram[Short]=[2]
+	JpegExifSegmentPlugin-sub.FNumber[Rational]=[28/10]
+	JpegExifSegmentPlugin-sub.FlashPixVersion[Undefined]=[0x30,0x31,0x30,0x30]
+	JpegExifSegmentPlugin-sub.MeteringMode[Short]=[5]
+	JpegExifSegmentPlugin-sub.ExposureBiasValue[SRational]=[0/10]
+	JpegExifSegmentPlugin-sub.ExifVersion[Undefined]=[0x30,0x32,0x32,0x30]
+	JpegExifSegmentPlugin-sub.Flash[Short]=[13]
+	JpegExifSegmentPlugin-sub.ColorSpace[Short]=[1]
+	JpegExifSegmentPlugin-sub.FileSource[Undefined]=[0x03]
+	JpegExifSegmentPlugin-sub.WhileBalence[Short]=[0]
+	JpegExifSegmentPlugin-sub.MaxApertureValue[Rational]=[48/16]
+	JpegExifSegmentPlugin-sub.SceneCaptureType[Short]=[0]
+	JpegExifSegmentPlugin-sub.Saturation[Short]=[0]
+	JpegExifSegmentPlugin-sub.LightSource[Short]=[0]
+	JpegExifSegmentPlugin-sub.CustomRendered[Short]=[0]
+	JpegExifSegmentPlugin-sub.DateTimeDigitized[ASCII]=2012:04:04 13:52:12
+	JpegExifSegmentPlugin-sub.ExposureMode[Short]=[0]
+	JpegExifSegmentPlugin-sub.ExifInteroperabilityOffset[Long]=[720]
+	JpegExifSegmentPlugin-sub.ExposureTime[Rational]=[10/400]
+	JpegExifSegmentPlugin-sub.FocalLength[Rational]=[79/10]
+	JpegExifSegmentPlugin-thumb.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin-thumb.YCbCrPositioning[Short]=[2]
+	JpegExifSegmentPlugin-thumb.Compression[Short]=[6]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormatLength/JpegIFByteCount[Long]=[7935]
+	JpegExifSegmentPlugin-thumb.YResolution[Rational]=[72/1]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormat/JpegIFOffset[Long]=[862]
+	JpegExifSegmentPlugin-thumb.XResolution[Rational]=[72/1]
+
+----------------------
+
+----------------------
 IPTC
 	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
 
@@ -43,4 +95,12 @@ ICC_PROFILE
 	ICC-Table.technologyTag=[0x73,0x69,0x67,0x20,0x00,0x00,0x00,0x00,0x43,0x52,0x54,0x20]
 
 ----------------------
+JpegICCSegmentPlugin:ensureDataRead->read
+JpegICCSegmentPlugin:read 7261
+
+----------------------
 PHOTOSHOP_IRB
+JpegAdobeIRBSegmentPlugin:ensureDataRead->read
+JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read IPTC_NAA [Value: 0x0404] - IPTC-NAA record.[, skip=0] :0/12+7/20
+
+----------------------

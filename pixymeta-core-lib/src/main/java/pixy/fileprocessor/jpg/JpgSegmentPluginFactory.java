@@ -21,7 +21,6 @@ public class JpgSegmentPluginFactory {
     // Obtain a logger instance
     private static final Logger LOGGER = LoggerFactory.getLogger(JpgSegmentPluginFactory.class);
 
-
     static List<JpgSegmentPluginFactory> factories = new ArrayList<JpgSegmentPluginFactory>();
 
     public final MetadataType type;
@@ -29,7 +28,7 @@ public class JpgSegmentPluginFactory {
     private final String subMarker;
     private final Class<? extends IMetadata> jpegExifClass;
     private final Class<? extends IFieldDefinition>[] fieldDefs;
-    private boolean debug = false;
+    private static boolean debug = true;
 
     private JpgSegmentPluginFactory(MetadataType type, JpegSegmentMarker marker, String subMarker, Class<? extends IMetadata> jpegExifClass
             , Class<? extends IFieldDefinition>... fieldDefs) {
@@ -43,19 +42,29 @@ public class JpgSegmentPluginFactory {
     /** each plugin implementation registeres here in it-s static constructor */
     public static JpgSegmentPluginFactory register(MetadataType type, JpegSegmentMarker marker, String subMarker,
                                                    Class<? extends IMetadata> jpegExifClass, Class<? extends IFieldDefinition>... fieldDefs) {
-        LOGGER.info("JpgSegmentPluginFactory.register " + jpegExifClass.getSimpleName());
+        LOGGER.info("JpgSegmentPluginFactory.register " + jpegExifClass.getSimpleName() + "; " + marker +
+                " + " + subMarker);
         final JpgSegmentPluginFactory factory = new JpgSegmentPluginFactory(type, marker, subMarker, jpegExifClass, fieldDefs);
         factories.add(factory);
         return factory;
     }
 
     public static JpgSegmentPluginFactory find(JpegSegmentMarker marker, byte[] data) {
-        for (JpgSegmentPluginFactory processor : factories) {
-            if ((processor.marker != null) && (marker == processor.marker)) {
-                String subMarker = processor.subMarker;
-                if ((subMarker == null) || (new String(data, 0, subMarker.length()).equals(subMarker))) {
-                    return processor;
+        if (data != null) {
+            for (JpgSegmentPluginFactory processor : factories) {
+                if ((processor.marker != null) && (marker == processor.marker)) {
+                    String subMarker = processor.subMarker;
+                    final String currentSubMarker = (subMarker == null) ? null : new String(data, 0, subMarker.length());
+                    if ((subMarker == null) || (subMarker.equals(currentSubMarker))) {
+                        if (debug)
+                            LOGGER.info("find-byMarker(" + marker + " + " + subMarker + ") : " + subMarker);
+                        return processor;
+                    }
                 }
+            }
+            if (debug) {
+                String subMarker = new String(data, 0, Math.min(10, data.length));
+                LOGGER.info("find-byMarker(" + marker + " + " + subMarker + ") : " + null);
             }
         }
         return null;
@@ -68,12 +77,14 @@ public class JpgSegmentPluginFactory {
                     for (Class<? extends IFieldDefinition> candidate : processor.fieldDefs) {
                         if (candidate.isAssignableFrom(tagClass))
                         {
+                            if (debug) LOGGER.info("find-byClass(" + tagClass + ") : " + processor);
                             return processor;
                         }
                     }
                 }
             }
         }
+        if (debug) LOGGER.info("find-byClass(" + tagClass + ") : " + null);
         return null;
     }
 
@@ -102,8 +113,8 @@ public class JpgSegmentPluginFactory {
         return jpegExifClass.getSimpleName() + "[" + marker.getName() + "," + subMarker +  "]";
     }
 
-    public JpgSegmentPluginFactory setDebug(boolean debug) {
-        this.debug = debug;
+    public JpgSegmentPluginFactory setDebug(boolean newDebugValue) {
+        debug = newDebugValue;
         return this;
     }
 }

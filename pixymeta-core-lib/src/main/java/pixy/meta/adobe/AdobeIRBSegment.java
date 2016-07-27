@@ -28,13 +28,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pixy.fileprocessor.jpg.JpgFileProcessor;
 import pixy.meta.MetadataBase;
 import pixy.meta.MetadataType;
 import pixy.util.ArrayUtils;
 import pixy.io.IOUtils;
 
 /**
- * Container for sub-MetaData  */
+ * The {@link pixy.meta.adobe.AdobeIRBSegment} is Container for sub-MetaData
+ * The most important payload are the
+ *    {@link pixy.meta.iptc.IPTCTag}-s in {@link pixy.meta.iptc.IPTC} containers.
+ * */
 public class AdobeIRBSegment extends MetadataBase {
 	private static final String SUB_SEGMENT_MARKER = "8BIM";
 	private boolean containsThumbnail;

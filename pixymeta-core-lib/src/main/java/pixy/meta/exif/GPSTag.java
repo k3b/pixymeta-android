@@ -30,25 +30,13 @@ public enum GPSTag implements Tag {
 	GPS_LATITUDE_REF("GPSLatitudeRef", (short)0x0001,FieldType.ASCII),
 	GPS_LATITUDE("GPSLatitude", (short)0x0002,FieldType.RATIONAL) {
 		public String getFieldAsString(Object value) {
-			int[] intValues = (int[])value;
-			if(intValues.length != 6)
-				throw new IllegalArgumentException("Wrong number of GPSLatitute data number: " + intValues.length);
-			//formatting numbers up to 3 decimal places in Java
-	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return StringUtils.rationalToString(df,  true, intValues[0], intValues[1]) + '\u00B0' + StringUtils.rationalToString(df, true, intValues[2], intValues[3])
-	        		+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
+			return getDegreeMinuteSecondString(this, (int[]) value);
 		}
 	},
 	GPS_LONGITUDE_REF("GPSLongitudeRef", (short)0x0003,FieldType. ASCII),
 	GPS_LONGITUDE("GPSLongitude", (short)0x0004,FieldType.RATIONAL) {
 		public String getFieldAsString(Object value) {
-			int[] intValues = (int[])value;
-			if(intValues.length != 6)
-				throw new IllegalArgumentException("Wrong number of GPSLongitude data number: " + intValues.length);
-			//formatting numbers up to 3 decimal places in Java
-	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return StringUtils.rationalToString(df,  true, intValues[0], intValues[1]) + '\u00B0' + StringUtils.rationalToString(df, true, intValues[2], intValues[3])
-	        		+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
+			return getDegreeMinuteSecondString(this, (int[]) value);
 		}
 	},
 	GPS_ALTITUDE_REF("GPSAltitudeRef", (short)0x0005,FieldType.BYTE),
@@ -56,7 +44,9 @@ public enum GPSTag implements Tag {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 2)
-				throw new IllegalArgumentException("Wrong number of GPSAltitute data number: " + intValues.length);
+				throw new IllegalArgumentException("Wrong number of " +
+						this +
+						" data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
 	        return StringUtils.rationalToString(df, true, intValues) + "m";	
@@ -66,7 +56,9 @@ public enum GPSTag implements Tag {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 6)
-				throw new IllegalArgumentException("Wrong number of GPSTimeStamp data number: " + intValues.length);
+				throw new IllegalArgumentException("Wrong number of " +
+						this +
+						" data number: " + intValues.length);
 			//formatting numbers up to 2 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.##");
 	        return StringUtils.rationalToString(df, true, intValues[0], intValues[1]) + ":" + StringUtils.rationalToString(df, true, intValues[2], intValues[3])
@@ -86,7 +78,9 @@ public enum GPSTag implements Tag {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 2)
-				throw new IllegalArgumentException("Wrong number of GPSImgDirection data number: " + intValues.length);
+				throw new IllegalArgumentException("Wrong number of " +
+						this +
+						" data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
 	        return StringUtils.rationalToString(df, true, intValues) + '\u00B0';	
@@ -96,25 +90,13 @@ public enum GPSTag implements Tag {
 	GPS_DEST_LATITUDE_REF("GPSDestLatitudeRef", (short)0x0013),
 	GPS_DEST_LATITUDE("GPSDestLatitude", (short)0x0014) {
 		public String getFieldAsString(Object value) {
-			int[] intValues = (int[])value;
-			if(intValues.length != 6)
-				throw new IllegalArgumentException("Wrong number of GPSDestLatitute data number: " + intValues.length);
-			//formatting numbers up to 3 decimal places in Java
-	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return StringUtils.rationalToString(df,  true, intValues[0], intValues[1]) + '\u00B0' + StringUtils.rationalToString(df, true, intValues[2], intValues[3])
-	        		+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
+			return getDegreeMinuteSecondString(this, (int[]) value);
 		}
 	},
 	GPS_DEST_LONGITUDE_REF("GPSDestLongitudeRef", (short)0x0015),
 	GPS_DEST_LONGITUDE("GPSDestLongitude", (short)0x0016) {
 		public String getFieldAsString(Object value) {
-			int[] intValues = (int[])value;
-			if(intValues.length != 6)
-				throw new IllegalArgumentException("Wrong number of GPSDestLongitude data number: " + intValues.length);
-			//formatting numbers up to 3 decimal places in Java
-	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return StringUtils.rationalToString(df,  true, intValues[0], intValues[1]) + '\u00B0' + StringUtils.rationalToString(df, true, intValues[2], intValues[3])
-	        		+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
+			return getDegreeMinuteSecondString(this, (int[]) value);
 		}
 	},
 	GPS_DEST_BEARING_REF("GPSDestBearingRef", (short)0x0017),
@@ -122,7 +104,9 @@ public enum GPSTag implements Tag {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 2)
-				throw new IllegalArgumentException("Wrong number of GPSDestBearing data number: " + intValues.length);
+				throw new IllegalArgumentException("Wrong number of " +
+						this +
+						" data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
 	        return StringUtils.rationalToString(df, true, intValues) + "m";	
@@ -133,7 +117,9 @@ public enum GPSTag implements Tag {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 2)
-				throw new IllegalArgumentException("Wrong number of GPSDestDistance data number: " + intValues.length);
+				throw new IllegalArgumentException("Wrong number of " +
+						this +
+						" data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
 	        return StringUtils.rationalToString(df, true, intValues) + "m";	
@@ -145,7 +131,7 @@ public enum GPSTag implements Tag {
 	GPS_DIFFERENTIAL("GPSDifferential", (short)0x001e),
 	GPS_HPOSITIONING_ERROR("GPSHPositioningError", (short)0x001f),
 	// unknown tag
-	UNKNOWN("Unknown",  (short)0xffff); 
+	UNKNOWN("Unknown",  (short)0xffff);
     // End of EXIF GPSSubIFD tags
 	
 	private GPSTag(String name, short value, FieldType fieldType) {
@@ -217,5 +203,17 @@ public enum GPSTag implements Tag {
 	@Override
 	public IDataType getDataType() {
 		return getFieldType();
+	}
+
+	private static String getDegreeMinuteSecondString(GPSTag owner, int[] value) {
+		int[] intValues = value;
+		if(intValues.length != 6)
+			throw new IllegalArgumentException("Wrong number of " +
+					owner +
+					" data number: " + intValues.length);
+		//formatting numbers up to 3 decimal places in Java
+		DecimalFormat df = new DecimalFormat("#,###,###.###");
+		return StringUtils.rationalToString(df,  true, intValues[0], intValues[1]) + '\u00B0' + StringUtils.rationalToString(df, true, intValues[2], intValues[3])
+				+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
 	}
 }

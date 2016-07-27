@@ -9,7 +9,7 @@ import pixy.meta.MetadataReader;
 import pixy.meta.MetadataType;
 
 /**
- * Created by EVE on 06.07.2016.
+ * Created by k3b on 06.07.2016.
  */
 public interface IMetadata extends MetadataReader {
 	byte[] getData();

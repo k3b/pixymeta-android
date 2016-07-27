@@ -103,6 +103,7 @@ public class MetadataRegressionTests {
 	}
 
 	@Test
+	// @Parameters({"iptc.tif"})
 	// @Parameters({"12.jpg"})
 	@Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldFormat(String fileName) throws IOException
@@ -235,7 +236,7 @@ public class MetadataRegressionTests {
 	}
 
 	@Test
-	// @Parameters({"flower.jpg"})
+	// @Parameters({"bedroom_arithmetic.jpg"})
 	// @Parameters({"12.jpg"})
 	// @Parameters({"app13.jpg"})
 	@Parameters(method = "getAllResourceImageNamesForTest")
