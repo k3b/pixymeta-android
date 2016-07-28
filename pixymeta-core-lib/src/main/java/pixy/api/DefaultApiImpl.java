@@ -16,22 +16,51 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
     public static DefaultApiImpl UNKNOWN = new DefaultApiImpl("JPG_SEGMENT_UNKNOWN");
     private List<IFieldValue> values = null;
 
+    private DefaultApiImpl() {
+
+    }
+
+    public static IDirectory createDirecotry(String name) {
+        return new DefaultApiImpl().setName(name);
+    }
+
+    public static IDataType createDataType(String name) {
+        return new DefaultApiImpl().setName(name);
+    }
+
+    private static IFieldDefinition createFieldDefinition(String type) {
+        return new DefaultApiImpl().setName(type);
+    }
+
     /** simuate IDataType, IDirectory or IFieldDefinition */
-    public DefaultApiImpl(String name) {
+    private DefaultApiImpl(String name) {
         this.name = name;
         // this.value = value;
     }
 
+    public static IDirectory createDirecotry(String name, IFieldDefinition fieldDefinition, String value) {
+        return new DefaultApiImpl(name, fieldDefinition, value);
+    }
     /** create IDirectory with values of type IFieldDefinition */
-    public DefaultApiImpl(String name, IFieldDefinition fieldDefinition, String... values) {
+    private DefaultApiImpl(String name, IFieldDefinition fieldDefinition, String value) {
         this.name = name;
-        for (String item: values) {
-            getValues().add(new DefaultApiImpl(fieldDefinition, item));
-        }
+        getValues().add(new DefaultApiImpl(fieldDefinition, value));
+    }
+
+    public static IFieldValue createFieldValue(String type, String value) {
+        return new DefaultApiImpl(createFieldDefinition(type), value);
+    }
+
+    public static IFieldValue createFieldValue(IFieldDefinition fieldDefinition, String value) {
+        final DefaultApiImpl result = new DefaultApiImpl(fieldDefinition, value);
+        result.name = fieldDefinition.getName() + "=" + value;
+        return result;
+
     }
 
     /** simualte IFieldValue */
-    public DefaultApiImpl(IFieldDefinition fieldDefinition, String value) {
+    private DefaultApiImpl(IFieldDefinition fieldDefinition, String value) {
+        name = value;
         this.fieldDefinition = fieldDefinition;
         this.value = value;
     }
@@ -41,14 +70,20 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
         this.name = name;
     }
 
-    public DefaultApiImpl(String name, List<IFieldValue> values) {
-
+    private DefaultApiImpl(String name, List<IFieldValue> values) {
         this.name = name;
         this.values = values;
     }
 
+    public static IDirectory createDirectory(String name, List<IFieldValue> values) {
+        DefaultApiImpl result = new DefaultApiImpl();
+        result.values = values;
+        result.name = name;
+        return result;
+    }
+
     @Override
-    public IDirectory setName(String name) {
+    public DefaultApiImpl setName(String name) {
         this.name = name;
         return this;
     }
@@ -107,4 +142,10 @@ public class DefaultApiImpl implements IDataType, IFieldDefinition, IFieldValue,
     public static boolean isNull(Object candidate) {
         return ((candidate == null) || (candidate == UNKNOWN));
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
 }

@@ -22,6 +22,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ import pixy.io.IOUtils;
 import pixy.fileprocessor.jpg.JpgFileProcessor;
 import pixy.meta.jpeg.JPEGMeta;
 import pixy.string.StringUtils;
+import pixy.util.DataFormatter;
 import pixy.util.FileUtils;
 
 // @RunWith(Parameterized.class)
@@ -128,41 +130,59 @@ public class MetadataRegressionTests {
 
 	}
 
+	private static Comparator<Object> toStringComparator = new Comparator<Object>() {
+
+		@Override
+		public int compare(Object lhs, Object rhs) {
+			return ("" + lhs).compareTo("" + rhs);
+		}
+	};
+
 	protected StringBuffer showMetaAndVerify(String fileName, Map<MetadataType, IMetadata> metadataMap, File outdir,
 											 boolean showDetailed, InputStream resultComparePath) throws FileNotFoundException {
 		StringBuffer result = new StringBuffer();
 		result.append("\n\n############\n").append(fileName).append("\n");
 
-		final Set<MetadataType> metadataTypeSet = metadataMap.keySet();
-		MetadataType[] keys = metadataTypeSet.toArray(new MetadataType[metadataTypeSet.size()]);
-		Arrays.sort(keys);
-		for (MetadataType key : keys) {
-			result.append(key).append("\n");
+		// sort items to prevent regression errors
+		final Set<MetadataType> metadataTypeSet = (metadataMap == null) ? null : metadataMap.keySet();
+		if (metadataTypeSet != null) {
+			MetadataType[] keys = metadataTypeSet.toArray(new MetadataType[metadataTypeSet.size()]);
+			Arrays.sort(keys, toStringComparator);
+			for (MetadataType key : keys) {
+				result.append(key).append("\n");
 
-			IMetadata metaData = (showDetailed) ? metadataMap.get(key) : null;
-			 if (metaData != null) {
-				 try {
-					 List<IDirectory> metaDir = metaData.getMetaData();
-					 if (metaDir != null) {
-						 for (IDirectory dir : metaDir) {
-							 final List<IFieldValue> values = dir.getValues();
-							 if (values != null) {
-								 for (IFieldValue value : values) {
-									 formatValue(result, dir, value);
-								 }
-							 }
-						 }
-						 result.append("\n----------------------\n");
-					 }
+				IMetadata metaData = (showDetailed) ? metadataMap.get(key) : null;
+				if (metaData != null) {
+					try {
+						List<IDirectory> metaDir = metaData.getMetaData();
+						if (metaDir != null) {
+							IDirectory[] dirs = metaDir.toArray(new IDirectory[metaDir.size()]);
+							Arrays.sort(dirs, toStringComparator);
 
-				 } catch (Exception ex) {
-					 result.append(ex.getMessage()).append("\n").append(ex.getStackTrace()).append("\n");
-				 } finally {
-					 String dbgMessage = metaData.getDebugMessage();
-					 if (dbgMessage != null)
-						 result.append(dbgMessage).append("\n----------------------\n");
-				 }
-			 }
+							for (IDirectory dir : dirs) {
+								if (dir != null) {
+									final List<IFieldValue> valueList = dir.getValues();
+									if (valueList != null) {
+										IFieldValue[] values = valueList.toArray(new IFieldValue[valueList.size()]);
+										Arrays.sort(values, toStringComparator);
+										for (IFieldValue value : values) {
+											formatValue(result, dir, value);
+										}
+									}
+								}
+							}
+							result.append("\n----------------------\n");
+						}
+
+					} catch (Exception ex) {
+						result.append(ex.getMessage()).append("\n").append(ex.getStackTrace()).append("\n");
+					} finally {
+						String dbgMessage = metaData.getDebugMessage();
+						if ((dbgMessage != null) && (dbgMessage.length() > 0))
+							result.append("\ndebug:\n").append(dbgMessage).append("\n----------------------\n");
+					}
+				}
+			}
 		}
 
 		if (showDetailed) {
@@ -221,7 +241,7 @@ public class MetadataRegressionTests {
 			if (DefaultApiImpl.isNull(dataType) && !DefaultApiImpl.isNull(fieldDefinition)) dataType = fieldDefinition.getDataType();
 
 			final String dataTypeName = DefaultApiImpl.isNull(dataType) ? null : dataType.getName();
-			final String valueAsString = value.getValueAsString();
+			final String valueAsString = DataFormatter.abreviateValue(value.getValueAsString());
 			final String fieldDefinitionName = DefaultApiImpl.isNull(fieldDefinition) ? null :  fieldDefinition.getName();
 
 			result.append("\t");

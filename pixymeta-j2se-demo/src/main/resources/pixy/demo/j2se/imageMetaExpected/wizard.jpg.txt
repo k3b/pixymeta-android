@@ -3,27 +3,31 @@
 ############
 wizard.jpg
 IPTC
+	ByLine.ByLine=Byline
+	ByLineTitle.ByLineTitle=BylineTitle
+	CaptionAbstract.CaptionAbstract=Caption
+	Category.Category=Cat
+	Category.Category=Supl. Category1
+	Category.Category=Supl. Category2
+	City.City=City
+	CopyrightNotice.CopyrightNotice=Copyright
 	CountryName.CountryName=Country
 	Credit.Credit=Credits
-	OriginalTransmissionRef.OriginalTransmissionRef=Transmission
 	DateCreated.DateCreated=20000101
-	WriterEditor.WriterEditor=CaptionWriter
-	City.City=City
-	Source.Source=Source
-	CopyrightNotice.CopyrightNotice=Copyright
-	Category.Category=Supl. Category2
-	Category.Category=Supl. Category1
-	Category.Category=Cat
-	SpecialInstructions.SpecialInstructions=Special Instr.
-	CaptionAbstract.CaptionAbstract=Caption
-	ByLine.ByLine=Byline
 	Headline.Headline=Headline
-	ProvinceState.ProvinceState=State
 	ObjectName.ObjectName=ObjectName
-	ByLineTitle.ByLineTitle=BylineTitle
+	OriginalTransmissionRef.OriginalTransmissionRef=Transmission
+	ProvinceState.ProvinceState=State
+	Source.Source=Source
+	SpecialInstructions.SpecialInstructions=Special Instr.
+	WriterEditor.WriterEditor=CaptionWriter
 
 ----------------------
+JPG_ADOBE
+JPG_JFIF
 PHOTOSHOP_IRB
+
+debug:
 JpegAdobeIRBSegmentPlugin:ensureDataRead->read
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read IPTC_NAA [Value: 0x0404] - IPTC-NAA record.[, skip=0] :0/12+250/5040
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read RESOLUTION_INFO [Value: 0x03ED] - ResolutionInfo structure.[, skip=0] :262/12+16/5040
@@ -37,11 +41,5 @@ JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read GRID_INFO [Value: 0x0408] - Grid 
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read DOC_SPECIFIC_ID [Value: 0x0414] - Document specific IDs, layer IDs will be generated starting at this base value or a greater value if we find existing IDs to already exceed it. 4 bytes.[, skip=0] :598/12+4/5040
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read THUMBNAIL_RESOURCE_PS5 [Value: 0x040C] - Photoshop 5.0 thumbnail resource.[, skip=0] :614/12+4394/5040
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read JPEG_QUALITY [Value: 0x0406] - JPEG quality. Private.[, skip=0] :5020/12+7/5040
-
-----------------------
-JPG_JFIF
-
-----------------------
-JPG_ADOBE
 
 ----------------------

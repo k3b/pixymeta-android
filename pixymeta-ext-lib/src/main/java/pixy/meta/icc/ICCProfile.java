@@ -326,28 +326,28 @@ public class ICCProfile extends Metadata {
 
 	/** same as showHeader but instead of printing the data is added to structure */
 	private IDirectory getHeader() {
-		IDirectory dir = new DefaultApiImpl("ICC-Header");
+		IDirectory dir = DefaultApiImpl.createDirecotry("ICC-Header");
 		List<IFieldValue> items = dir.getValues();
-		items.add(new DefaultApiImpl(new DefaultApiImpl("ProfileSize"), ""+ getProfileSize()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("CMM Type"), ""+ getPreferredCMMType()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Version"), ""+ getProfileVersionNumber()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Profile/Device Class"), ""+ getProfileClassDescription()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Color Space"), ""+ getColorSpace()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("PCS"), ""+ getPCS()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Date Created"), ""+ getDateTimeCreated()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Profile File Signature"), ""+ getProfileFileSignature()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Primary Platform Signature"), ""+ getPrimaryPlatformSignature()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Flags"), ""+ getProfileFlags()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Device Manufacturer"), ""+ getDeviceManufacturer()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Device Model"), ""+ getDeviceModel()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Device Attributes"), ""+ getDeviceAttributes()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Rendering Intent"), ""+ getRenderingIntentDescription()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("PCS Illuminant"),
-				"X = " + getPCSXYZ()[0] +
+		items.add(DefaultApiImpl.createFieldValue("ProfileSize", ""+ getProfileSize()));
+		items.add(DefaultApiImpl.createFieldValue("CMM Type", ""+ getPreferredCMMType()));
+		items.add(DefaultApiImpl.createFieldValue("Version", ""+ getProfileVersionNumber()));
+		items.add(DefaultApiImpl.createFieldValue("Profile/Device Class", ""+ getProfileClassDescription()));
+		items.add(DefaultApiImpl.createFieldValue("Color Space", ""+ getColorSpace()));
+		items.add(DefaultApiImpl.createFieldValue("PCS", ""+ getPCS()));
+		items.add(DefaultApiImpl.createFieldValue("Date Created", ""+ getDateTimeCreated()));
+		items.add(DefaultApiImpl.createFieldValue("Profile File Signature", ""+ getProfileFileSignature()));
+		items.add(DefaultApiImpl.createFieldValue("Primary Platform Signature", ""+ getPrimaryPlatformSignature()));
+		items.add(DefaultApiImpl.createFieldValue("Flags", ""+ getProfileFlags()));
+		items.add(DefaultApiImpl.createFieldValue("Device Manufacturer", ""+ getDeviceManufacturer()));
+		items.add(DefaultApiImpl.createFieldValue("Device Model", ""+ getDeviceModel()));
+		items.add(DefaultApiImpl.createFieldValue("Device Attributes", ""+ getDeviceAttributes()));
+		items.add(DefaultApiImpl.createFieldValue("Rendering Intent", ""+ getRenderingIntentDescription()));
+		items.add(DefaultApiImpl.createFieldValue("PCS Illuminant",
+						"X = " + getPCSXYZ()[0] +
 						", Y = " + getPCSXYZ()[1] +
 						", Z = " + getPCSXYZ()[2]));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Profile Creator"), ""+ getProfileCreator()));
-		items.add(new DefaultApiImpl(new DefaultApiImpl("Profile ID"), ""+ getProfileID()));
+		items.add(DefaultApiImpl.createFieldValue("Profile Creator", ""+ getProfileCreator()));
+		items.add(DefaultApiImpl.createFieldValue("Profile ID", ""+ getProfileID()));
 		return dir;
 	}
 
@@ -367,7 +367,7 @@ public class ICCProfile extends Metadata {
 		ensureDataRead();
 		List<IDirectory> result =  new ArrayList<IDirectory>();
 		result.add(getHeader());
-		result.add(new DefaultApiImpl("ICC-Table", new ArrayList<IFieldValue>(tagTable.getTagEntries())));
+		result.add(DefaultApiImpl.createDirectory("ICC-Table", new ArrayList<IFieldValue>(tagTable.getTagEntries())));
 
 		return result;
 	}

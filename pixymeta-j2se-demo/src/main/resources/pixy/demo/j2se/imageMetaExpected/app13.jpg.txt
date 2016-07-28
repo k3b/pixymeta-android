@@ -2,95 +2,100 @@
 
 ############
 app13.jpg
-IPTC
-	CopyrightNotice.CopyrightNotice=(C) 2006 Trevor Lush
-	CopyrightNotice.CopyrightNotice=(c) Jupiterimages
-	Source.Source=Photos.com
-	Source.Source=Photos.com
-	CaptionAbstract.CaptionAbstract=Smiling businesswoman
-	SpecialInstructions.SpecialInstructions=RF Image, Model Released, Not Property Released
-	SpecialInstructions.SpecialInstructions=MR
-	Credit.Credit=www.jupiterimages.com
-	Credit.Credit=Getty Images
-	Headline.Headline=23995211
-	ByLine.ByLine=Jupiterimages
-	ByLine.ByLine=Jupiterimages
-	ObjectName.ObjectName=050217_5365_0541_
-	ObjectName.ObjectName=89676934
-	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
-	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
-	Keywords.Keywords=jun
-	Keywords.Keywords=person
-	Keywords.Keywords=caucasian
-	Keywords.Keywords=adult
-	Keywords.Keywords=woman
-	Keywords.Keywords=female
-	Keywords.Keywords=businesswoman
-	Keywords.Keywords=blonde
-	Keywords.Keywords=executive
-	Keywords.Keywords=professional
-	Keywords.Keywords=business
-	Keywords.Keywords=corporate
-	Keywords.Keywords=workplace
-	Keywords.Keywords=manager
-	Keywords.Keywords=management
-	Keywords.Keywords=head shot
-	Keywords.Keywords=decision maker
-	Keywords.Keywords=decisive
-	Keywords.Keywords=leader
-	Keywords.Keywords=leadership
-	Keywords.Keywords=portrait
-	Keywords.Keywords=smiling
-	Keywords.Keywords=smile
-	Keywords.Keywords=blurry
-	Keywords.Keywords=blurred
-	Keywords.Keywords=focus
-	Keywords.Keywords=people
-	Keywords.Keywords=meeting
-	Keywords.Keywords=interview
-	Keywords.Keywords=close-up
-	Keywords.Keywords=happy
-	Keywords.Keywords=inside
-	Keywords.Keywords=indoors
-	Keywords.Keywords=office
-	Keywords.Keywords=23995211
-
-----------------------
 ICC_PROFILE
+	ICC-Header.Device Model=
+	ICC-Header.Profile/Device Class='mntr': display devices - CRTs and LCDs
+	ICC-Header.Date Created=1999/6/3, 0:0:0
+	ICC-Header.Version=2.10
 	ICC-Header.ProfileSize=560
 	ICC-Header.CMM Type=ADBE
-	ICC-Header.Version=2.10
-	ICC-Header.Profile/Device Class='mntr': display devices - CRTs and LCDs
-	ICC-Header.Color Space=RGB
-	ICC-Header.PCS=XYZ
-	ICC-Header.Date Created=1999/6/3, 0:0:0
-	ICC-Header.Profile File Signature=acsp
-	ICC-Header.Primary Platform Signature=APPL
-	ICC-Header.Flags=not embedded, used independently
-	ICC-Header.Device Manufacturer=none
-	ICC-Header.Device Model=
-	ICC-Header.Device Attributes=reflective, glossy, positive, color
-	ICC-Header.Rendering Intent=perceptual
-	ICC-Header.PCS Illuminant=X = 0.9642029, Y = 1.0, Z = 0.8249054
 	ICC-Header.Profile Creator=ADBE
-	ICC-Header.Profile ID=[0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]
-	ICC-Table.blueMatrixColumnTag=[0x58,0x59,0x5A,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x26,0x31,0x00,0x00,0x10,0x2F,0x00,0x00,0xBE,0x9C]
-	ICC-Table.mediaWhitePointTag=[0x58,0x59,0x5A,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0xF3,0x51,0x00,0x01,0x00,0x00,0x00,0x01,0x16,0xCC]
-	ICC-Table.redTRCTag=[0x63,0x75,0x72,0x76,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x33]
-	ICC-Table.redMatrixColumnTag=[0x58,0x59,0x5A,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x9C,0x18,0x00,0x00,0x4F,0xA5,0x00,0x00,0x04,0xFC]
+	ICC-Header.Primary Platform Signature=APPL
+	ICC-Header.Color Space=RGB
+	ICC-Header.PCS Illuminant=X = 0.9642029, Y = 1.0, Z = 0.8249054
+	ICC-Header.PCS=XYZ
+	ICC-Header.Profile ID=[81 bytes, md5=13ec46a7506627b73f0e6d93ae2af573] [0x00,0x00,0x00,0x00,0x00,0...0,0x00,0x00,0x00,0x00,0x00
+	ICC-Header.Profile File Signature=acsp
+	ICC-Header.Device Manufacturer=none
+	ICC-Header.Flags=not embedded, used independently
+	ICC-Header.Rendering Intent=perceptual
+	ICC-Header.Device Attributes=reflective, glossy, positive, color
+	ICC-Table.mediaBlackPointTag=[101 bytes, md5=171b937b39c5e2311288dce726d69342] [0x58,0x59,0x5A,0x20,0x00,0...0,0x00,0x00,0x00,0x00,0x00
 	ICC-Table.blueTRCTag=[0x63,0x75,0x72,0x76,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x33]
-	ICC-Table.profileDescriptionTag=[0x64,0x65,0x73,0x63,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x11,0x41,0x64,0x6F,0x62,0x65,0x20,0x52,0x47,0x42,0x20,0x28,0x31,0x39,0x39,0x38,0x29,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]
-	ICC-Table.greenMatrixColumnTag=[0x58,0x59,0x5A,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x34,0x8D,0x00,0x00,0xA0,0x2C,0x00,0x00,0x0F,0x95]
+	ICC-Table.blueMatrixColumnTag=[101 bytes, md5=c4644001018e54aa08137a3fbde5339e] [0x58,0x59,0x5A,0x20,0x00,0...0,0x2F,0x00,0x00,0xBE,0x9C
+	ICC-Table.copyrightTag=[251 bytes, md5=a844be2587ccd69d9152a74ce7ac27c8] [0x74,0x65,0x78,0x74,0x00,0...2,0x61,0x74,0x65,0x64,0x00
+	ICC-Table.profileDescriptionTag=[536 bytes, md5=bbe4e18b28db3b083a3ec0d193b91123] [0x64,0x65,0x73,0x63,0x00,0...0,0x00,0x00,0x00,0x00,0x00
 	ICC-Table.greenTRCTag=[0x63,0x75,0x72,0x76,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x33]
-	ICC-Table.copyrightTag=[0x74,0x65,0x78,0x74,0x00,0x00,0x00,0x00,0x43,0x6F,0x70,0x79,0x72,0x69,0x67,0x68,0x74,0x20,0x31,0x39,0x39,0x39,0x20,0x41,0x64,0x6F,0x62,0x65,0x20,0x53,0x79,0x73,0x74,0x65,0x6D,0x73,0x20,0x49,0x6E,0x63,0x6F,0x72,0x70,0x6F,0x72,0x61,0x74,0x65,0x64,0x00]
-	ICC-Table.mediaBlackPointTag=[0x58,0x59,0x5A,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]
+	ICC-Table.greenMatrixColumnTag=[101 bytes, md5=cd4a6b1b5da2d5b6a9340cbea2ad4eac] [0x58,0x59,0x5A,0x20,0x00,0...0,0x2C,0x00,0x00,0x0F,0x95
+	ICC-Table.redTRCTag=[0x63,0x75,0x72,0x76,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x33]
+	ICC-Table.redMatrixColumnTag=[101 bytes, md5=240cf781c9201d9d95a36f0d23fd6056] [0x58,0x59,0x5A,0x20,0x00,0...F,0xA5,0x00,0x00,0x04,0xFC
+	ICC-Table.mediaWhitePointTag=[101 bytes, md5=a6312441fc0cf83599a9ae466638166f] [0x58,0x59,0x5A,0x20,0x00,0...0,0x00,0x00,0x01,0x16,0xCC
 
 ----------------------
+
+debug:
 JpegICCSegmentPlugin:ensureDataRead->read
 JpegICCSegmentPlugin:read 560
 
 ----------------------
+IPTC
+	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
+	ApplicationRecordVersion.ApplicationRecordVersion=[0x00,0x02]
+	ByLine.ByLine=Jupiterimages
+	ByLine.ByLine=Jupiterimages
+	CaptionAbstract.CaptionAbstract=Smiling businesswoman
+	CopyrightNotice.CopyrightNotice=(C) 2006 Trevor Lush
+	CopyrightNotice.CopyrightNotice=(c) Jupiterimages
+	Credit.Credit=Getty Images
+	Credit.Credit=www.jupiterimages.com
+	Headline.Headline=23995211
+	Keywords.Keywords=23995211
+	Keywords.Keywords=adult
+	Keywords.Keywords=blonde
+	Keywords.Keywords=blurred
+	Keywords.Keywords=blurry
+	Keywords.Keywords=business
+	Keywords.Keywords=businesswoman
+	Keywords.Keywords=caucasian
+	Keywords.Keywords=close-up
+	Keywords.Keywords=corporate
+	Keywords.Keywords=decision maker
+	Keywords.Keywords=decisive
+	Keywords.Keywords=executive
+	Keywords.Keywords=female
+	Keywords.Keywords=focus
+	Keywords.Keywords=happy
+	Keywords.Keywords=head shot
+	Keywords.Keywords=indoors
+	Keywords.Keywords=inside
+	Keywords.Keywords=interview
+	Keywords.Keywords=jun
+	Keywords.Keywords=leader
+	Keywords.Keywords=leadership
+	Keywords.Keywords=management
+	Keywords.Keywords=manager
+	Keywords.Keywords=meeting
+	Keywords.Keywords=office
+	Keywords.Keywords=people
+	Keywords.Keywords=person
+	Keywords.Keywords=portrait
+	Keywords.Keywords=professional
+	Keywords.Keywords=smile
+	Keywords.Keywords=smiling
+	Keywords.Keywords=woman
+	Keywords.Keywords=workplace
+	ObjectName.ObjectName=050217_5365_0541_
+	ObjectName.ObjectName=89676934
+	Source.Source=Photos.com
+	Source.Source=Photos.com
+	SpecialInstructions.SpecialInstructions=MR
+	SpecialInstructions.SpecialInstructions=RF Image, Model Released, Not Property Released
+
+----------------------
+JPG_JFIF
 PHOTOSHOP_IRB
+
+debug:
 JpegAdobeIRBSegmentPlugin:merge(190) => 9818
 JpegAdobeIRBSegmentPlugin:ensureDataRead->read
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read IPTC_NAA [Value: 0x0404] - IPTC-NAA record.[, skip=0] :0/12+617/9818
@@ -114,8 +119,5 @@ JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read JPEG_QUALITY [Value: 0x0406] - JP
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read IPTC_NAA [Value: 0x0404] - IPTC-NAA record.[, skip=0] :9628/12+125/9818
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read COPYRIGHT_FLAG [Value: 0x040A] - Copyright flag. Boolean indicating whether image is copyrighted. Can be set via Property suite or by user in File Info...[, skip=0] :9766/12+1/9818
 JpegAdobeIRBSegmentPlugin:AdobeIRBSegment.read URL [Value: 0x040B] - URL. Handle of a text string with uniform resource locator. Can be set via Property suite or by user in File Info...[, skip=0] :9780/12+26/9818
-
-----------------------
-JPG_JFIF
 
 ----------------------

@@ -3,66 +3,64 @@
 ############
 example.jpg
 EXIF
-	JpegExifSegmentPlugin.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin.DateTime[ASCII]=2010:04:04 08:58:03
 	JpegExifSegmentPlugin.ExifSubIFD[Long]=[244]
-	JpegExifSegmentPlugin.YCbCrPositioning[Short]=[2]
 	JpegExifSegmentPlugin.GPSSubIFD[Long]=[3364]
 	JpegExifSegmentPlugin.ImageDescription[ASCII]=
-	JpegExifSegmentPlugin.Orientation[Short]=[1]
-	JpegExifSegmentPlugin.DateTime[ASCII]=2010:04:04 08:58:03
-	JpegExifSegmentPlugin.YResolution[Rational]=[180/1]
-	JpegExifSegmentPlugin.XResolution[Rational]=[180/1]
 	JpegExifSegmentPlugin.Make[ASCII]=Canon
 	JpegExifSegmentPlugin.Model[ASCII]=Canon PowerShot SX20 IS
-	JpegExifSegmentPlugin-sub.ExifImageHeight[Short]=[3000]
-	JpegExifSegmentPlugin-sub.ExifImageWidth[Short]=[4000]
-	JpegExifSegmentPlugin-sub.ISOSpeedRatings[Short]=[160]
-	JpegExifSegmentPlugin-sub.SensingMethod[Short]=[2]
+	JpegExifSegmentPlugin.Orientation[Short]=[1]
+	JpegExifSegmentPlugin.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin.XResolution[Rational]=[180/1]
+	JpegExifSegmentPlugin.YCbCrPositioning[Short]=[2]
+	JpegExifSegmentPlugin.YResolution[Rational]=[180/1]
+	JpegExifSegmentPlugin-gps.GPSAltitude[Rational]=[48350/27]
+	JpegExifSegmentPlugin-gps.GPSAltitudeRef[Byte]=[0x00]
+	JpegExifSegmentPlugin-gps.GPSDateStamp[ASCII]=2010:04:04
+	JpegExifSegmentPlugin-gps.GPSLatitude[Rational]=[31/1,11/1,77029/1587]
+	JpegExifSegmentPlugin-gps.GPSLatitudeRef[ASCII]=N
+	JpegExifSegmentPlugin-gps.GPSLongitude[Rational]=[7/1,44/1,28024/507]
+	JpegExifSegmentPlugin-gps.GPSLongitudeRef[ASCII]=W
+	JpegExifSegmentPlugin-gps.GPSTimeStamp[Rational]=[8/1,58/1,3/1]
+	JpegExifSegmentPlugin-gps.GPSVersionID[Byte]=[0x02,0x02,0x00,0x00]
+	JpegExifSegmentPlugin-sub.ApertureValue[Rational]=[95/32]
+	JpegExifSegmentPlugin-sub.ColorSpace[Short]=[1]
 	JpegExifSegmentPlugin-sub.ComponentConfiguration[Undefined]=[0x01,0x02,0x03,0x00]
-	JpegExifSegmentPlugin-sub.FocalPlanXResolution[Rational]=[4000000/244]
-	JpegExifSegmentPlugin-sub.UserComment[Undefined]=[0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ...]
-	JpegExifSegmentPlugin-sub.FocalPlanYResolution[Rational]=[3000000/183]
 	JpegExifSegmentPlugin-sub.CompressedBitsPerPixel[Rational]=[3/1]
-	JpegExifSegmentPlugin-sub.ShutterSpeedValue[SRational]=[298/32]
+	JpegExifSegmentPlugin-sub.CustomRendered[Short]=[0]
+	JpegExifSegmentPlugin-sub.DateTimeDigitized[ASCII]=2010:04:04 08:58:03
 	JpegExifSegmentPlugin-sub.DateTimeOriginal[ASCII]=2010:04:04 08:58:03
 	JpegExifSegmentPlugin-sub.DigitalZoomRatio[Rational]=[4000/4000]
-	JpegExifSegmentPlugin-sub.FNumber[Rational]=[28/10]
-	JpegExifSegmentPlugin-sub.FlashPixVersion[Undefined]=[0x30,0x31,0x30,0x30]
-	JpegExifSegmentPlugin-sub.MeteringMode[Short]=[5]
-	JpegExifSegmentPlugin-sub.ExposureBiasValue[SRational]=[0/3]
-	JpegExifSegmentPlugin-sub.ExifVersion[Undefined]=[0x30,0x32,0x32,0x31]
-	JpegExifSegmentPlugin-sub.Flash[Short]=[16]
-	JpegExifSegmentPlugin-sub.ColorSpace[Short]=[1]
-	JpegExifSegmentPlugin-sub.ApertureValue[Rational]=[95/32]
-	JpegExifSegmentPlugin-sub.FileSource[Undefined]=[0x03]
-	JpegExifSegmentPlugin-sub.MakerNote[Undefined]=[0x1B,0x00,0x01,0x00,0x03,0x00,0x30,0x00,0x00,0x00 ...]
-	JpegExifSegmentPlugin-sub.WhileBalence[Short]=[0]
-	JpegExifSegmentPlugin-sub.MaxApertureValue[Rational]=[95/32]
-	JpegExifSegmentPlugin-sub.SceneCaptureType[Short]=[0]
-	JpegExifSegmentPlugin-sub.CustomRendered[Short]=[0]
-	JpegExifSegmentPlugin-sub.ExposureMode[Short]=[0]
-	JpegExifSegmentPlugin-sub.DateTimeDigitized[ASCII]=2010:04:04 08:58:03
-	JpegExifSegmentPlugin-sub.FocalPlanResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin-sub.ExifImageHeight[Short]=[3000]
+	JpegExifSegmentPlugin-sub.ExifImageWidth[Short]=[4000]
 	JpegExifSegmentPlugin-sub.ExifInteroperabilityOffset[Long]=[3310]
+	JpegExifSegmentPlugin-sub.ExifVersion[Undefined]=[0x30,0x32,0x32,0x31]
+	JpegExifSegmentPlugin-sub.ExposureBiasValue[SRational]=[0/3]
+	JpegExifSegmentPlugin-sub.ExposureMode[Short]=[0]
 	JpegExifSegmentPlugin-sub.ExposureTime[Rational]=[1/640]
+	JpegExifSegmentPlugin-sub.FNumber[Rational]=[28/10]
+	JpegExifSegmentPlugin-sub.FileSource[Undefined]=[0x03]
+	JpegExifSegmentPlugin-sub.Flash[Short]=[16]
+	JpegExifSegmentPlugin-sub.FlashPixVersion[Undefined]=[0x30,0x31,0x30,0x30]
 	JpegExifSegmentPlugin-sub.FocalLength[Rational]=[5000/1000]
-	JpegExifSegmentPlugin-gps.GPSLongitudeRef[ASCII]=W
-	JpegExifSegmentPlugin-gps.GPSLatitude[Rational]=[31/1,11/1,77029/1587]
-	JpegExifSegmentPlugin-gps.GPSVersionID[Byte]=[0x02,0x02,0x00,0x00]
-	JpegExifSegmentPlugin-gps.GPSDateStamp[ASCII]=2010:04:04
-	JpegExifSegmentPlugin-gps.GPSTimeStamp[Rational]=[8/1,58/1,3/1]
-	JpegExifSegmentPlugin-gps.GPSLongitude[Rational]=[7/1,44/1,28024/507]
-	JpegExifSegmentPlugin-gps.GPSLatitudeRef[ASCII]=N
-	JpegExifSegmentPlugin-gps.GPSAltitudeRef[Byte]=[0x00]
-	JpegExifSegmentPlugin-gps.GPSAltitude[Rational]=[48350/27]
-	JpegExifSegmentPlugin-thumb.ResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin-sub.FocalPlanResolutionUnit[Short]=[2]
+	JpegExifSegmentPlugin-sub.FocalPlanXResolution[Rational]=[4000000/244]
+	JpegExifSegmentPlugin-sub.FocalPlanYResolution[Rational]=[3000000/183]
+	JpegExifSegmentPlugin-sub.ISOSpeedRatings[Short]=[160]
+	JpegExifSegmentPlugin-sub.MakerNote[Undefined]=[0x1B,0x00,0x01,0x00,0x03,0x00,0x30,0x00,0x00,0x00 ...]
+	JpegExifSegmentPlugin-sub.MaxApertureValue[Rational]=[95/32]
+	JpegExifSegmentPlugin-sub.MeteringMode[Short]=[5]
+	JpegExifSegmentPlugin-sub.SceneCaptureType[Short]=[0]
+	JpegExifSegmentPlugin-sub.SensingMethod[Short]=[2]
+	JpegExifSegmentPlugin-sub.ShutterSpeedValue[SRational]=[298/32]
+	JpegExifSegmentPlugin-sub.UserComment[Undefined]=[0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ...]
+	JpegExifSegmentPlugin-sub.WhileBalence[Short]=[0]
 	JpegExifSegmentPlugin-thumb.Compression[Short]=[6]
-	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormatLength/JpegIFByteCount[Long]=[5084]
-	JpegExifSegmentPlugin-thumb.YResolution[Rational]=[180/1]
 	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormat/JpegIFOffset[Long]=[3664]
+	JpegExifSegmentPlugin-thumb.JPEGInterchangeFormatLength/JpegIFByteCount[Long]=[5084]
+	JpegExifSegmentPlugin-thumb.ResolutionUnit[Short]=[2]
 	JpegExifSegmentPlugin-thumb.XResolution[Rational]=[180/1]
-
-----------------------
+	JpegExifSegmentPlugin-thumb.YResolution[Rational]=[180/1]
 
 ----------------------
 XMP
@@ -75,7 +73,5 @@ XMP
  </rdf:Description>
 </rdf:RDF>
 </x:xmpmeta><?xpacket begin='﻿' id='W5M0MpCehiHzreSzNTczkc9d'?><?xpacket end='w'?>
-
-----------------------
 
 ----------------------

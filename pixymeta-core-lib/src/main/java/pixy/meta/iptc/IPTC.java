@@ -196,7 +196,7 @@ public class IPTC extends MetadataBase {
 		ensureDataRead();
 		ArrayList<IDirectory> result = new ArrayList<IDirectory>();
 		for (Map.Entry<String, IPTCDataSet.IPTCDataSetList> entry : getDataSets().entrySet()) {
-			result.add(new DefaultApiImpl(entry.getKey(), new ArrayList<IFieldValue>(entry.getValue())));
+			result.add(DefaultApiImpl.createDirectory(entry.getKey(), new ArrayList<IFieldValue>(entry.getValue())));
 		}
 		return result;
 	}

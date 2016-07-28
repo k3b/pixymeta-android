@@ -59,7 +59,7 @@ public class MetaHolder {
     }
 
     public IFieldValue add(IFieldDefinition tag, String value) {
-        IFieldValue fieldValue = new DefaultApiImpl(tag, value);
+        IFieldValue fieldValue = DefaultApiImpl.createFieldValue(tag, value);
         add(fieldValue);
         return fieldValue;
     }

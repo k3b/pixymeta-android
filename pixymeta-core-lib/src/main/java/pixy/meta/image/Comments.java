@@ -41,7 +41,7 @@ import pixy.string.StringUtils;
 public class Comments extends MetadataBase implements IDirectory, IFieldValue {
 	private static final String NAME = "Comment";
 
-	public static final IDataType StringLines = new DefaultApiImpl("StringLines");
+	public static final IDataType StringLines = DefaultApiImpl.createDataType("StringLines");
 	public static final IFieldDefinition CommentTag = new DefaultApiImpl(NAME, StringLines) {
 		// must be its own type to allow matching tag.class => handler
 	};
@@ -141,6 +141,11 @@ public class Comments extends MetadataBase implements IDirectory, IFieldValue {
 	@Override
 	public IFieldDefinition getDefinition() {
 		return CommentTag;
+	}
+
+	@Override
+	public String toString() {
+		return "" + getDefinition();
 	}
 
 	@Override

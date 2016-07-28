@@ -103,7 +103,7 @@ public abstract class XMP extends MetadataBase {
 		try {
 			if (xmpDocument != null) {
 				String xml = XMLUtils.serializeToStringLS(xmpDocument);
-				IDirectory dir = new DefaultApiImpl("xml", XmpTag.XmlRaw, xml);
+				IDirectory dir = DefaultApiImpl.createDirecotry("xml", XmpTag.XmlRaw, xml);
 				result.add(dir);
 			}
 		} catch (IOException e) {

@@ -85,6 +85,11 @@ public class ProfileTagTable {
 		}
 
 		@Override
+		public String toString() {
+			return getDefinition().toString();
+		}
+
+		@Override
 		public void setValue(String value) {
 			data = StringUtils.parseHexByteList(value);
 		}

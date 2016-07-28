@@ -253,6 +253,11 @@ public class IFD implements IDirectory {
 		return name;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 	// implementation of api.IDirectory
 	@Override
 	public IDirectory setName(String name) {
