@@ -54,7 +54,8 @@ test {
         showCauses true
         showExceptions true
         showStackTraces true
-        showStandardStreams true
+        // showStandardStreams true // this will crash travis build because log too large
+        showStandardStreams false
     }
 }
 
