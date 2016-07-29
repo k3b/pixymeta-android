@@ -5,6 +5,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * Copyright (C) 2016 by k3b.
+ *
+ * Used by regressiontest data to make the display (and file) shorter
+ *
  * Created by k3b on 27.07.2016.
  */
 public class DataFormatter {

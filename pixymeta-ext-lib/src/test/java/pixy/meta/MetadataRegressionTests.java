@@ -41,6 +41,16 @@ import pixy.meta.jpeg.JPEGMeta;
 import pixy.util.DataFormatter;
 import pixy.util.FileUtils;
 
+/**
+ * Copyright (C) 2016 by k3b.
+ *
+ * Regression test that verifies that the extracted metadata is the same as on the last run.
+ *
+ * Each image of the testimage-collection pixymeta-j2se-demo/src/main/resources/pixy/demo/j2se/images/imagefile.ext
+ * has a corresponding pixymeta-j2se-demo/src/main/resources/pixy/demo/j2se/imageMetaExpected/imagefile.ext.txt
+ * with the expected result
+ *
+ */
 // @RunWith(Parameterized.class)
 @RunWith(JUnitParamsRunner.class)
 public class MetadataRegressionTests {

@@ -18,6 +18,8 @@ import pixy.meta.iptc.IPTCApplicationTag;
 import pixy.meta.jpeg.JPEGMeta;
 
 /**
+ * Copyright (C) 2016 by k3b.
+ *
  * Created by k3b on 11.07.2016.
  */
 @RunWith(JUnitParamsRunner.class)

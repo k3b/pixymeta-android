@@ -41,6 +41,9 @@ import pixy.meta.exif.Tag;
 import pixy.string.StringUtils;
 
 /**
+ * Copyright (c) 2014-2016 by Wen Yu.
+ * Copyright (C) 2016 by k3b.
+ *
  * Image File Directory containing meta-data-fields and sub-IFDs
  *
  * Exif file Segments (or Image File Directories {@link pixy.image.exifFields.IFD}s)
@@ -50,6 +53,10 @@ import pixy.string.StringUtils;
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
+ *
+ * Who   Date       Description
+ * ====  =======    =================================================
+ * k3b	 july2016	refactored; Added interface supoort for common tag handling
  */
 public class IFD implements IDirectory {
 

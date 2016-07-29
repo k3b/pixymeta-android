@@ -20,7 +20,7 @@ import pixy.image.exifFields.RationalField;
 /**
  * Define virtual exif tags that contain of more than 1 physical tags.
  *
- * Created by k3b on 25.07.2016.
+ * Copyright (C) 2016 by k3b.
  */
 public enum ExifCompositeTag implements Tag {
     GPS_LATITUDE_EX(FieldType.GPSCoordinate, GPSTag.GPS_LATITUDE, GPSTag.GPS_LATITUDE_REF) {

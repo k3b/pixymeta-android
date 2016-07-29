@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
+ * Copyright (C) 2016 by k3b.
+ *
  * Created by k3b on 07.07.2016.
  */
 public class ParserTests {

@@ -38,7 +38,7 @@ import pixy.io.WriteStrategyMM;
 import pixy.string.StringUtils;
 
 /**
- * Created by k3b on 11.07.2016.
+ * Copyright (C) 2016 by k3b.
  */
 public class IfdMetaUtils {
     // Obtain a logger instance

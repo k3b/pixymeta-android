@@ -19,6 +19,9 @@ import pixy.io.RandomAccessOutputStream;
 import pixy.meta.exif.Tag;
 
 /**
+ * Copyright (c) 2014-2016 by Wen Yu.
+ * Copyright (C) 2016 by k3b.
+ *
  * One meta data item of basetype T living in a IFD (Image File Directory).
  *
  * Exif file Segments (or Image File Directories {@link pixy.image.exifFields.IFD}s)
@@ -33,6 +36,10 @@ import pixy.meta.exif.Tag;
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/04/2013
+ *
+ * Who   Date       Description
+ * ====  =======    =================================================
+ * k3b	 july2016	refactored; Added interface supoort for common tag handling
  */
 public abstract class ExifField<T> implements Comparable<ExifField<?>>, IFieldValue{
 	private final pixy.image.exifFields.FieldType fieldType;

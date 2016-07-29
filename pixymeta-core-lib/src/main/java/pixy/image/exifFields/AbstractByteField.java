@@ -1,11 +1,17 @@
 /**
  * Copyright (c) 2014-2016 by Wen Yu.
+ * Copyright (C) 2016 by k3b.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ *
+ * Who   Date       Description
+ * ====  =======    =================================================
+ * k3b	 july2016	refactored; Added interface supoort for common tag handling
  */
 
 package pixy.image.exifFields;
