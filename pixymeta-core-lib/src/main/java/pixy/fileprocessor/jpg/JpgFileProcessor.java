@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pixy.api.DebuggableBase;
 import pixy.api.IMetadata;
 import pixy.image.jpeg.JpegSegment;
 import pixy.image.jpeg.JpegSegmentMarker;
@@ -31,7 +32,7 @@ import pixy.meta.iptc.IPTC;
  *
  * Created by k3b on 07.07.2016.
  */
-public class JpgFileProcessor {
+public class JpgFileProcessor extends DebuggableBase {
     private Map<MetadataType, IMetadata> metadataMap = new HashMap<MetadataType, IMetadata>();
 
     /**
@@ -174,7 +175,8 @@ public class JpgFileProcessor {
     protected void onProcessSegment(JpegSegment jpegSegment) {
 
         final byte[] jpegSegmentData = jpegSegment.getData();
-        JpgSegmentPluginFactory definition = JpgSegmentPluginFactory.find(jpegSegment.getJpegSegmentMarker(), jpegSegmentData);
+        final JpegSegmentMarker jpegSegmentMarker = jpegSegment.getJpegSegmentMarker();
+        JpgSegmentPluginFactory definition = JpgSegmentPluginFactory.find(jpegSegmentMarker, jpegSegmentData);
         if (definition != null) {
             IMetadata meta = metadataMap.get(definition.type);
 
@@ -186,7 +188,15 @@ public class JpgFileProcessor {
             } else {
                 meta.merge(definition.getBytesWithoutHeader(jpegSegmentData));
             }
+        } else  if (isDebugEnabled()) {
+            String message = "Unknown jpeg segment: " + jpegSegmentMarker;
+            int len = IOUtils.find(jpegSegmentData, (byte) 0, 0);
+            if ((len > 0) && (len < 40)) {
+                message += "+" + new String(jpegSegmentData, 0, len);
+            }
+            debug(message);
         }
+
     }
 
     protected void onWriteSegments(OutputStream os, List<JpegSegment> jpegSegments) throws IOException {

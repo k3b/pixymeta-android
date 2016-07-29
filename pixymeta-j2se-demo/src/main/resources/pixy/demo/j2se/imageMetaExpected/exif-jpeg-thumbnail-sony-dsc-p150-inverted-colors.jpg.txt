@@ -2,6 +2,10 @@
 
 ############
 exif-jpeg-thumbnail-sony-dsc-p150-inverted-colors.jpg
+JpgFileProcessor:Unknown jpeg segment: SOF0: Baseline DCT+~	�
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table
+
 EXIF
 	JpegExifSegmentPlugin.DateTime[ASCII]=2012:04:10 09:53:08
 	JpegExifSegmentPlugin.ExifSubIFD[Long]=[274]

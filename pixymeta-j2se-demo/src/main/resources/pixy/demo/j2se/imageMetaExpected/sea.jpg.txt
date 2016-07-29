@@ -2,6 +2,14 @@
 
 ############
 sea.jpg
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: SOF0: Baseline DCT+�
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table+
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table+
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table+
+
 EXIF
 	JpegExifSegmentPlugin.Artist[ASCII]=
 	JpegExifSegmentPlugin.Copyright[ASCII]=Copyright (c) 2012  Vanderhaegen Bart
@@ -35,6 +43,8 @@ EXIF
 	JpegExifSegmentPlugin-gps.GPSLongitudeRef[ASCII]=W
 	JpegExifSegmentPlugin-gps.GPSMapDatum[ASCII]=WGS-84
 	JpegExifSegmentPlugin-gps.GPSTimeStamp[Rational]=[10/1,16/1,38/1]
+	JpegExifSegmentPlugin-gps.GPS_LATITUDE_EX[Double]=[47.305063999999994]
+	JpegExifSegmentPlugin-gps.GPS_LONGITUDE_EX[Double]=[-3.238512]
 	JpegExifSegmentPlugin-sub.CFAPattern[Undefined]=[0x00,0x02,0x00,0x02,0x00,0x01,0x01,0x02]
 	JpegExifSegmentPlugin-sub.ColorSpace[Short]=[65535]
 	JpegExifSegmentPlugin-sub.ComponentConfiguration[Undefined]=[0x01,0x02,0x03,0x00]

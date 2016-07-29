@@ -37,23 +37,24 @@ public enum ExifCompositeTag implements Tag {
     GPS_LONGITUDE_EX(FieldType.GPSCoordinate, GPSTag.GPS_LONGITUDE, GPSTag.GPS_LONGITUDE_REF) {
         @Override
         public ExifField createVirtualField(IFD directory) {
-            return getGpsField(this, directory, GPSTag.GPS_LONGITUDE, GPSTag.GPS_LONGITUDE_REF, "WE");
+            return getGpsField(this, directory, GPSTag.GPS_LONGITUDE, GPSTag.GPS_LONGITUDE_REF, "EW");
         }
     },
     GPS_DEST_LONGITUDE_EX(FieldType.GPSCoordinate, GPSTag.GPS_DEST_LONGITUDE, GPSTag.GPS_DEST_LONGITUDE_REF) {
         @Override
         public ExifField createVirtualField(IFD directory) {
-            return getGpsField(this, directory, GPSTag.GPS_DEST_LONGITUDE, GPSTag.GPS_DEST_LONGITUDE_REF, "WE");
+            return getGpsField(this, directory, GPSTag.GPS_DEST_LONGITUDE, GPSTag.GPS_DEST_LONGITUDE_REF, "EW");
         }
     };
 
+    private static final Map<IFieldDefinition, ExifCompositeTag> allReplacements = new HashMap<IFieldDefinition, ExifCompositeTag>();
+
     private final FieldType fieldType;
+    private final Tag[] replacementTags;
 
-    private ExifCompositeTag(FieldType fieldType, Tag... replacementTags) {
+    private ExifCompositeTag(final FieldType fieldType, final Tag... replacementTags) {
         this.fieldType = fieldType;
-
-        if ((replacementTags != null) && (replacementTags.length > 0))
-        register(this, replacementTags);
+        this.replacementTags = replacementTags;
     }
 
     abstract public ExifField createVirtualField(IFD directory);
@@ -110,13 +111,18 @@ public enum ExifCompositeTag implements Tag {
         return Tag.DONOT_WRITE;
     }
 
-    private static Map<IFieldDefinition, ExifCompositeTag> replacements = null;
+    static
+    {
+        for(ExifCompositeTag tag : values()) {
+            register(tag, tag.replacementTags);
+        }
+    }
 
-    private static void register(ExifCompositeTag exifCompositeTag, Tag[] replacementTags) {
-        if (replacements == null) replacements = new HashMap<IFieldDefinition, ExifCompositeTag>();
-
-        for(Tag old : replacementTags) {
-            replacements.put(old, exifCompositeTag);
+    private static void register(final ExifCompositeTag exifCompositeTag, final Tag[] replacementTags) {
+        if (replacementTags != null) {
+            for (Tag old : replacementTags) {
+                allReplacements.put(old, exifCompositeTag);
+            }
         }
     }
 
@@ -139,9 +145,8 @@ public enum ExifCompositeTag implements Tag {
 
     public static ExifCompositeTag getReplacement(IFieldDefinition tag) {
         if (tag == null) return null;
-        if (replacements == null) replacements = new HashMap<IFieldDefinition, ExifCompositeTag>();
 
-        return replacements.get(tag);
+        return allReplacements.get(tag);
     }
 
     private static void include(List<IFieldValue> values, IFD directory, ExifCompositeTag replacement) {

@@ -10,6 +10,7 @@ import java.util.List;
 import pixy.api.IFieldDefinition;
 import pixy.api.IMetadata;
 import pixy.image.jpeg.JpegSegmentMarker;
+import pixy.io.IOUtils;
 import pixy.meta.MetadataType;
 import pixy.util.ArrayUtils;
 
@@ -42,8 +43,9 @@ public class JpgSegmentPluginFactory {
     /** each plugin implementation registeres here in it-s static constructor */
     public static JpgSegmentPluginFactory register(MetadataType type, JpegSegmentMarker marker, String subMarker,
                                                    Class<? extends IMetadata> jpegExifClass, Class<? extends IFieldDefinition>... fieldDefs) {
-        LOGGER.info("JpgSegmentPluginFactory.register " + jpegExifClass.getSimpleName() + "; " + marker +
-                " + " + subMarker);
+        String message = "JpgSegmentPluginFactory.register " + jpegExifClass.getSimpleName() + "; " + marker;
+        if (subMarker != null) message += " + " + subMarker;
+        LOGGER.info(message);
         final JpgSegmentPluginFactory factory = new JpgSegmentPluginFactory(type, marker, subMarker, jpegExifClass, fieldDefs);
         factories.add(factory);
         return factory;
@@ -56,15 +58,22 @@ public class JpgSegmentPluginFactory {
                     String subMarker = processor.subMarker;
                     final String currentSubMarker = (subMarker == null) ? null : new String(data, 0, subMarker.length());
                     if ((subMarker == null) || (subMarker.equals(currentSubMarker))) {
-                        if (debug)
-                            LOGGER.info("find-byMarker(" + marker + " + " + subMarker + ") : " + subMarker);
+                        if (debug) {
+                            String message = "find-byMarker(" + marker;
+                            if (subMarker != null) message += " + " + subMarker;
+                            LOGGER.info(message + ") : " + processor);
+                        }
                         return processor;
                     }
                 }
             }
             if (debug) {
-                String subMarker = new String(data, 0, Math.min(10, data.length));
-                LOGGER.info("find-byMarker(" + marker + " + " + subMarker + ") : " + null);
+                String message = "find-byMarker(" + marker;
+                int len = IOUtils.find(data, (byte) 0, 0);
+                if ((len > 0) && (len < 40)) {
+                    message += " + " + new String(data, 0, len);
+                }
+                LOGGER.info(message + ") : " + null);
             }
         }
         return null;

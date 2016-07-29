@@ -2,6 +2,11 @@
 
 ############
 cmykjpg.jpg
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: SOF0: Baseline DCT+��
+JpgFileProcessor:Unknown jpeg segment: DRI: Define restart interval
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table
+
 EXIF
 	JpegExifSegmentPlugin.DateTime[ASCII]=2014:06:18 12:57:14
 	JpegExifSegmentPlugin.ExifSubIFD[Long]=[164]

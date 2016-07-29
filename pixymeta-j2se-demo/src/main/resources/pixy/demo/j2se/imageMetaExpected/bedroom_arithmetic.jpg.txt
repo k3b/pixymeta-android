@@ -2,6 +2,11 @@
 
 ############
 bedroom_arithmetic.jpg
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: SOF9: Sequential DCT, arithmetic coding+Y
+JpgFileProcessor:Unknown jpeg segment: DAC: Define Arithmetic Table 
+
 EXIF
 	JpegExifSegmentPlugin.DateTime[ASCII]=2011:06:17 11:34:09
 	JpegExifSegmentPlugin.ExifSubIFD[Long]=[164]

@@ -86,9 +86,12 @@ public class IFD implements IDirectory {
 	public void addField(ExifField<?> exifField) {
 		tiffFields.put(exifField.getDefinition(), exifField);
 		ExifCompositeTag replacement = ExifCompositeTag.getReplacement(exifField.getDefinition());
-		if ((replacement != null) && (tiffFields.get(replacement) == null)) {
+		if (replacement != null) {
+			// may re-add field because an additional src field was just added
 			ExifField virtualValue = replacement.createVirtualField(this);
-			tiffFields.put(virtualValue.getDefinition(), virtualValue);
+			if (virtualValue != null) {
+				tiffFields.put(replacement, virtualValue);
+			} // else null because not all src fields are added yet
 		}
 	}
 	

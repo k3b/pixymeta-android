@@ -106,8 +106,16 @@ public class IOUtils {
 			n += count;
 		}
 	}
-	 
-	public static int readInt(byte[] buf, int start_idx) { 
+
+	public static int find(byte[] buf, byte search, int start_idx) {
+		while (start_idx < buf.length) {
+			if (search == buf[start_idx]) return start_idx;
+			start_idx++;
+		}
+		return -1;
+	}
+
+	public static int readInt(byte[] buf, int start_idx) {
 		return ((buf[start_idx++]&0xff)|((buf[start_idx++]&0xff)<<8)|
 				((buf[start_idx++]&0xff)<<16)|((buf[start_idx++]&0xff)<<24));
 	}

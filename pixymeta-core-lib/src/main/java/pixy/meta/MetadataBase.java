@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import pixy.api.DebuggableBase;
 import pixy.api.IDirectory;
 import pixy.api.IMetadata;
 import pixy.util.ArrayUtils;
@@ -14,7 +15,7 @@ import pixy.util.ArrayUtils;
 /**
  * Created by k3b on 10.07.2016.
  */
-public abstract class MetadataBase  implements IMetadata {
+public abstract class MetadataBase extends DebuggableBase implements IMetadata {
     // Obtain a logger instance
     private static final Logger LOGGER = LoggerFactory.getLogger(MetadataBase.class);
 
@@ -22,7 +23,6 @@ public abstract class MetadataBase  implements IMetadata {
     protected MetadataType type;
     private byte[] data;
     protected boolean isDataRead;
-    private StringBuilder debugMessageBuffer = null;
 
     public MetadataBase(MetadataType type, byte[] data) {
         if ((data != null) && isDebugEnabled()) debug("ctor(" + data.length + ")");
@@ -92,30 +92,9 @@ public abstract class MetadataBase  implements IMetadata {
         return null;
     }
 
-    public String getDebugMessage() {
-        return (debugMessageBuffer != null) ? debugMessageBuffer.toString() : null;
-    }
-
-    public boolean isDebugEnabled() {
-        return (null != debugMessageBuffer);
-    }
-
-    public IMetadata setDebugMessageBuffer(StringBuilder debugMessageBuffer) {
-        this.debugMessageBuffer = debugMessageBuffer;
-        return this;
-    }
-
     @Override
     public String toString() {
         return getClass().getSimpleName() +"[" + type + "]";
-    }
-
-    protected void debug(String s) {
-        if (this.debugMessageBuffer != null) {
-            this.debugMessageBuffer
-                    .append(getClass().getSimpleName()).append(":")
-                    .append(s).append("\n");
-        }
     }
 
     public void setData(byte[] data) {

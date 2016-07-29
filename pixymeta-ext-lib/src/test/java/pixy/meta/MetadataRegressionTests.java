@@ -20,7 +20,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -36,12 +35,9 @@ import pixy.api.IFieldDefinition;
 import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.demo.j2se.TestPixyMetaJ2se;
-import pixy.image.exifFields.FieldType;
-import pixy.meta.exif.Tag;
 import pixy.io.IOUtils;
 import pixy.fileprocessor.jpg.JpgFileProcessor;
 import pixy.meta.jpeg.JPEGMeta;
-import pixy.string.StringUtils;
 import pixy.util.DataFormatter;
 import pixy.util.FileUtils;
 
@@ -123,7 +119,7 @@ public class MetadataRegressionTests {
 		} finally {
 		}
 
-		result = showMetaAndVerify(fileName, metadataMap, outdir, true, null);
+		result = showMetaAndVerify(fileName, metadataMap, outdir, true, null, null);
 		stream.close();
 
 		LOGGER.info(result.toString());
@@ -139,10 +135,14 @@ public class MetadataRegressionTests {
 	};
 
 	protected StringBuffer showMetaAndVerify(String fileName, Map<MetadataType, IMetadata> metadataMap, File outdir,
-											 boolean showDetailed, InputStream resultComparePath) throws FileNotFoundException {
+											 boolean showDetailed, InputStream resultComparePath,
+											 String additionalInfo) throws FileNotFoundException {
 		StringBuffer result = new StringBuffer();
 		result.append("\n\n############\n").append(fileName).append("\n");
 
+		if (additionalInfo != null) {
+			result.append(additionalInfo).append("\n");
+		}
 		// sort items to prevent regression errors
 		final Set<MetadataType> metadataTypeSet = (metadataMap == null) ? null : metadataMap.keySet();
 		if (metadataTypeSet != null) {
@@ -257,12 +257,14 @@ public class MetadataRegressionTests {
 
 	@Test
 	// @Parameters({"bedroom_arithmetic.jpg"})
+	// @Parameters({"sea.jpg"}) // gps
 	// @Parameters({"12.jpg"})
 	// @Parameters({"app13.jpg"})
 	@Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldCopyJpgFile(String fileName) throws IOException {
 		if (fileName.toLowerCase().endsWith(".jpg")) {
 			JpgFileProcessor doCopy = new JpgFileProcessor();
+			doCopy.setDebugMessageBuffer(new StringBuilder());
 
 			InputStream inputStream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
 			Assert.assertNotNull("open images/" + fileName, inputStream);
@@ -283,7 +285,7 @@ public class MetadataRegressionTests {
 
 				final String expectedResultPath = "imageMetaExpected/" + fileName + ".txt";
 				InputStream expectedResultInputStream = TestPixyMetaJ2se.class.getResourceAsStream(expectedResultPath);
-				StringBuffer result = showMetaAndVerify(fileName, metadataMap, outDir, true, expectedResultInputStream);
+				StringBuffer result = showMetaAndVerify(fileName, metadataMap, outDir, true, expectedResultInputStream, doCopy.getDebugMessage());
 
 				if (expectedResultInputStream == null) {
 					Assert.fail("Cannot open compare file " + expectedResultPath);

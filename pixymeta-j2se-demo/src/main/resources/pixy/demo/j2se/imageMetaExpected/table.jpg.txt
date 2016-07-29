@@ -2,6 +2,14 @@
 
 ############
 table.jpg
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: SOF0: Baseline DCT+
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table+
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table+
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table+
+
 EXIF
 	JpegExifSegmentPlugin.DateTime[ASCII]=2014:04:17 14:34:05
 	JpegExifSegmentPlugin.ExifSubIFD[Long]=[58]

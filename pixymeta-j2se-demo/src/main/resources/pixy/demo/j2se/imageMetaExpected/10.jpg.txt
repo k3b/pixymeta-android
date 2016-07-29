@@ -2,6 +2,10 @@
 
 ############
 10.jpg
+JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
+JpgFileProcessor:Unknown jpeg segment: SOF0: Baseline DCT+
+JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table
+
 COMMENT
 	Comment.Comment[StringLines]=Adobe ImageReady
 

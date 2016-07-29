@@ -118,7 +118,7 @@ public class IfdMetaUtils {
                         byteField = new ByteField(ftag, data);
                     else
                         byteField = new UndefinedField(ftag, data);
-                    tiffIFD.addField(byteField);
+                    addField(tiffIFD, byteField);
                     offset += 4;
                     break;
                 case ASCII:
@@ -133,7 +133,7 @@ public class IfdMetaUtils {
                         rin.readFully(data, 0, field_length);
                     }
                     ExifField<String> ascIIField = new ASCIIField(ftag, new String(data, 0, data.length, "UTF-8"));
-                    tiffIFD.addField(ascIIField);
+                    addField(tiffIFD, ascIIField);
                     offset += 4;
                     break;
                 case SHORT:
@@ -160,7 +160,7 @@ public class IfdMetaUtils {
                         }
                     }
                     ExifField<short[]> shortField = new ShortField(ftag, sdata);
-                    tiffIFD.addField(shortField);
+                    addField(tiffIFD, shortField);
                     break;
                 case LONG:
                     int[] ldata = new int[field_length];
@@ -179,7 +179,7 @@ public class IfdMetaUtils {
                         }
                     }
                     ExifField<int[]> longField = new LongField(ftag, ldata);
-                    tiffIFD.addField(longField);
+                    addField(tiffIFD, longField);
 
                     if ((ftag == ExifImageTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
                         try { // If something bad happens, we skip the sub IFD
@@ -230,7 +230,7 @@ public class IfdMetaUtils {
                         }
                     }
                     ExifField<float[]> floatField = new FloatField(ftag, fdata);
-                    tiffIFD.addField(floatField);
+                    addField(tiffIFD, floatField);
 
                     break;
                 case DOUBLE:
@@ -244,7 +244,7 @@ public class IfdMetaUtils {
                         toOffset += 8;
                     }
                     ExifField<double[]> doubleField = new DoubleField(ftag, ddata);
-                    tiffIFD.addField(doubleField);
+                    addField(tiffIFD, doubleField);
 
                     break;
                 case RATIONAL:
@@ -268,7 +268,7 @@ public class IfdMetaUtils {
                     } else {
                         rationalField = new RationalField(ftag, ldata);
                     }
-                    tiffIFD.addField(rationalField);
+                    addField(tiffIFD, rationalField);
 
                     break;
                 case IFD:
@@ -288,7 +288,7 @@ public class IfdMetaUtils {
                         }
                     }
                     ExifField<int[]> ifdField = new IFDField(ftag, ldata);
-                    tiffIFD.addField(ifdField);
+                    addField(tiffIFD, ifdField);
                     for(int ifd = 0; ifd < ldata.length; ifd++) {
                         readIFD(tiffIFD, ExifImageTag.SUB_IFDS, ExifImageTag.class, rin, null, ldata[0]);
                     }
@@ -307,6 +307,10 @@ public class IfdMetaUtils {
         rin.seek(offset);
 
         return rin.readInt();
+    }
+
+    private static void addField(IFD targetIFD, ExifField<?> field) {
+        targetIFD.addField(field);
     }
 
     static Tag getTagFromId(Method fromShortMethod, short tag, FieldType ftype) {
@@ -459,7 +463,7 @@ public class IfdMetaUtils {
         // Reset pageNumber for the existing pages
         for(int i = 0; i < list.size(); i++) {
             list.get(i).removeField(ExifImageTag.PAGE_NUMBER);
-            list.get(i).addField(new ShortField(ExifImageTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
+            addField(list.get(i), new ShortField(ExifImageTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
         }
         // End of removing pages
         // Step 3: copy the remaining pages
@@ -496,7 +500,7 @@ public class IfdMetaUtils {
         // Reset pageNumber for the existing pages
         for(int i = 0; i < list.size(); i++) {
             list.get(i).removeField(ExifImageTag.PAGE_NUMBER);
-            list.get(i).addField(new ShortField(ExifImageTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
+            addField(list.get(i), new ShortField(ExifImageTag.PAGE_NUMBER, new short[]{(short)i, (short)(list.size() - 1)}));
         }
         // Step 3: copy the remaining pages
         // 0x08 is the first write offset
@@ -630,12 +634,12 @@ public class IfdMetaUtils {
                 stripOffSets = new LongField(ExifImageTag.STRIP_OFFSETS, temp);
             else
                 stripOffSets = new LongField(ExifImageTag.TILE_OFFSETS, temp);
-            ifd.addField(stripOffSets);
+            addField(ifd, stripOffSets);
         }
 
         // Add software field.
         String softWare = "PIXYMETA-ANDROID - https://github.com/dragon66/pixymeta-android\0";
-        ifd.addField(new ASCIIField(ExifImageTag.SOFTWARE, softWare));
+        addField(ifd, new ASCIIField(ExifImageTag.SOFTWARE, softWare));
 
 		/* The following are added to work with old-style JPEG compression (type 6) */
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
@@ -649,36 +653,36 @@ public class IfdMetaUtils {
                     rin.readFully(bytes2Read);
                     rout.seek(offset);
                     rout.write(bytes2Read);
-                    ifd.addField(jpegIFByteCount);
+                    addField(ifd, jpegIFByteCount);
                 } else {
                     long startOffset = rout.getStreamPointer();
                     copyJPEGIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
                     long endOffset = rout.getStreamPointer();
-                    ifd.addField(new LongField(ExifImageTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[]{(int)(endOffset - startOffset)}));
+                    addField(ifd, new LongField(ExifImageTag.JPEG_INTERCHANGE_FORMAT_LENGTH, new int[]{(int)(endOffset - startOffset)}));
                 }
                 jpegIFOffset = new LongField(ExifImageTag.JPEG_INTERCHANGE_FORMAT, new int[]{offset});
-                ifd.addField(jpegIFOffset);
+                addField(ifd, jpegIFOffset);
             } catch (EOFException ex) {;};
         }
 		/* Another flavor of the old style JPEG compression type 6 contains separate tables */
         ExifField<?> jpegTable = ifd.removeField(ExifImageTag.JPEG_DC_TABLES);
         if(jpegTable != null) {
             try {
-                ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+                addField(ifd, copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
             } catch(EOFException ex) {;}
         }
 
         jpegTable = ifd.removeField(ExifImageTag.JPEG_AC_TABLES);
         if(jpegTable != null) {
             try {
-                ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+                addField(ifd, copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
             } catch(EOFException ex) {;}
         }
 
         jpegTable = ifd.removeField(ExifImageTag.JPEG_Q_TABLES);
         if(jpegTable != null) {
             try {
-                ifd.addField(copyJPEGQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+                addField(ifd, copyJPEGQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
             } catch(EOFException ex) {;}
         }
 		/* End of code to work with old-style JPEG compression */

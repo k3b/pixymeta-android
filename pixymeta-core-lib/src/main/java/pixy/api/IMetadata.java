@@ -36,5 +36,5 @@ public interface IMetadata extends MetadataReader {
 	void merge(byte[] data);
 
 	String getDebugMessage();
-	IMetadata setDebugMessageBuffer(StringBuilder debugMessageBuffer);
+	void setDebugMessageBuffer(StringBuilder debugMessageBuffer);
 }
