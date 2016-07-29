@@ -43,6 +43,7 @@ EXIF
 	JpegExifSegmentPlugin-gps.GPSLongitudeRef[ASCII]=W
 	JpegExifSegmentPlugin-gps.GPSMapDatum[ASCII]=WGS-84
 	JpegExifSegmentPlugin-gps.GPSTimeStamp[Rational]=[10/1,16/1,38/1]
+	JpegExifSegmentPlugin-gps.GPS_ALTITUDE_EX[Double]=[72.0]
 	JpegExifSegmentPlugin-gps.GPS_LATITUDE_EX[Double]=[47.305063999999994]
 	JpegExifSegmentPlugin-gps.GPS_LONGITUDE_EX[Double]=[-3.238512]
 	JpegExifSegmentPlugin-sub.CFAPattern[Undefined]=[0x00,0x02,0x00,0x02,0x00,0x01,0x01,0x02]

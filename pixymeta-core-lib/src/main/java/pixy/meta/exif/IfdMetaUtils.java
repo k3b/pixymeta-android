@@ -84,6 +84,7 @@ public class IfdMetaUtils {
         // Use reflection to invoke fromShort(short) fromShort
         Method fromShort = getFromShortMethod(tagClass);
         IFD tiffIFD = new IFD();
+        if (tagClass != null) tiffIFD.setName("IFD[" + tagClass.getSimpleName() + "]");
         rin.seek(offset);
         int no_of_fields = rin.readShort();
         offset += 2;
@@ -182,34 +183,14 @@ public class IfdMetaUtils {
                     addField(tiffIFD, longField);
 
                     if ((ftag == ExifImageTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
-                        try { // If something bad happens, we skip the sub IFD
-                            readIFD(tiffIFD, ExifImageTag.EXIF_SUB_IFD, ExifSubTag.class, rin, null, ldata[0]);
-                        } catch(Exception e) {
-                            tiffIFD.removeField(ExifImageTag.EXIF_SUB_IFD);
-                            e.printStackTrace();
-                        }
+                        readSubIFD(tiffIFD, ExifImageTag.EXIF_SUB_IFD, ExifSubTag.class, rin, null, ldata[0]);
                     } else if ((ftag == ExifImageTag.GPS_SUB_IFD) && (ldata[0] != 0)) {
-                        try {
-                            readIFD(tiffIFD, ExifImageTag.GPS_SUB_IFD, GPSTag.class, rin, null, ldata[0]);
-                        } catch(Exception e) {
-                            tiffIFD.removeField(ExifImageTag.GPS_SUB_IFD);
-                            e.printStackTrace();
-                        }
+                        readSubIFD(tiffIFD, ExifImageTag.GPS_SUB_IFD, GPSTag.class, rin, null, ldata[0]);
                     } else if((ftag == ExifSubTag.EXIF_INTEROPERABILITY_OFFSET) && (ldata[0] != 0)) {
-                        try {
-                            readIFD(tiffIFD, ExifSubTag.EXIF_INTEROPERABILITY_OFFSET, InteropTag.class, rin, null, ldata[0]);
-                        } catch(Exception e) {
-                            tiffIFD.removeField(ExifSubTag.EXIF_INTEROPERABILITY_OFFSET);
-                            e.printStackTrace();
-                        }
+                        readSubIFD(tiffIFD, ExifSubTag.EXIF_INTEROPERABILITY_OFFSET, InteropTag.class, rin, null, ldata[0]);
                     } else if (ftag == ExifImageTag.SUB_IFDS) {
                         for(int ifd = 0; ifd < ldata.length; ifd++) {
-                            try {
-                                readIFD(tiffIFD, ExifImageTag.SUB_IFDS, ExifImageTag.class, rin, null, ldata[0]);
-                            } catch(Exception e) {
-                                tiffIFD.removeField(ExifImageTag.SUB_IFDS);
-                                e.printStackTrace();
-                            }
+                            readSubIFD(tiffIFD, ExifImageTag.SUB_IFDS, ExifImageTag.class, rin, null, ldata[0]);
                         }
                     }
                     break;
@@ -307,6 +288,25 @@ public class IfdMetaUtils {
         rin.seek(offset);
 
         return rin.readInt();
+    }
+
+    /** The same as {@link IfdMetaUtils#readIFD(IFD, Tag, Class, RandomAccessInputStream, List, int)}
+     * but with internal error handling
+     */
+    private static int readSubIFD(IFD parent, Tag parentTag, Class<? extends Tag> tagClass,
+                                  RandomAccessInputStream rin, List<IFD> list, int offset) {
+        try {
+            return readIFD(parent, parentTag, tagClass, rin, list, offset);
+            //readIFD(tiffIFD, ExifImageTag.GPS_SUB_IFD, GPSTag.class, rin, null, ldata[0]);
+        } catch(Exception e) {
+            String message = "Skipping because of error: sub-IFD '" + parentTag
+                    + "' for '" + tagClass.getSimpleName() +
+                    ".* from '" + parent
+                    + "' : " + e.getMessage();
+            LOGGER.error(message,e);
+            parent.removeField(parentTag);
+        }
+        return 0;
     }
 
     private static void addField(IFD targetIFD, ExifField<?> field) {
