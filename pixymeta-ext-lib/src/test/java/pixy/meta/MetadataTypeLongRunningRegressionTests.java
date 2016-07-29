@@ -24,17 +24,25 @@ import pixy.meta.exif.Tag;
 import pixy.string.StringUtils;
 
 /**
- * Long running regression test that verifies that found datatypes are
- * compartible to declared datatybes.
+ * Copyright (C) 2016 by k3b.
  *
- * Created by k3b on 18.07.2016.
+ * Long running regression test that verifies that found datatypes are compartible to declared datatybes.
+ *
+ * Executed on each attribute of each image of the testimage-collection
+ * pixymeta-j2se-demo/src/main/resources/pixy/demo/j2se/images/imagefile.ext
+ *
  */
 @RunWith(JUnitParamsRunner.class)
-public class MetadataTypeRegressionTests {
+public class MetadataTypeLongRunningRegressionTests {
+
+    // for debuging use smaller collection with problematic file
+    // private static final String[] ALL_TEST_FILES = new String[]{"example.jpg"};
+    private static final String[] ALL_TEST_FILES = MetadataRegressionTests.allTestFiles;
+
     // used by JUnitParamsRunner fileName, dir, value
     private Object getAllFieldValuesForTest() throws IOException {
         ArrayList<Object> result = new ArrayList<>();
-        for (String fileName : MetadataRegressionTests.allTestFiles) {
+        for (String fileName : ALL_TEST_FILES) {
             InputStream stream = null;
             try {
                 stream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
@@ -65,7 +73,6 @@ public class MetadataTypeRegressionTests {
     }
 
     @Test
-    // @Parameters({"12.jpg"})
     @Parameters(method = "getAllFieldValuesForTest")
     public void declaredTypeShouldMatchFoundType(String fileName, IDirectory dir, IFieldValue value) throws IOException {
         final IFieldDefinition fieldDefinition = value.getDefinition();
@@ -101,6 +108,9 @@ public class MetadataTypeRegressionTests {
 
         // Long => Short is ok
         if ( (definitionDataType == FieldType.LONG) && (valueDataType == FieldType.SHORT)) return true;
+
+        // GPSCoordinate => Double is ok
+        if ( (definitionDataType == FieldType.GPSCoordinate) && (valueDataType == FieldType.DOUBLE)) return true;
 
         return false;
     }
