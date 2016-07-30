@@ -17,7 +17,14 @@ public class DataFormatter {
 
     /** if value is unformatted and to lonog return abriviated value */
     public static String abreviateValue(String s) {
-        final int length = (s == null) ? (MAXLEN) : s.length();
+        if (s == null) return null;
+
+        // xml may contain "<?xpacket begin='ï»¿'  ..." at the end of the xml. that sometimes
+        // contain utf8-BOM that gets lost. replaceAll("ï»¿","") does not work
+        int end = s.indexOf("<?xpacket begin");
+        if (end >= 0) s = s.substring(0, end);
+
+        final int length = s.length();
         if (length < MAXLEN) return s;
 
         if (s.indexOf('\n') >= 0) return s; // formatted text containing newline (i.e. xml) should be returned unmodified

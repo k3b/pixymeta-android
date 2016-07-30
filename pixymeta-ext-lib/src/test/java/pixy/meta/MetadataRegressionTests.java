@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,8 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -195,25 +194,29 @@ public class MetadataRegressionTests {
 			}
 		}
 
+		String resultString = result.toString();
 		if (showDetailed) {
-			saveResultToFile(new File(outdir,fileName + ".txt"), result.toString());
+			saveResultToFile(new File(outdir,fileName + ".txt"), resultString);
 		}
 
 		if (resultComparePath != null) {
 			String expected = readAll(resultComparePath);
-			Assert.assertEquals(fileName, expected, result.toString());
+			Assert.assertEquals(fileName, expected, resultString);
 		}
 		return result;
 	}
 
 	private void saveResultToFile(File fileName, String result) throws FileNotFoundException {
-		String charset = "UTF8";
-
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName)));
-		PrintWriter out = new PrintWriter(bw);
-		out.print(result);
-		out.flush();
-		out.close();
+		PrintWriter out = null;
+		try {
+			out = new PrintWriter(fileName, "UTF-8");
+			out.print(result);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} finally {
+			out.flush();
+			out.close();
+		}
 	}
 
 	private String readAll(InputStream inStream) {

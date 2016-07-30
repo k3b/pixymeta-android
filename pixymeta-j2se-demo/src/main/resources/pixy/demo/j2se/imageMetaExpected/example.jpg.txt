@@ -3,7 +3,7 @@
 ############
 example.jpg
 JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
-JpgFileProcessor:Unknown jpeg segment: SOF0: Baseline DCT+��!
+JpgFileProcessor:Unknown jpeg segment: SOF0: Baseline DCT
 JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table
 
 EXIF
@@ -79,6 +79,6 @@ XMP
   <aux:OwnerName>Rich Durant - PDX</aux:OwnerName>
  </rdf:Description>
 </rdf:RDF>
-</x:xmpmeta><?xpacket begin='﻿' id='W5M0MpCehiHzreSzNTczkc9d'?><?xpacket end='w'?>
+</x:xmpmeta>
 
 ----------------------

@@ -3,7 +3,7 @@
 ############
 Nikon.jpg
 JpgFileProcessor:Unknown jpeg segment: DQT: Define quantization table
-JpgFileProcessor:Unknown jpeg segment: SOF2: Progressive DCT, Huffman coding+r!"
+JpgFileProcessor:Unknown jpeg segment: SOF2: Progressive DCT, Huffman coding
 JpgFileProcessor:Unknown jpeg segment: DHT: Define Huffman table
 
 EXIF

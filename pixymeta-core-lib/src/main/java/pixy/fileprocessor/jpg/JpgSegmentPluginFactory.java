@@ -69,7 +69,7 @@ public class JpgSegmentPluginFactory {
             }
             if (debug) {
                 String message = "find-byMarker(" + marker;
-                int len = IOUtils.find(data, (byte) 0, 0);
+                int len = IOUtils.find(data, (byte) 0, (byte) 31, 0);
                 if ((len > 0) && (len < 40)) {
                     message += " + " + new String(data, 0, len);
                 }

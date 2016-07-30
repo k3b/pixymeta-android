@@ -107,9 +107,9 @@ public class IOUtils {
 		}
 	}
 
-	public static int find(byte[] buf, byte search, int start_idx) {
+	public static int find(byte[] buf, byte searchMin, byte searchMax, int start_idx) {
 		while (start_idx < buf.length) {
-			if (search == buf[start_idx]) return start_idx;
+			if ((buf[start_idx] >= searchMin) && (buf[start_idx] <= searchMax)) return start_idx;
 			start_idx++;
 		}
 		return -1;

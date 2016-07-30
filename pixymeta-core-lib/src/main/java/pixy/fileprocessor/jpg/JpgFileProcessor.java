@@ -190,7 +190,7 @@ public class JpgFileProcessor extends DebuggableBase {
             }
         } else  if (isDebugEnabled()) {
             String message = "Unknown jpeg segment: " + jpegSegmentMarker;
-            int len = IOUtils.find(jpegSegmentData, (byte) 0, 0);
+            int len = IOUtils.find(jpegSegmentData, (byte) 0, (byte) 31, 0);
             if ((len > 0) && (len < 40)) {
                 message += "+" + new String(jpegSegmentData, 0, len);
             }
