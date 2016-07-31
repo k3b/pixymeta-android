@@ -1,7 +1,9 @@
-package pixy.string;
+package pixy.util;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import pixy.string.StringUtils;
 
 /**
  * Copyright (C) 2016 by k3b.

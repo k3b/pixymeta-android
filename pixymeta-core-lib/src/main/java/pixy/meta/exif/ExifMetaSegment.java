@@ -88,9 +88,15 @@ public abstract class ExifMetaSegment extends MetadataBase {
 		addField(tag, tag.getDataType(), data);
 	}
 
+	public IDirectory getDirectory(Class<? extends IFieldDefinition> tagClass, boolean createIfNotFound) {
+		final String typName = tagClass.getSimpleName();
+		IFD ifd = getOrCreateIfd(typName, createIfNotFound);
+		return ifd;
+	}
+
 	public void addField(IFieldDefinition tag, IDataType type, Object data) {
 		final String typName = tag.getClass().getSimpleName();
-		IFD ifd = getOrCreateIfd(typName);
+		IFD ifd = getOrCreateIfd(typName, true);
 
 		ExifField<?> field = FieldType.createField((Tag) tag, (FieldType) type, data);
 		if (field != null)
@@ -105,7 +111,7 @@ public abstract class ExifMetaSegment extends MetadataBase {
 	protected static final String ID_exifImageIFD = ExifImageTag.class.getSimpleName();
 
 	HashMap<String, IFD> ifds = new HashMap<String, IFD>();
-	private IFD getOrCreateIfd(String typName) {
+	private IFD getOrCreateIfd(String typName, boolean createIfNotFound) {
 		IFD result = getIfd(typName);
 
 		if (result == null) {

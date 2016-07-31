@@ -10,12 +10,12 @@ import junitparams.Parameters;
 import pixy.api.IFieldDefinition;
 import pixy.api.IMetadata;
 import pixy.meta.MetadataType;
+import pixy.meta.exif.ExifCompositeTag;
 import pixy.meta.exif.ExifImageTag;
 import pixy.meta.exif.ExifSubTag;
 import pixy.meta.exif.GPSTag;
 import pixy.meta.image.Comments;
 import pixy.meta.iptc.IPTCApplicationTag;
-import pixy.meta.jpeg.JPEGMeta;
 
 /**
  * Copyright (C) 2016 by k3b.
@@ -26,7 +26,7 @@ import pixy.meta.jpeg.JPEGMeta;
 public class JpgSegmentPluginFactoryTests {
     @BeforeClass
     public static void initDirectories() {
-        JPEGMeta.register();
+        JpegMetaDef.register();
     }
 
     private static final IFieldDefinition allExampleTags[] = new IFieldDefinition[]{
@@ -34,8 +34,8 @@ public class JpgSegmentPluginFactoryTests {
 
         ExifImageTag.DATETIME,
         ExifSubTag.LENS_Make,
-        GPSTag.GPS_ALTITUDE,
-
+        GPSTag.GPS_LATITUDE,
+        ExifCompositeTag.GPS_DEST_LONGITUDE_EX,
         IPTCApplicationTag.KEY_WORDS
     };
 
@@ -51,6 +51,7 @@ public class JpgSegmentPluginFactoryTests {
         Assert.assertNotNull(tag.getName() + ":" + tag.getClass().getSimpleName(), found);
     }
 
+    /*
     private static final MetadataType[] allExampleMetaDefs = new MetadataType[]{
             MetadataType.COMMENT,
             MetadataType.EXIF,
@@ -62,12 +63,13 @@ public class JpgSegmentPluginFactoryTests {
         return allExampleMetaDefs;
     }
 
-/*
+
     @Test
     @Parameters(method = "getExampleMetaDefs")
     public void shouldFindDefinition(MetadataType tag)  {
         JpgSegmentPluginFactory found = JpgSegmentPluginFactory.find(tag.getClass());
-        Assert.assertNotNull(tag.getName() + ":" + tag.getClass().getSimpleName(), found);
+        Assert.assertNotNull(tag + ":" + tag.getClass().getSimpleName(), found);
     }
-*/
+    */
+
 }

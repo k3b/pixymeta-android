@@ -24,29 +24,33 @@ public class JpgSegmentPluginFactory {
 
     static List<JpgSegmentPluginFactory> factories = new ArrayList<JpgSegmentPluginFactory>();
 
-    public final MetadataType type;
-    private final JpegSegmentMarker marker;
+    private final MetadataType metadataType;
+    private final JpegSegmentMarker segmentMarker;
     private final String subMarker;
-    private final Class<? extends IMetadata> jpegExifClass;
-    private final Class<? extends IFieldDefinition>[] fieldDefs;
+    private final Class<? extends IMetadata> metadataClass;
+    private final Class<? extends IFieldDefinition>[] fieldDefClasses;
     private static boolean debug = true;
 
-    private JpgSegmentPluginFactory(MetadataType type, JpegSegmentMarker marker, String subMarker, Class<? extends IMetadata> jpegExifClass
-            , Class<? extends IFieldDefinition>... fieldDefs) {
-        this.type = type;
-        this.marker = marker;
+    private JpgSegmentPluginFactory(MetadataType metadataType, JpegSegmentMarker segmentMarker
+            , String subMarker
+            , Class<? extends IMetadata> metadataClass
+            , Class<? extends IFieldDefinition>... fieldDefClasses) {
+        this.metadataType = metadataType;
+        this.segmentMarker = segmentMarker;
         this.subMarker = subMarker;
-        this.jpegExifClass = jpegExifClass;
-        this.fieldDefs = fieldDefs;
+        this.metadataClass = metadataClass;
+        this.fieldDefClasses = fieldDefClasses;
     }
 
     /** each plugin implementation registeres here in it-s static constructor */
-    public static JpgSegmentPluginFactory register(MetadataType type, JpegSegmentMarker marker, String subMarker,
-                                                   Class<? extends IMetadata> jpegExifClass, Class<? extends IFieldDefinition>... fieldDefs) {
-        String message = "JpgSegmentPluginFactory.register " + jpegExifClass.getSimpleName() + "; " + marker;
+    public static JpgSegmentPluginFactory register(MetadataType metadataType
+            , JpegSegmentMarker segmentMarker, String subMarker
+            , Class<? extends IMetadata> metadataClass
+            , Class<? extends IFieldDefinition>... fieldDefClasses) {
+        String message = "JpgSegmentPluginFactory.register " + metadataClass.getSimpleName() + "; " + segmentMarker;
         if (subMarker != null) message += " + " + subMarker;
         LOGGER.info(message);
-        final JpgSegmentPluginFactory factory = new JpgSegmentPluginFactory(type, marker, subMarker, jpegExifClass, fieldDefs);
+        final JpgSegmentPluginFactory factory = new JpgSegmentPluginFactory(metadataType, segmentMarker, subMarker, metadataClass, fieldDefClasses);
         factories.add(factory);
         return factory;
     }
@@ -54,7 +58,7 @@ public class JpgSegmentPluginFactory {
     public static JpgSegmentPluginFactory find(JpegSegmentMarker marker, byte[] data) {
         if (data != null) {
             for (JpgSegmentPluginFactory processor : factories) {
-                if ((processor.marker != null) && (marker == processor.marker)) {
+                if ((processor.segmentMarker != null) && (marker == processor.segmentMarker)) {
                     String subMarker = processor.subMarker;
                     final String currentSubMarker = (subMarker == null) ? null : new String(data, 0, subMarker.length());
                     if ((subMarker == null) || (subMarker.equals(currentSubMarker))) {
@@ -83,7 +87,7 @@ public class JpgSegmentPluginFactory {
         if (tagClass != null) {
             for (JpgSegmentPluginFactory processor : factories) {
                 if (processor != null) {
-                    for (Class<? extends IFieldDefinition> candidate : processor.fieldDefs) {
+                    for (Class<? extends IFieldDefinition> candidate : processor.fieldDefClasses) {
                         if (candidate.isAssignableFrom(tagClass))
                         {
                             if (debug) LOGGER.info("find-byClass(" + tagClass + ") : " + processor);
@@ -100,7 +104,7 @@ public class JpgSegmentPluginFactory {
     public IMetadata create(byte[] data) {
         try {
             data = getBytesWithoutHeader(data);
-            Constructor<? extends IMetadata> constructor = jpegExifClass.getConstructor(byte[].class);
+            Constructor<? extends IMetadata> constructor = metadataClass.getConstructor(byte[].class);
             final IMetadata metadata = constructor.newInstance(data);
             if (debug) {
                 metadata.setDebugMessageBuffer(new StringBuilder());
@@ -119,11 +123,19 @@ public class JpgSegmentPluginFactory {
     }
 
     @Override public String toString() {
-        return jpegExifClass.getSimpleName() + "[" + marker.getName() + "," + subMarker +  "]";
+        return metadataClass.getSimpleName() + "[" + segmentMarker.getName() + "," + subMarker +  "]";
     }
 
     public JpgSegmentPluginFactory setDebug(boolean newDebugValue) {
         debug = newDebugValue;
         return this;
+    }
+
+    public JpegSegmentMarker getSegmentMarker() {
+        return segmentMarker;
+    }
+
+    public MetadataType getMetadataType() {
+        return metadataType;
     }
 }

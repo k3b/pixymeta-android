@@ -197,11 +197,12 @@ public class MetadataRegressionTests {
 	@Parameters(method = "getAllResourceImageNamesForTest")
 	public void shouldCopyJpgFile(String fileName) throws IOException {
 		if (fileName.toLowerCase().endsWith(".jpg")) {
-			JpgFileProcessor doCopy = new JpgFileProcessor();
-			doCopy.setDebugMessageBuffer(new StringBuilder());
 
 			InputStream inputStream = TestPixyMetaJ2se.class.getResourceAsStream("images/" + fileName);
 			Assert.assertNotNull("open images/" + fileName, inputStream);
+
+			JpgFileProcessor doCopy = new JpgFileProcessor(inputStream);
+			doCopy.setDebugMessageBuffer(new StringBuilder());
 
 			File outDir = new File(OUTDIR ,"shouldCopyJpgFile");
 			outDir.mkdirs();
@@ -210,7 +211,8 @@ public class MetadataRegressionTests {
 			OutputStream outputStream = new FileOutputStream(outFile);
 
 			try {
-				doCopy.copyStream(inputStream, outputStream);
+				doCopy.load();
+				doCopy.save(outputStream);
 			} finally {
 				inputStream.close();
 				outputStream.close();

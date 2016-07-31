@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import pixy.api.DebuggableBase;
+import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.image.jpeg.JpegSegment;
 import pixy.image.jpeg.JpegSegmentMarker;
@@ -33,21 +35,34 @@ import pixy.meta.iptc.IPTC;
  * Created by k3b on 07.07.2016.
  */
 public class JpgFileProcessor extends DebuggableBase {
+    // uninterpreted raw meta data
+    private List<JpegSegment> jpegSegments = null;
+
+    /** for interprete on demand: true when data has been parsed */
+    private boolean dataParsed = false;
+
+    // interpreted meta data
     private Map<MetadataType, IMetadata> metadataMap = new HashMap<MetadataType, IMetadata>();
 
+    private final InputStream is;
+
+    public JpgFileProcessor(InputStream is) {
+        this.is = is;
+    }
+
+    public void load() throws IOException {
+        this.jpegSegments = onReadSegments(is);
+    }
+
     /**
-     * @param is input image stream
      * @param os output image stream (or null if no writing should be done)
      * @throws IOException
      */
-    public void copyStream(InputStream is, OutputStream os) throws IOException {
-        List<JpegSegment> jpegSegments = onReadSegments(is);
-
+    public void save(OutputStream os) throws IOException {
         if (os != null) {
             IOUtils.writeShortMM(os, JpegSegmentMarker.JPG_SEGMENT_START_OF_IMAGE_SOI.getValue());
 
-            onProcessSegments(jpegSegments);
-            onWriteSegments(os, jpegSegments);
+            onWriteSegments(os, this.jpegSegments);
             IOUtils.writeShortMM(os, JpegSegmentMarker.SOS.getValue());
 
             onCopyImageData(is, os);
@@ -133,6 +148,7 @@ public class JpgFileProcessor extends DebuggableBase {
         return false;
     }
 
+    /** load one un-interpreted meta data segment from jpg */
     protected JpegSegment onReadSegment(InputStream is, List<JpegSegment> jpegSegments,
                                int segLengthInclMarker,
                                JpegSegmentMarker currentJpegSegmentMarker) throws IOException {
@@ -148,15 +164,17 @@ public class JpgFileProcessor extends DebuggableBase {
         return segment;
     }
 
-    protected void onProcessSegments(List<JpegSegment> jpegSegments) {
+    protected void interpretAllJpgSegments(List<JpegSegment> jpegSegments) {
+        dataParsed = true;
         if (jpegSegments != null) {
             for (JpegSegment segment : jpegSegments) {
-                if (segment != null) onProcessSegment(segment);
+                if (segment != null) {
+                    interpretJpgSegment(segment);
+                }
             }
         }
 
         AdobeIRBSegment adobeIrbSegment = (AdobeIRBSegment) metadataMap.get(MetadataType.PHOTOSHOP_IRB);
-
         if ((adobeIrbSegment != null)) {
             AdobyMetadataBase iptc = adobeIrbSegment.get8BIM(ImageResourceID.IPTC_NAA.getValue());
 
@@ -172,18 +190,17 @@ public class JpgFileProcessor extends DebuggableBase {
         }
     }
 
-    protected void onProcessSegment(JpegSegment jpegSegment) {
-
+    protected void interpretJpgSegment(JpegSegment jpegSegment) {
         final byte[] jpegSegmentData = jpegSegment.getData();
         final JpegSegmentMarker jpegSegmentMarker = jpegSegment.getJpegSegmentMarker();
         JpgSegmentPluginFactory definition = JpgSegmentPluginFactory.find(jpegSegmentMarker, jpegSegmentData);
         if (definition != null) {
-            IMetadata meta = metadataMap.get(definition.type);
+            IMetadata meta = metadataMap.get(definition.getMetadataType());
 
             if (meta == null) {
                 meta = definition.create(jpegSegmentData);
                 if (meta != null) {
-                    metadataMap.put(definition.type, meta);
+                    metadataMap.put(definition.getMetadataType(), meta);
                 }
             } else {
                 meta.merge(definition.getBytesWithoutHeader(jpegSegmentData));
@@ -221,7 +238,17 @@ public class JpgFileProcessor extends DebuggableBase {
     }
 
     public Map<MetadataType, IMetadata> getMetadataMap() {
+        if (!dataParsed) interpretAllJpgSegments(this.jpegSegments);
+
         return metadataMap;
     }
 
+    public IFieldValue get(IFieldDefinition tag) {
+        JpgSegmentPluginFactory found = JpgSegmentPluginFactory.find(tag.getClass());
+        MetadataType metadataType = (found == null) ? null : found.getMetadataType();
+        IMetadata metadata = (metadataType == null) ? null : getMetadataMap().get(metadataType);
+
+        // TODO return (metadata == null) ? null : metadata.get(tag);
+        return null;
+    }
 }
