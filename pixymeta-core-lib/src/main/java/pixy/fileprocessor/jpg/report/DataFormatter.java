@@ -1,4 +1,4 @@
-package pixy.util;
+package pixy.fileprocessor.jpg.report;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

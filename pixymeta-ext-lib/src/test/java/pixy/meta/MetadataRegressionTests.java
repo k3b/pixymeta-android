@@ -19,25 +19,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import pixy.api.DefaultApiImpl;
-import pixy.api.IDataType;
-import pixy.api.IDirectory;
-import pixy.api.IFieldDefinition;
-import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.demo.j2se.TestPixyMetaJ2se;
+import pixy.fileprocessor.jpg.report.MetaDataReport;
 import pixy.io.IOUtils;
 import pixy.fileprocessor.jpg.JpgFileProcessor;
 import pixy.meta.jpeg.JPEGMeta;
-import pixy.util.DataFormatter;
 import pixy.util.FileUtils;
 
 /**
@@ -135,14 +126,6 @@ public class MetadataRegressionTests {
 
 	}
 
-	private static Comparator<Object> toStringComparator = new Comparator<Object>() {
-
-		@Override
-		public int compare(Object lhs, Object rhs) {
-			return ("" + lhs).compareTo("" + rhs);
-		}
-	};
-
 	protected StringBuffer showMetaAndVerify(String fileName, Map<MetadataType, IMetadata> metadataMap, File outdir,
 											 boolean showDetailed, InputStream resultComparePath,
 											 String additionalInfo) throws FileNotFoundException {
@@ -152,47 +135,9 @@ public class MetadataRegressionTests {
 		if (additionalInfo != null) {
 			result.append(additionalInfo).append("\n");
 		}
-		// sort items to prevent regression errors
-		final Set<MetadataType> metadataTypeSet = (metadataMap == null) ? null : metadataMap.keySet();
-		if (metadataTypeSet != null) {
-			MetadataType[] keys = metadataTypeSet.toArray(new MetadataType[metadataTypeSet.size()]);
-			Arrays.sort(keys, toStringComparator);
-			for (MetadataType key : keys) {
-				result.append(key).append("\n");
 
-				IMetadata metaData = (showDetailed) ? metadataMap.get(key) : null;
-				if (metaData != null) {
-					try {
-						List<IDirectory> metaDir = metaData.getMetaData();
-						if (metaDir != null) {
-							IDirectory[] dirs = metaDir.toArray(new IDirectory[metaDir.size()]);
-							Arrays.sort(dirs, toStringComparator);
-
-							for (IDirectory dir : dirs) {
-								if (dir != null) {
-									final List<IFieldValue> valueList = dir.getValues();
-									if (valueList != null) {
-										IFieldValue[] values = valueList.toArray(new IFieldValue[valueList.size()]);
-										Arrays.sort(values, toStringComparator);
-										for (IFieldValue value : values) {
-											formatValue(result, dir, value);
-										}
-									}
-								}
-							}
-							result.append("\n----------------------\n");
-						}
-
-					} catch (Exception ex) {
-						result.append(ex.getMessage()).append("\n").append(ex.getStackTrace()).append("\n");
-					} finally {
-						String dbgMessage = metaData.getDebugMessage();
-						if ((dbgMessage != null) && (dbgMessage.length() > 0))
-							result.append("\ndebug:\n").append(dbgMessage).append("\n----------------------\n");
-					}
-				}
-			}
-		}
+		MetaDataReport reporter = new MetaDataReport();
+		reporter.getReport(metadataMap, result);
 
 		String resultString = result.toString();
 		if (showDetailed) {
@@ -242,30 +187,6 @@ public class MetadataRegressionTests {
 			}
 		}
 		return null;
-	}
-
-	// add "dirName.fieldDefinitionName[dataTypeName]=valueAsString" to result
-	private void formatValue(StringBuffer result, IDirectory dir, IFieldValue value) {
-		if (value != null) {
-			final String dirName = dir.getName();
-			final IFieldDefinition fieldDefinition = value.getDefinition();
-
-			IDataType dataType = value.getDataType();
-			if (DefaultApiImpl.isNull(dataType) && !DefaultApiImpl.isNull(fieldDefinition)) dataType = fieldDefinition.getDataType();
-
-			final String dataTypeName = DefaultApiImpl.isNull(dataType) ? null : dataType.getName();
-			final String valueAsString = DataFormatter.abreviateValue(value.getValueAsString());
-			final String fieldDefinitionName = DefaultApiImpl.isNull(fieldDefinition) ? null :  fieldDefinition.getName();
-
-			result.append("\t");
-
-			if (dirName != null) result.append(dirName);
-
-			if (fieldDefinitionName != null) result.append(".").append(fieldDefinitionName);
-			if (dataTypeName != null) result.append("[").append(dataTypeName).append("]");
-			if (valueAsString != null) result.append("=").append(valueAsString);
-			result.append("\n");
-        }
 	}
 
 	@Test
