@@ -35,7 +35,6 @@ package pixy.meta.jpeg;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,8 +68,8 @@ import pixy.api.IMetadata;
 import pixy.meta.adobe.AdobeIRBSegment;
 import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.meta.exif.ExifMetaSegment;
+import pixy.meta.iptc.IPTCFieldValue;
 import pixy.meta.xmp.XmpTag;
-import pixy.string.Base64;
 import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
 import pixy.util.ArrayUtils;
@@ -101,7 +100,6 @@ import pixy.meta.icc.ICCProfile;
 import pixy.meta.image.ImageMetadata;
 import pixy.meta.image.Comments;
 import pixy.meta.iptc.IPTC;
-import pixy.meta.iptc.IPTCDataSet;
 import pixy.meta.xmp.XMP;
 import pixy.util.MetadataUtils;
 
@@ -727,15 +725,15 @@ public class JPEGMeta extends JpegMetaDef {
 	}
 	
 	/**
-	 * Inserts a list of IPTCDataSet into a JPEG JPG_SEGMENT_IPTC_APP13 Photoshop AdobeIRBSegment segment
+	 * Inserts a list of IPTCFieldValue into a JPEG JPG_SEGMENT_IPTC_APP13 Photoshop AdobeIRBSegment segment
 	 * 
 	 * @param is InputStream for the original image
 	 * @param os OutputStream for the image with IPTC JPG_SEGMENT_IPTC_APP13 inserted
-	 * @param iptcs a collection of IPTCDataSet to be inserted
+	 * @param iptcs a collection of IPTCFieldValue to be inserted
 	 * @param update if true, keep the original data, otherwise, replace the complete JPG_SEGMENT_IPTC_APP13 data
 	 * @throws IOException
 	 */
-	public static void insertIPTC(InputStream is, OutputStream os, Collection<IPTCDataSet> iptcs, boolean update) throws IOException {
+	public static void insertIPTC(InputStream is, OutputStream os, Collection<IPTCFieldValue> iptcs, boolean update) throws IOException {
 		// Copy the original image and insert Photoshop AdobeIRBSegment data
 		boolean finished = false;
 		int length = 0;	
@@ -772,12 +770,12 @@ public class JPEGMeta extends JpegMetaDef {
 					if(iptcBIM != null) { // Keep the original values
 						IPTC iptc = new IPTC(iptcBIM.getData());
 						// Shallow copy the map
-						IPTCDataSet.IPTCDataSetMap dataSetMap = new IPTCDataSet.IPTCDataSetMap();
-						dataSetMap.putAll(iptc.getDataSets());
-						for(IPTCDataSet set : iptcs)
+						IPTCFieldValue.IPTCFieldValueMap dataSetMap = new IPTCFieldValue.IPTCFieldValueMap();
+						dataSetMap.putAll(iptc.getFieldValueMap());
+						for(IPTCFieldValue set : iptcs)
 							if(!set.allowMultiple())
 								dataSetMap.remove(set.getName());
-						for(IPTCDataSet.IPTCDataSetList iptcList : dataSetMap.values())
+						for(IPTCFieldValue.IPTCFieldValueList iptcList : dataSetMap.values())
 							iptcs.addAll(iptcList);
 					}
 			  	}				
@@ -787,7 +785,7 @@ public class JPEGMeta extends JpegMetaDef {
 					jpegSegments.get(i).write(os);
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				// Insert IPTC data as one of AdobeIRBSegment 8BIM block
-				for(IPTCDataSet iptc : iptcs)
+				for(IPTCFieldValue iptc : iptcs)
 					iptc.write(bout);
 				// Create 8BIM for IPTC
 				AdobyMetadataBase newBIM = new IPTC_NAA(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());

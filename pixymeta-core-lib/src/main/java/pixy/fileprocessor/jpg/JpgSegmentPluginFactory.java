@@ -123,7 +123,9 @@ public class JpgSegmentPluginFactory {
     }
 
     @Override public String toString() {
-        return metadataClass.getSimpleName() + "[" + segmentMarker.getName() + "," + subMarker +  "]";
+        String metaName = (metadataClass == null) ? null : metadataClass.getSimpleName();
+        String segmentMarkerName =  (segmentMarker == null) ? null : segmentMarker.getName();
+        return metaName + "[" + segmentMarkerName + "," + subMarker +  "]";
     }
 
     public JpgSegmentPluginFactory setDebug(boolean newDebugValue) {

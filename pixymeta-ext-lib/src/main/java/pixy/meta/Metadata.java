@@ -41,11 +41,11 @@ import pixy.image.IBitmap;
 import pixy.image.ImageType;
 import pixy.meta.adobe.AdobyMetadataBase;
 import pixy.meta.exif.ExifMetaSegment;
+import pixy.meta.iptc.IPTCFieldValue;
 import pixy.meta.tiff.TIFFMetaUtils;
 import pixy.util.MetadataUtils;
 import pixy.meta.bmp.BMPMeta;
 import pixy.meta.gif.GIFMeta;
-import pixy.meta.iptc.IPTCDataSet;
 import pixy.meta.jpeg.JPEGMeta;
 import pixy.meta.png.PNGMeta;
 import pixy.meta.xmp.XMP;
@@ -221,11 +221,11 @@ public abstract class Metadata extends MetadataBase {
 		peekHeadInputStream.shallowClose();
 	}
 
-	public static void insertIPTC(InputStream is, OutputStream out, Collection<IPTCDataSet> iptcs) throws IOException {
+	public static void insertIPTC(InputStream is, OutputStream out, Collection<IPTCFieldValue> iptcs) throws IOException {
 		insertIPTC(is, out, iptcs, false);
 	}
 	
-	public static void insertIPTC(InputStream is, OutputStream out, Collection<IPTCDataSet> iptcs, boolean update) throws IOException {
+	public static void insertIPTC(InputStream is, OutputStream out, Collection<IPTCFieldValue> iptcs, boolean update) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = MetadataUtils.guessImageType(peekHeadInputStream);		

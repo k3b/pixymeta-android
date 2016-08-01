@@ -9,7 +9,7 @@
  * 
  * Change History - most recent changes go on top of previous changes
  *
- * IPTCDataSet.java
+ * IPTCFieldValue.java
  *
  * Who   Date       Description
  * ====  =========  =================================================
@@ -24,8 +24,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +42,13 @@ import pixy.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 06/10/2013
  */
-public class IPTCDataSet implements IFieldValue {
+public class IPTCFieldValue implements IFieldValue {
 
-	public static class IPTCDataSetList extends ArrayList<IPTCDataSet> {
+	public static class IPTCFieldValueList extends ArrayList<IPTCFieldValue> {
 		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder(getClass().getSimpleName()).append(":");
-			for (IPTCDataSet item : this) {
+			for (IPTCFieldValue item : this) {
 				if (result.length() > 0) result.append("\n");
 				result.append(item);
 			}
@@ -58,7 +56,8 @@ public class IPTCDataSet implements IFieldValue {
 		}
 	}
 
-	public static class IPTCDataSetMap extends HashMap<String, IPTCDataSetList> {
+	public static class IPTCFieldValueMap extends HashMap<String, IPTCFieldValueList> {
+
 
 	}
 
@@ -74,18 +73,18 @@ public class IPTCDataSet implements IFieldValue {
 	private String name;
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCDataSet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCFieldValue.class);
 
-	public IPTCDataSet(IFieldDefinition tag, Object data) {
+	public IPTCFieldValue(IFieldDefinition tag, Object data) {
 		byte[] bytes = (data instanceof String) ? ((String) data).getBytes() : (byte[]) data;
 		init(IPTCRecord.APPLICATION.getRecordNumber(), ((IPTCApplicationTag) tag).getTag(), bytes.length, bytes, 0);
 	}
 
-	public IPTCDataSet(int recordNumber, int tag, int size, byte[] data, int offset) {
+	public IPTCFieldValue(int recordNumber, int tag, int size, byte[] data, int offset) {
 		init(recordNumber, tag, size, data, offset);
 	}
 
-	public IPTCDataSet(IPTCApplicationTag appTag, String value) {
+	public IPTCFieldValue(IPTCApplicationTag appTag, String value) {
 		byte[] data = value.getBytes();
 		init(IPTCRecord.APPLICATION.getRecordNumber(), appTag.getTag(), data.length, data, 0);
 	}
@@ -111,7 +110,7 @@ public class IPTCDataSet implements IFieldValue {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		IPTCDataSet other = (IPTCDataSet) obj;
+		IPTCFieldValue other = (IPTCFieldValue) obj;
 		byte[] thisData = ArrayUtils.subArray(data, offset, size);
 		byte[] thatData = ArrayUtils.subArray(other.data, other.offset, other.size);
 		if (!Arrays.equals(thisData, thatData))
@@ -256,9 +255,9 @@ public class IPTCDataSet implements IFieldValue {
 	}
 	
 	/**
-	 * Write the current IPTCDataSet to the OutputStream
+	 * Write the current IPTCFieldValue to the OutputStream
 	 * 
-	 * @param out OutputStream to write the IPTCDataSet
+	 * @param out OutputStream to write the IPTCFieldValue
 	 * @throws IOException
 	 */
 	public void write(OutputStream out) throws IOException {

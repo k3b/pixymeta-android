@@ -13,8 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ==================================================
- * WY    25Apr2015  Added addDataSets()
- * WY    25Apr2015  Renamed getDataSet(0 to getDataSets()
+ * WY    25Apr2015  Added addValues()
+ * WY    25Apr2015  Renamed getDataSet(0 to getFieldValueMap()
  * WY    13Apr2015  Changed write() to use ITPC.write()
  * WY    12Apr2015  Removed unnecessary read()
  */
@@ -25,14 +25,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
 import pixy.meta.iptc.IPTC;
-import pixy.meta.iptc.IPTCDataSet;
+import pixy.meta.iptc.IPTCFieldValue;
 
-/** living in an {@link pixy.meta.adobe.AdobeIRBSegment} */
+/** The main iptc payload living in an {@link pixy.meta.adobe.AdobeIRBSegment} */
 public class IPTC_NAA extends AdobyMetadataBase {
 	//
 	private IPTC iptc;
@@ -52,37 +52,41 @@ public class IPTC_NAA extends AdobyMetadataBase {
 	}
 
 	public void addField(IFieldDefinition tag, Object data) {
-		iptc.addDataSet(new IPTCDataSet(tag, data));
+		iptc.addValue(new IPTCFieldValue(tag, data));
 	}
 
-	public void addDataSets(Collection<? extends IPTCDataSet> dataSets) {
-		iptc.addDataSets(dataSets);
+	public IFieldValue getValue(IFieldDefinition tag) {
+		return iptc.getValue(tag);
+	}
+
+	public void addDataSets(Collection<? extends IPTCFieldValue> dataSets) {
+		iptc.addValues(dataSets);
 	}
 	
 	/**
-	 * Get all the IPTCDataSet as a map for this IPTC data
+	 * Get all the IPTCFieldValue as a map for this IPTC data
 	 * 
-	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
+	 * @return a map with the key for the IPTCFieldValue name and a list of IPTCFieldValue as the value
 	 */
-	public Map<String, IPTCDataSet.IPTCDataSetList> getDataSets() {
-		return iptc.getDataSets();			
+	public Map<String, IPTCFieldValue.IPTCFieldValueList> getDataSets() {
+		return iptc.getFieldValueMap();
 	}
 	
 	/**
-	 * Get a list of IPTCDataSet associated with a key
+	 * Get a list of IPTCFieldValue associated with a key
 	 * 
 	 * @param key name of the data set
-	 * @return a list of IPTCDataSet associated with the key
+	 * @return a list of IPTCFieldValue associated with the key
 	 */
-	public IPTCDataSet.IPTCDataSetList getDataSet(String key) {
-		return iptc.getDataSet(key);
+	public IPTCFieldValue.IPTCFieldValueList getDataSet(String key) {
+		return iptc.getValue(key);
 	}
 	
 	public void print() {
 		super.print();
-		// Print multiple entry IPTCDataSet
-		for(IPTCDataSet.IPTCDataSetList datasets : iptc.getDataSets().values())
-			for(IPTCDataSet dataset : datasets)
+		// Print multiple entry IPTCFieldValue
+		for(IPTCFieldValue.IPTCFieldValueList datasets : iptc.getFieldValueMap().values())
+			for(IPTCFieldValue dataset : datasets)
 				dataset.print();			
 	}
 	

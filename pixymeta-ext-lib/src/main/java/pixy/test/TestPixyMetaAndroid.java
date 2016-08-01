@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 import pixy.image.IBitmap;
 import pixy.api.IMetadata;
@@ -29,12 +28,10 @@ import pixy.meta.exif.ExifSubTag;
 import pixy.meta.exif.JpegExif;
 import pixy.meta.exif.TiffExif;
 import pixy.meta.iptc.IPTCApplicationTag;
-import pixy.meta.iptc.IPTCDataSet;
-import pixy.meta.jpeg.JPEGMeta;
+import pixy.meta.iptc.IPTCFieldValue;
 import pixy.meta.jpeg.JpegXMP;
 import pixy.meta.xmp.XMP;
 import pixy.image.exifFields.FieldType;
-import pixy.string.XMLUtils;
 import pixy.util.MetadataUtils;
 
 public class TestPixyMetaAndroid {
@@ -143,11 +140,11 @@ public class TestPixyMetaAndroid {
 		fout.close();
 	}
 	
-	private static IPTCDataSet.IPTCDataSetList createIPTCDataSet() {
-		IPTCDataSet.IPTCDataSetList iptcs = new IPTCDataSet.IPTCDataSetList();
-		iptcs.add(new IPTCDataSet(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2016, yuwen_66@yahoo.com"));
-		iptcs.add(new IPTCDataSet(IPTCApplicationTag.CATEGORY, "ICAFE"));
-		iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!"));
+	private static IPTCFieldValue.IPTCFieldValueList createIPTCDataSet() {
+		IPTCFieldValue.IPTCFieldValueList iptcs = new IPTCFieldValue.IPTCFieldValueList();
+		iptcs.add(new IPTCFieldValue(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2016, yuwen_66@yahoo.com"));
+		iptcs.add(new IPTCFieldValue(IPTCApplicationTag.CATEGORY, "ICAFE"));
+		iptcs.add(new IPTCFieldValue(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!"));
 		
 		return iptcs;
 	}

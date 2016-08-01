@@ -35,6 +35,8 @@ public class MetadataTests {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MetadataTests.class);
 
 	private static final IFieldDefinition allExampleTags[] = new IFieldDefinition[]{
+			/*!!!
+			*/
 			Comments.CommentTag,
 
 			ExifImageTag.DATETIME,

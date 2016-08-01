@@ -56,7 +56,7 @@ import pixy.meta.exif.TiffExif;
 import pixy.meta.icc.ICCProfile;
 import pixy.meta.image.Comments;
 import pixy.meta.iptc.IPTC;
-import pixy.meta.iptc.IPTCDataSet;
+import pixy.meta.iptc.IPTCFieldValue;
 import pixy.meta.xmp.XMP;
 import pixy.image.exifFields.ASCIIField;
 import pixy.image.exifFields.ByteField;
@@ -81,14 +81,14 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(TIFFMetaUtils.class);
 	
-	private static Collection<IPTCDataSet> copyIPTCDataSet(Collection<IPTCDataSet> iptcs, byte[] data) throws IOException {
+	private static Collection<IPTCFieldValue> copyIPTCDataSet(Collection<IPTCFieldValue> iptcs, byte[] data) throws IOException {
 		IPTC iptc = new IPTC(data);
 		// Shallow copy the map
-		Map<String, IPTCDataSet.IPTCDataSetList> dataSetMap = new HashMap<String, IPTCDataSet.IPTCDataSetList>(iptc.getDataSets());
-		for(IPTCDataSet set : iptcs)
+		Map<String, IPTCFieldValue.IPTCFieldValueList> dataSetMap = new HashMap<String, IPTCFieldValue.IPTCFieldValueList>(iptc.getFieldValueMap());
+		for(IPTCFieldValue set : iptcs)
 			if(!set.allowMultiple())
 				dataSetMap.remove(set.getName());
-		for(IPTCDataSet.IPTCDataSetList iptcList : dataSetMap.values())
+		for(IPTCFieldValue.IPTCFieldValueList iptcList : dataSetMap.values())
 			iptcs.addAll(iptcList);
 		
 		return iptcs;
@@ -300,7 +300,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 		writeToStream(rout, firstIFDOffset);	
 	}
 	
-	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, Collection<IPTCDataSet> iptcs, boolean update) throws IOException {
+	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, Collection<IPTCFieldValue> iptcs, boolean update) throws IOException {
 		insertIPTC(rin, rout, 0, iptcs, update);
 	}
 	
@@ -321,12 +321,12 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 	 * @param rin RandomAccessInputStream for the original TIFF
 	 * @param rout RandomAccessOutputStream for the output TIFF with IPTC inserted
 	 * @param pageNumber page offset where to insert IPTC
-	 * @param iptcs A list of IPTCDataSet to insert into the TIFF image
+	 * @param iptcs A list of IPTCFieldValue to insert into the TIFF image
 	 * @param update whether we want to keep the original IPTC data or override it
 	 *        completely new IPTC data set
 	 * @throws IOException
 	 */
-	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, Collection<IPTCDataSet> iptcs, boolean update) throws IOException {
+	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, Collection<IPTCFieldValue> iptcs, boolean update) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
@@ -360,12 +360,12 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 					// Now copy the Photoshop IPTC data
 					copyIPTCDataSet(iptcs, photoshop_iptc.getData());
 					// Remove duplicates
-					iptcs = new IPTCDataSet.IPTCDataSetList();
-					iptcs.addAll(new HashSet<IPTCDataSet>(iptcs));
+					iptcs = new IPTCFieldValue.IPTCFieldValueList();
+					iptcs.addAll(new HashSet<IPTCFieldValue>(iptcs));
 				}
 			}
 			// Create IPTC 8BIM
-			for(IPTCDataSet dataset : iptcs) {
+			for(IPTCFieldValue dataset : iptcs) {
 				dataset.write(bout);
 			}
 			AdobyMetadataBase iptc_bim = new AdobyMetadataBase(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());
@@ -384,7 +384,7 @@ public class TIFFMetaUtils extends IfdMetaUtils {
 					data = (byte[])f_iptc.getData();
 				copyIPTCDataSet(iptcs, data);
 			}
-			for(IPTCDataSet dataset : iptcs) {
+			for(IPTCFieldValue dataset : iptcs) {
 				dataset.write(bout);
 			}		
 			workingPage.addField(new UndefinedField(ExifImageTag.IPTC, bout.toByteArray()));

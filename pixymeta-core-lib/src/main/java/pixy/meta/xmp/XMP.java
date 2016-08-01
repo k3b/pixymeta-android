@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -35,11 +33,8 @@ import org.w3c.dom.NodeList;
 
 import pixy.api.DefaultApiImpl;
 import pixy.api.IDirectory;
-import pixy.api.IFieldValue;
 import pixy.meta.MetadataBase;
 import pixy.meta.MetadataType;
-import pixy.meta.iptc.IPTCDataSet;
-import pixy.string.StringUtils;
 import pixy.string.XMLUtils;
 
 public abstract class XMP extends MetadataBase {

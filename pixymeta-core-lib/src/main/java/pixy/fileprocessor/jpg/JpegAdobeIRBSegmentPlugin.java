@@ -16,8 +16,13 @@ import pixy.meta.iptc.IPTCApplicationTag;
 public class JpegAdobeIRBSegmentPlugin extends AdobeIRBSegment {
     static {
         JpgSegmentPluginFactory.register(MetadataType.PHOTOSHOP_IRB, JpegSegmentMarker.JPG_SEGMENT_IPTC_APP13,
-                JpegMetaDef.PHOTOSHOP_IRB_ID, JpegAdobeIRBSegmentPlugin.class, IPTCApplicationTag.class)
+                JpegMetaDef.PHOTOSHOP_IRB_ID, JpegAdobeIRBSegmentPlugin.class); // , IPTCApplicationTag.class)
                 // .setDebug(true)
+        ;
+
+        JpgSegmentPluginFactory.register(MetadataType.IPTC, null,
+                MetadataType.IPTC.toString(), JpegAdobeIRBSegmentPlugin.class, IPTCApplicationTag.class)
+        // .setDebug(true)
         ;
     }
 

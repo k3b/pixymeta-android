@@ -13,8 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
- * WY    25Apr2015  Renamed getDataSet() to getDataSets()
- * WY    25Apr2015  Added addDataSets()
+ * WY    25Apr2015  Renamed getDataSet() to getFieldValueMap()
+ * WY    25Apr2015  Added addValues()
  * WY    13Apr2015  Added write()
  */
 
@@ -57,11 +57,11 @@ public class IPTC extends MetadataBase {
 		}
 	}
 	
-	private IPTCDataSet.IPTCDataSetMap datasetMap;
+	private IPTCFieldValue.IPTCFieldValueMap fieldValueMap;
 	
 	public IPTC() {
 		super(MetadataType.IPTC, null);
-		datasetMap =  new IPTCDataSet.IPTCDataSetMap();
+		fieldValueMap =  new IPTCFieldValue.IPTCFieldValueMap();
 		isDataRead = true;
 	}
 	
@@ -71,38 +71,48 @@ public class IPTC extends MetadataBase {
 	}
 
 	public void addField(IFieldDefinition tag, Object data) {
-		addDataSet(new IPTCDataSet(tag, data));
+		addValue(new IPTCFieldValue(tag, data));
 	}
 
-	public void addDataSet(IPTCDataSet dataSet) {
-		addDataSets(Arrays.asList(dataSet));
+	public void addValue(IPTCFieldValue value) {
+		addValues(Arrays.asList(value));
 	}
-	
-	public void addDataSets(Collection<? extends IPTCDataSet> dataSets) {
-		if(datasetMap != null) {
-			for(IPTCDataSet dataSet: dataSets) {
-				String name = dataSet.getName();
-				if(datasetMap.get(name) == null) {
-					IPTCDataSet.IPTCDataSetList list = new IPTCDataSet.IPTCDataSetList();
-					list.add(dataSet);
-					datasetMap.put(name, list);
-				} else if(dataSet.allowMultiple()) {
-					datasetMap.get(name).add(dataSet);
+
+	public IFieldValue getValue(IFieldDefinition tag) {
+		ensureDataRead();
+		/* TODO
+		if(fieldValueMap != null) {
+			return fieldValueMap.get(tag);
+		}
+		*/
+		return null;
+	}
+
+	public void addValues(Collection<? extends IPTCFieldValue> values) {
+		if(fieldValueMap != null) {
+			for(IPTCFieldValue value: values) {
+				String name = value.getName();
+				if(fieldValueMap.get(name) == null) {
+					IPTCFieldValue.IPTCFieldValueList list = new IPTCFieldValue.IPTCFieldValueList();
+					list.add(value);
+					fieldValueMap.put(name, list);
+				} else if(value.allowMultiple()) {
+					fieldValueMap.get(name).add(value);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Get a string representation of the IPTCDataSet associated with the key
+	 * Get a string representation of the IPTCFieldValue associated with the key
 	 *  
-	 * @param key the name for the IPTCDataSet
-	 * @return a String representation of the IPTCDataSet, separated by ";"
+	 * @param key the name for the IPTCFieldValue
+	 * @return a String representation of the IPTCFieldValue, separated by ";"
 	 */
 	public String getAsString(String key) {
-		// Retrieve the IPTCDataSet list associated with this key
+		// Retrieve the IPTCFieldValue list associated with this key
 		// Most of the time the list will only contain one item
-		IPTCDataSet.IPTCDataSetList list = getDataSet(key);
+		IPTCFieldValue.IPTCFieldValueList list = getValue(key);
 		
 		String value = "";
 	
@@ -120,45 +130,45 @@ public class IPTC extends MetadataBase {
 	}
 	
 	/**
-	 * Get a list of IPTCDataSet associated with a key
+	 * Get a list of IPTCFieldValue associated with a key
 	 * 
-	 * @param key name of the data set
-	 * @return a list of IPTCDataSet associated with the key
+	 * @param name name of the data set
+	 * @return a list of IPTCFieldValue associated with the key
 	 */
-	public IPTCDataSet.IPTCDataSetList getDataSet(String key) {
-		return getDataSets().get(key);
+	public IPTCFieldValue.IPTCFieldValueList getValue(String name) {
+		return getFieldValueMap().get(name);
 	}
 	
 	/**
-	 * Get all the IPTCDataSet as a map for this IPTC data
+	 * Get all the IPTCFieldValue as a map for this IPTC data
 	 * 
-	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
+	 * @return a map with the key for the IPTCFieldValue name and a list of IPTCFieldValue as the value
 	 */
-	public IPTCDataSet.IPTCDataSetMap getDataSets() {
+	public IPTCFieldValue.IPTCFieldValueMap getFieldValueMap() {
 		ensureDataRead();
-		return datasetMap;
+		return fieldValueMap;
 	}
 	
 	public void read() throws IOException {
 		if(!isDataRead) {
 			int i = 0;
 			int tagMarker = getData()[i];
-			datasetMap = new IPTCDataSet.IPTCDataSetMap();
+			fieldValueMap = new IPTCFieldValue.IPTCFieldValueMap();
 			while (tagMarker == 0x1c) {
 				i++;
 				int recordNumber = getData()[i++]&0xff;
 				int tag = getData()[i++]&0xff;
 				int recordSize = IOUtils.readUnsignedShortMM(getData(), i);
 				i += 2;
-				IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, getData(), i);
-				String name = dataSet.getName();
-				final IPTCDataSet.IPTCDataSetList existingIptcDataSet = datasetMap.get(name);
-				if(existingIptcDataSet == null) {
-					IPTCDataSet.IPTCDataSetList list = new IPTCDataSet.IPTCDataSetList();
-					list.add(dataSet);
-					datasetMap.put(name, list);
+				IPTCFieldValue value = new IPTCFieldValue(recordNumber, tag, recordSize, getData(), i);
+				String name = value.getName();
+				final IPTCFieldValue.IPTCFieldValueList existingValue = fieldValueMap.get(name);
+				if(existingValue == null) {
+					IPTCFieldValue.IPTCFieldValueList list = new IPTCFieldValue.IPTCFieldValueList();
+					list.add(value);
+					fieldValueMap.put(name, list);
 				} else {
-					existingIptcDataSet.add(dataSet);
+					existingValue.add(value);
 				}
 				i += recordSize;
 				// Sanity check
@@ -168,8 +178,8 @@ public class IPTC extends MetadataBase {
 
 			/*
 			// Remove possible duplicates
-			for (Map.Entry<String, IPTCDataSet.IPTCDataSetList> entry : datasetMap.entrySet()){
-			    entry.setValue(new IPTCDataSet.IPTCDataSetList(new HashSet<IPTCDataSet>(entry.getValue())));
+			for (Map.Entry<String, IPTCFieldValue.IPTCFieldValueList> entry : fieldValueMap.entrySet()){
+			    entry.setValue(new IPTCFieldValue.IPTCFieldValueList(new HashSet<IPTCFieldValue>(entry.getValue())));
 			}
 			*/
 
@@ -179,10 +189,10 @@ public class IPTC extends MetadataBase {
 	
 	public void showMetadata() {
 		ensureDataRead();
-		if(datasetMap != null){
-			// Print multiple entry IPTCDataSet
-			for(IPTCDataSet.IPTCDataSetList iptcs : datasetMap.values()) {
-				for(IPTCDataSet iptc : iptcs)
+		if(fieldValueMap != null){
+			// Print multiple entry IPTCFieldValue
+			for(IPTCFieldValue.IPTCFieldValueList iptcs : fieldValueMap.values()) {
+				for(IPTCFieldValue iptc : iptcs)
 					iptc.print();
 			}
 		}
@@ -195,7 +205,7 @@ public class IPTC extends MetadataBase {
 	public List<IDirectory> getMetaData() {
 		ensureDataRead();
 		ArrayList<IDirectory> result = new ArrayList<IDirectory>();
-		for (Map.Entry<String, IPTCDataSet.IPTCDataSetList> entry : getDataSets().entrySet()) {
+		for (Map.Entry<String, IPTCFieldValue.IPTCFieldValueList> entry : getFieldValueMap().entrySet()) {
 			result.add(DefaultApiImpl.createDirectory(entry.getKey(), new ArrayList<IFieldValue>(entry.getValue())));
 		}
 		return result;
@@ -203,9 +213,9 @@ public class IPTC extends MetadataBase {
 
 
 	public void write(OutputStream os) throws IOException {
-		for(IPTCDataSet.IPTCDataSetList datasets : getDataSets().values())
-			for(IPTCDataSet dataset : datasets)
-				dataset.write(os);
+		for(IPTCFieldValue.IPTCFieldValueList values : getFieldValueMap().values())
+			for(IPTCFieldValue value : values)
+				value.write(os);
 	}
 
 }
