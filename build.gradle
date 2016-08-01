@@ -49,6 +49,9 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+		
+		// https://github.com/palantir/gradle-jacoco-coverage
+        classpath 'com.palantir:jacoco-coverage:0.4.0'		
     }
 }
 
@@ -86,3 +89,22 @@ task javadocJar {
     dependsOn { subprojects.javadocJar }
 }
 
+/* not working
+// https://discuss.gradle.org/t/merge-jacoco-coverage-reports-for-multiproject-setups/12100/6
+// https://docs.gradle.org/current/dsl/org.gradle.testing.jacoco.tasks.JacocoMerge.html
+task jacocoMerge(type: JacocoMerge) {
+   subprojects.each { subproject ->
+      executionData subproject.tasks.withType(Test)
+   } 
+   
+}
+*/
+
+
+// https://github.com/palantir/gradle-jacoco-coverage
+apply plugin: 'com.palantir.jacoco-full-report'
+
+jacocoFull {
+	// dependson ":pixymeta-core-lib:test", ":pixymeta-ext-lib:test"
+    // excludeProject ":my-sub-project", ":buildSrc"
+}

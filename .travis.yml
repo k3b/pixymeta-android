@@ -17,7 +17,7 @@ before_install:
 script:
   # error "Gradle Test Executor 137" Process 'Gradle Test Executor 1' finished with non-zero exit value 137
   # This usually indicates a SIGKILL being issued by TravisCI due to high memory use or a build taking too long. https://discuss.gradle.org/t/gradle-travis-ci/11928
-  - ./gradlew assemble pixymeta-j2se-demo:runFatJar pixymeta-core-lib:test pixymeta-ext-lib:test pixymeta-ext-lib:jacocoTestReport
+  - ./gradlew assemble pixymeta-j2se-demo:runFatJar pixymeta-core-lib:test pixymeta-ext-lib:test pixymeta-ext-lib:jacocoTestReport jacocoFull
   - ls -l pixymeta-j2se-demo/build/testresults/
 
 after_success:
