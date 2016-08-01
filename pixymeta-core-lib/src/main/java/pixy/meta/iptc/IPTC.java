@@ -37,6 +37,7 @@ import pixy.meta.MetadataBase;
 import pixy.meta.MetadataType;
 import pixy.io.IOUtils;
 
+/** recursive container for {@link pixy.meta.iptc.IPTCFieldValue} */
 public class IPTC extends MetadataBase {
 	public static void showIPTC(byte[] data) {
 		if(data != null && data.length > 0) {
@@ -80,12 +81,8 @@ public class IPTC extends MetadataBase {
 
 	public IFieldValue getValue(IFieldDefinition tag) {
 		ensureDataRead();
-		/* TODO
-		if(fieldValueMap != null) {
-			return fieldValueMap.get(tag);
-		}
-		*/
-		return null;
+		IPTCFieldValue.IPTCFieldValueList list = getValue(tag.toString());
+		return (list == null) ? null : list.getValue(tag);
 	}
 
 	public void addValues(Collection<? extends IPTCFieldValue> values) {

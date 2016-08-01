@@ -37,12 +37,13 @@ import pixy.string.StringUtils;
 import pixy.util.ArrayUtils;
 
 /**
- * International Press Telecommunications Council (IPTC) data set
+ * International Press Telecommunications Council (IPTC) field value
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 06/10/2013
  */
 public class IPTCFieldValue implements IFieldValue {
+	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCFieldValue.class);
 
 	public static class IPTCFieldValueList extends ArrayList<IPTCFieldValue> {
 		@Override
@@ -53,6 +54,15 @@ public class IPTCFieldValue implements IFieldValue {
 				result.append(item);
 			}
 			return result.toString();
+		}
+
+
+		public IFieldValue getValue(IFieldDefinition tag) {
+			if (this.size() == 0) return null;
+			if (this.size() > 1) {
+				LOGGER.warn("getValue(" + tag + ") ignoring multible values " );
+			}
+			return this.get(0);
 		}
 	}
 
@@ -72,9 +82,6 @@ public class IPTCFieldValue implements IFieldValue {
 	// A unique name used as HashMap key
 	private String name;
 	
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCFieldValue.class);
-
 	public IPTCFieldValue(IFieldDefinition tag, Object data) {
 		byte[] bytes = (data instanceof String) ? ((String) data).getBytes() : (byte[]) data;
 		init(IPTCRecord.APPLICATION.getRecordNumber(), ((IPTCApplicationTag) tag).getTag(), bytes.length, bytes, 0);

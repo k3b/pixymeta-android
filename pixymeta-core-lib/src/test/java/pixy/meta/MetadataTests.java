@@ -35,15 +35,13 @@ public class MetadataTests {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MetadataTests.class);
 
 	private static final IFieldDefinition allExampleTags[] = new IFieldDefinition[]{
-			/*!!!
-			*/
 			Comments.CommentTag,
 
 			ExifImageTag.DATETIME,
 			ExifSubTag.USER_COMMENT,
 			GPSTag.GPS_LATITUDE,
-			ExifCompositeTag.GPS_LONGITUDE_EX
-			// ,IPTCApplicationTag.KEY_WORDS
+			ExifCompositeTag.GPS_LONGITUDE_EX,
+			IPTCApplicationTag.KEY_WORDS
 	};
 
 	// used by JUnitParamsRunner
