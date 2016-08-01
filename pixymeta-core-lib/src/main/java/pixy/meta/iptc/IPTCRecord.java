@@ -23,9 +23,14 @@ import pixy.meta.iptc.IPTCRecord;
  * @version 1.0 03/13/2015
  */
 public enum IPTCRecord {
-	ENVELOP(1, "Envelop"), APPLICATION(2, "Application"), NEWSPHOTO(3, "NewsPhoto"),
-	PRE_OBJECTDATA(7, "PreObjectData"), OBJECTDATA(8, "ObjectData"), POST_OBJECTDATA(9, "PostObjectData"),
-	FOTOSTATION(240, "FotoStation"), UNKNOWN(999, "Unknown");	
+	ENVELOP(1, "Envelop"),
+	APPLICATION(2, "Application"),
+	NEWSPHOTO(3, "NewsPhoto"),
+	PRE_OBJECTDATA(7, "PreObjectData"),
+	OBJECTDATA(8, "ObjectData"),
+	POST_OBJECTDATA(9, "PostObjectData"),
+	FOTOSTATION(240, "FotoStation"),
+	UNKNOWN(999, "Unknown");
 	
 	private IPTCRecord(int recordNumber, String name) {
 		this.recordNumber = recordNumber;

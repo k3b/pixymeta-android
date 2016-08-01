@@ -131,11 +131,11 @@ public enum IPTCApplicationTag implements IPTCTag {
 		 return tag;
 	 }
 	 
-	 public static IPTCApplicationTag fromTag(int value) {
+	public static IPTCApplicationTag fromTag(int value) {
       	IPTCApplicationTag record = recordMap.get(value);
-   	if (record == null)
-   		return UNKNOWN;
-   	return record;
+		if (record == null)
+			return UNKNOWN;
+		return record;
    }
   
    @Override public String toString() {

@@ -19,14 +19,14 @@
 
 package pixy.meta.iptc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import pixy.api.DefaultApiImpl;
 import pixy.api.IDataType;
@@ -42,14 +42,18 @@ import pixy.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 06/10/2013
  */
-public class IPTCFieldValue implements IFieldValue {
-	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCFieldValue.class);
+public class IPTCFieldValueNew implements IFieldValue {
+	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCFieldValueNew.class);
 
-	public static class IPTCFieldValueList extends ArrayList<IPTCFieldValue> {
+	public void append(byte[] data, int offset, int recordsize) {
+	}
+
+
+	public static class IPTCFieldValueList extends ArrayList<IPTCFieldValueNew> {
 		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder(getClass().getSimpleName()).append(":");
-			for (IPTCFieldValue item : this) {
+			for (IPTCFieldValueNew item : this) {
 				if (result.length() > 0) result.append("\n");
 				result.append(item);
 			}
@@ -78,20 +82,21 @@ public class IPTCFieldValue implements IFieldValue {
 	private byte[] data;
 	private int offset;
 	private IPTCTag tagEnum;
-	
+
 	// A unique name used as HashMap key
 	private String name;
-	
-	public IPTCFieldValue(IPTCRecord iptcRecordType, IFieldDefinition tag, Object data) {
+
+	public IPTCFieldValueNew(IFieldDefinition tag, Object data, int offset, int recordsize) {
+		// TODO wrong params
 		byte[] bytes = (data instanceof String) ? ((String) data).getBytes() : (byte[]) data;
-		init(IPTCRecord.APPLICATION.getRecordNumber(), ((IPTCApplicationTag) tag).getTag(), bytes.length, bytes, 0);
+		init(IPTCRecord.APPLICATION.getRecordNumber(), ((IPTCApplicationTag) tag).getTag(), recordsize, bytes, offset);
 	}
 
-	public IPTCFieldValue(int iptcSegmentTypeId, int tag, int size, byte[] data, int offset) {
+	public IPTCFieldValueNew(int iptcSegmentTypeId, int tag, int size, byte[] data, int offset) {
 		init(iptcSegmentTypeId, tag, size, data, offset);
 	}
 
-	public IPTCFieldValue(IPTCApplicationTag appTag, String value) {
+	public IPTCFieldValueNew(IPTCApplicationTag appTag, String value) {
 		byte[] data = value.getBytes();
 		init(IPTCRecord.APPLICATION.getRecordNumber(), appTag.getTag(), data.length, data, 0);
 	}
@@ -117,7 +122,7 @@ public class IPTCFieldValue implements IFieldValue {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		IPTCFieldValue other = (IPTCFieldValue) obj;
+		IPTCFieldValueNew other = (IPTCFieldValueNew) obj;
 		byte[] thisData = ArrayUtils.subArray(data, offset, size);
 		byte[] thatData = ArrayUtils.subArray(other.data, other.offset, other.size);
 		if (!Arrays.equals(thisData, thatData))

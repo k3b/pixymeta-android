@@ -72,7 +72,7 @@ public class IPTC extends MetadataBase {
 	}
 
 	public void addField(IFieldDefinition tag, Object data) {
-		addValue(new IPTCFieldValue(tag, data));
+		addValue(new IPTCFieldValue(IPTCRecord.APPLICATION, tag, data));
 	}
 
 	public void addValue(IPTCFieldValue value) {
@@ -157,6 +157,8 @@ public class IPTC extends MetadataBase {
 				int tag = getData()[i++]&0xff;
 				int recordSize = IOUtils.readUnsignedShortMM(getData(), i);
 				i += 2;
+				IPTCApplicationTag tagEnum = IPTCApplicationTag.fromTag(tag);
+
 				IPTCFieldValue value = new IPTCFieldValue(recordNumber, tag, recordSize, getData(), i);
 				String name = value.getName();
 				final IPTCFieldValue.IPTCFieldValueList existingValue = fieldValueMap.get(name);
