@@ -34,6 +34,7 @@ import pixy.meta.Thumbnail;
 import pixy.util.ArrayUtils;
 import pixy.util.MetadataUtils;
 
+/** living in an {@link pixy.meta.adobe.AdobeIRBSegment} */
 public class ThumbnailResource extends AdobyMetadataBase {
 	// Check to make sure id is either ImageResourceID.THUMBNAIL_RESOURCE_PS4
 	// or ImageResourceID.THUMBNAIL_RESOURCE_PS5

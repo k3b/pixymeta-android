@@ -18,6 +18,7 @@ import org.w3c.dom.Document;
 
 import pixy.image.IBitmap;
 import pixy.api.IMetadata;
+import pixy.meta.adobe.ImageResourceID;
 import pixy.meta.exif.ExifImageTag;
 import pixy.meta.Metadata;
 import pixy.meta.MetadataType;
@@ -152,7 +153,7 @@ public class TestPixyMetaAndroid {
 	}
 	
 	private static List<AdobyMetadataBase> createPhotoshopIPTC() {
-		IPTC_NAA iptc = new IPTC_NAA();
+		IPTC_NAA iptc = new IPTC_NAA(ImageResourceID.IPTC_NAA);
 		iptc.addField(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2016, yuwen_66@yahoo.com");
 		iptc.addField(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!");
 		iptc.addField(IPTCApplicationTag.CATEGORY, "ICAFE");

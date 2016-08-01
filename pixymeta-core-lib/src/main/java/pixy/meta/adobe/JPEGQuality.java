@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import pixy.io.IOUtils;
 
+/** living in an {@link pixy.meta.adobe.AdobeIRBSegment} */
 public class JPEGQuality extends AdobyMetadataBase {
 	public enum Format {
 		FORMAT_STANDARD(0x0000),
@@ -90,25 +91,25 @@ public class JPEGQuality extends AdobyMetadataBase {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGQuality.class);
 	
-	public JPEGQuality() {
-		this("JPEGQuality");
+	public JPEGQuality(ImageResourceID tag) {
+		this(tag, "JPEGQuality");
 	}
 	
-	public JPEGQuality(String name) {
-		super(ImageResourceID.JPEG_QUALITY, name, null);
+	public JPEGQuality(ImageResourceID tag, String name) {
+		super(tag, name, null);
 	}
 	
-	public JPEGQuality(String name, byte[] data) {
-		super(ImageResourceID.JPEG_QUALITY, name, data);
+	public JPEGQuality(ImageResourceID tag, String name, byte[] data) {
+		super(tag, name, data);
 		read();
 	}
 	
-	public JPEGQuality(Quality quality, Format format, ProgressiveScans progressiveScans) {
-		this("JPEGQuality", quality, format, progressiveScans);
+	public JPEGQuality(ImageResourceID tag, Quality quality, Format format, ProgressiveScans progressiveScans) {
+		this(tag, "JPEGQuality", quality, format, progressiveScans);
 	}
 	
-	public JPEGQuality(String name, Quality quality, Format format, ProgressiveScans progressiveScans) {
-		super(ImageResourceID.JPEG_QUALITY, name, null);
+	public JPEGQuality(ImageResourceID tag, String name, Quality quality, Format format, ProgressiveScans progressiveScans) {
+		super(tag, name, null);
 		// Null check
 		if(quality == null || format == null || progressiveScans == null)
 			throw new IllegalArgumentException("Input parameter(s) is null");

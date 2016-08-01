@@ -48,6 +48,7 @@ import pixy.fileprocessor.jpg.JpegJFIFSegmentPlugin;
 import pixy.fileprocessor.jpg.JpegMetaDef;
 import pixy.image.BitmapFactory;
 import pixy.image.IBitmap;
+import pixy.meta.adobe.IPTC_NAA;
 import pixy.meta.exif.ExifImageTag;
 import pixy.image.jpeg.JpegSegment;
 import pixy.image.jpeg.JpegSegmentMarker;
@@ -789,7 +790,7 @@ public class JPEGMeta extends JpegMetaDef {
 				for(IPTCDataSet iptc : iptcs)
 					iptc.write(bout);
 				// Create 8BIM for IPTC
-				AdobyMetadataBase newBIM = new AdobyMetadataBase(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
+				AdobyMetadataBase newBIM = new IPTC_NAA(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());
 				if(bimMap != null) {
 					bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
 					writeIRB(os, bimMap.values()); // Write the whole thing as one JPG_SEGMENT_IPTC_APP13

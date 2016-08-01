@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import pixy.io.IOUtils;
 import pixy.string.StringUtils;
 
+/** living in an {@link pixy.meta.adobe.AdobeIRBSegment} */
 public class VersionInfo extends AdobyMetadataBase {
 	//
 	private int version;
@@ -42,25 +43,25 @@ public class VersionInfo extends AdobyMetadataBase {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(VersionInfo.class);
 	
-	public VersionInfo() {
-		this("VersionInfo");
+	public VersionInfo(ImageResourceID tag) {
+		this(tag, "VersionInfo");
 	}
 	
-	public VersionInfo(String name) {
-		super(ImageResourceID.VERSION_INFO, name, null);
+	public VersionInfo(ImageResourceID tag, String name) {
+		super(tag, name, null);
 	}
 
-	public VersionInfo(String name, byte[] data) {
-		super(ImageResourceID.VERSION_INFO, name, data);
+	public VersionInfo(ImageResourceID tag, String name, byte[] data) {
+		super(tag, name, data);
 		read();
 	}
 	
-	public VersionInfo(int version, boolean hasRealMergedData, String writerName, String readerName, int fileVersion) {
-		this("VersionInfo", version, hasRealMergedData, writerName, readerName, fileVersion);
+	public VersionInfo(ImageResourceID tag, int version, boolean hasRealMergedData, String writerName, String readerName, int fileVersion) {
+		this(tag, "VersionInfo", version, hasRealMergedData, writerName, readerName, fileVersion);
 	}
 	
-	public VersionInfo(String name, int version, boolean hasRealMergedData, String writerName, String readerName, int fileVersion) {
-		super(ImageResourceID.VERSION_INFO, name, null);
+	public VersionInfo(ImageResourceID tag, String name, int version, boolean hasRealMergedData, String writerName, String readerName, int fileVersion) {
+		super(tag, name, null);
 		this.version = version;
 		this.hasRealMergedData = hasRealMergedData;
 		this.writerName = writerName;

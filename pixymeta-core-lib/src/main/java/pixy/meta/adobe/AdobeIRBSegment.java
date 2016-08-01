@@ -28,7 +28,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pixy.fileprocessor.jpg.JpgFileProcessor;
 import pixy.meta.MetadataBase;
 import pixy.meta.MetadataType;
 import pixy.util.ArrayUtils;
@@ -121,19 +120,19 @@ public class AdobeIRBSegment extends MetadataBase {
 					}
 					switch(tag) {
 						case JPEG_QUALITY:
-							_8bims.put(tagCode, new JPEGQuality(name, ArrayUtils.subArray(getData(), i, size)));
+							_8bims.put(tagCode, new JPEGQuality(tag, name, ArrayUtils.subArray(getData(), i, size)));
 							break;
 						case VERSION_INFO:
-							_8bims.put(tagCode, new VersionInfo(name, ArrayUtils.subArray(getData(), i, size)));
+							_8bims.put(tagCode, new VersionInfo(tag, name, ArrayUtils.subArray(getData(), i, size)));
 							break;
 						case IPTC_NAA:
 							byte[] newData = ArrayUtils.subArray(getData(), i, size);
 							AdobyMetadataBase iptcBim = _8bims.get(tagCode);
 							if(iptcBim != null) {
 								byte[] oldData = iptcBim.getData();
-								_8bims.put(tagCode, new IPTC_NAA(name, ArrayUtils.concat(oldData, newData)));
+								_8bims.put(tagCode, new IPTC_NAA(tag, name, ArrayUtils.concat(oldData, newData)));
 							} else
-								_8bims.put(tagCode, new IPTC_NAA(name, newData));
+								_8bims.put(tagCode, new IPTC_NAA(tag, name, newData));
 							break;
 						case THUMBNAIL_RESOURCE_PS4:
 						case THUMBNAIL_RESOURCE_PS5:
@@ -142,7 +141,7 @@ public class AdobeIRBSegment extends MetadataBase {
 							_8bims.put(tagCode, thumbnail);
 							break;
 						default:
-							_8bims.put(tagCode, new AdobyMetadataBase(tagCode, name, size, ArrayUtils.subArray(getData(), i, size)));
+							_8bims.put(tagCode, new AdobyMetadataBase(tag, name, size, ArrayUtils.subArray(getData(), i, size)));
 					}
 
 					unknown = 0;

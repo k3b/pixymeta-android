@@ -32,21 +32,22 @@ import pixy.api.IFieldDefinition;
 import pixy.meta.iptc.IPTC;
 import pixy.meta.iptc.IPTCDataSet;
 
+/** living in an {@link pixy.meta.adobe.AdobeIRBSegment} */
 public class IPTC_NAA extends AdobyMetadataBase {
 	//
 	private IPTC iptc;
 		
-	public IPTC_NAA() {
-		this("IPTC_NAA");
+	public IPTC_NAA(ImageResourceID tag) {
+		this(tag, "IPTC_NAA");
 	}
 	
-	public IPTC_NAA(String name) {
-		super(ImageResourceID.IPTC_NAA, name, null);
+	public IPTC_NAA(ImageResourceID tag, String name) {
+		super(tag, name, null);
 		iptc = new IPTC();
 	}
 
-	public IPTC_NAA(String name, byte[] data) {
-		super(ImageResourceID.IPTC_NAA, name, data);
+	public IPTC_NAA(ImageResourceID tag, String name, byte[] data) {
+		super(tag, name, data);
 		iptc = new IPTC(data);
 	}
 
