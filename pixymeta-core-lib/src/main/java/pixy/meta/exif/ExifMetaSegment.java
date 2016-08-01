@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import pixy.api.IDataType;
 import pixy.api.IDirectory;
 import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
 import pixy.image.IBitmap;
 import pixy.meta.MetadataBase;
 import pixy.meta.MetadataType;
@@ -47,6 +48,7 @@ import pixy.io.FileCacheRandomAccessOutputStream;
 import pixy.io.IOUtils;
 import pixy.io.RandomAccessInputStream;
 import pixy.io.RandomAccessOutputStream;
+import pixy.util.ClassUtils;
 
 /**
  * EXIF wrapper
@@ -88,21 +90,29 @@ public abstract class ExifMetaSegment extends MetadataBase {
 		addField(tag, tag.getDataType(), data);
 	}
 
+	/*
 	public IDirectory getDirectory(Class<? extends IFieldDefinition> tagClass, boolean createIfNotFound) {
 		final String typName = tagClass.getSimpleName();
 		IFD ifd = getOrCreateIfd(typName, createIfNotFound);
 		return ifd;
 	}
+	*/
+
+	public IFieldValue getValue(IFieldDefinition tag) {
+		IFD ifd = getOrCreateIfd(tag, false);
+
+		if (ifd != null) return ifd.getValue(tag);
+		return null;
+	}
 
 	public void addField(IFieldDefinition tag, IDataType type, Object data) {
-		final String typName = tag.getClass().getSimpleName();
-		IFD ifd = getOrCreateIfd(typName, true);
+		IFD ifd = getOrCreateIfd(tag, true);
 
 		ExifField<?> field = FieldType.createField((Tag) tag, (FieldType) type, data);
 		if (field != null)
 			ifd.addField(field);
 		else
-			throw new IllegalArgumentException("Cannot create required " + typName +
+			throw new IllegalArgumentException("Cannot create required " + ClassUtils.getSimpleClassName(tag) +
 					" field");
 	}
 
@@ -119,6 +129,12 @@ public abstract class ExifMetaSegment extends MetadataBase {
 			ifds.put(typName, result);
 		}
 		return result;
+	}
+
+	protected IFD getOrCreateIfd(IFieldDefinition tag, boolean createIfNotFound) {
+		if (tag instanceof ExifCompositeTag) return getOrCreateIfd(ID_gpsSubIFD, createIfNotFound);
+		final String typName = ClassUtils.getSimpleClassName(tag);
+		return getOrCreateIfd(typName, createIfNotFound);
 	}
 
 	protected IFD getIfd(String typName) {

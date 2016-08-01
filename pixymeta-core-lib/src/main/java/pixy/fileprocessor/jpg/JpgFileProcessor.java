@@ -243,12 +243,11 @@ public class JpgFileProcessor extends DebuggableBase {
         return metadataMap;
     }
 
-    public IFieldValue get(IFieldDefinition tag) {
+    public IFieldValue getValue(IFieldDefinition tag) {
         JpgSegmentPluginFactory found = JpgSegmentPluginFactory.find(tag.getClass());
         MetadataType metadataType = (found == null) ? null : found.getMetadataType();
         IMetadata metadata = (metadataType == null) ? null : getMetadataMap().get(metadataType);
 
-        // TODO return (metadata == null) ? null : metadata.get(tag);
-        return null;
+        return (metadata == null) ? null : metadata.getValue(tag);
     }
 }

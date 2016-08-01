@@ -9,6 +9,8 @@ import java.util.List;
 
 import pixy.api.DebuggableBase;
 import pixy.api.IDirectory;
+import pixy.api.IFieldDefinition;
+import pixy.api.IFieldValue;
 import pixy.api.IMetadata;
 import pixy.util.ArrayUtils;
 
@@ -100,4 +102,8 @@ public abstract class MetadataBase extends DebuggableBase implements IMetadata {
     public void setData(byte[] data) {
         this.data = data;
     }
+
+    // TODO must be implemented by sub-classes
+    public IFieldValue getValue(IFieldDefinition tag) {return null;}
+
 }

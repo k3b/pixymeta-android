@@ -33,6 +33,8 @@ public interface IMetadata extends MetadataReader {
 	 * */
 	List<IDirectory> getMetaData();
 
+	IFieldValue getValue(IFieldDefinition tag);
+
 	void merge(byte[] data);
 
 	String getDebugMessage();
